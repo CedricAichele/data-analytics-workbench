@@ -1,0 +1,14 @@
+<svg width="360" height="96" viewBox="0 0 360 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Data Analytics Workbench logo">
+  <rect width="360" height="96" rx="12" fill="#FFFFFF"/>
+  <rect x="1" y="1" width="358" height="94" rx="11" stroke="#E5E7EB" stroke-width="2"/>
+  <g transform="translate(24 22)">
+    <rect x="0" y="0" width="52" height="52" rx="10" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>
+    <rect x="12" y="30" width="6" height="12" rx="2" fill="#2563EB"/>
+    <rect x="23" y="22" width="6" height="20" rx="2" fill="#2563EB"/>
+    <rect x="34" y="12" width="6" height="30" rx="2" fill="#2563EB"/>
+    <path d="M12 18H40" stroke="#93C5FD" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <text x="92" y="43" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700">Data Analytics</text>
+  <text x="92" y="68" fill="#2563EB" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">Workbench</text>
+</svg>
+

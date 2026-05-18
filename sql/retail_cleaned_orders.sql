@@ -1,0 +1,21 @@
+SELECT
+    CAST(order_id AS VARCHAR) AS order_id,
+    CAST(order_date AS TIMESTAMP) AS order_date,
+    CAST(customer_id AS VARCHAR) AS customer_id,
+    CAST(product_name AS VARCHAR) AS product_name,
+    COALESCE(CAST(product_category AS VARCHAR), 'Uncategorized') AS product_category,
+    CAST(quantity AS DOUBLE) AS quantity,
+    CAST(unit_price AS DOUBLE) AS unit_price,
+    COALESCE(CAST(country AS VARCHAR), 'Unknown') AS country,
+    COALESCE(CAST(invoice_status AS VARCHAR), 'Unknown') AS invoice_status,
+    original_order_date,
+    CAST(is_return AS BOOLEAN) AS is_return,
+    CAST(is_invalid_price AS BOOLEAN) AS is_invalid_price,
+    CAST(is_missing_customer AS BOOLEAN) AS is_missing_customer,
+    CAST(is_invalid_date AS BOOLEAN) AS is_invalid_date,
+    CAST(is_cancelled AS BOOLEAN) AS is_cancelled,
+    CAST(is_duplicate_row AS BOOLEAN) AS is_duplicate_row,
+    CAST(is_analysis_valid AS BOOLEAN) AS is_analysis_valid,
+    CAST(gross_revenue AS DOUBLE) AS gross_revenue,
+    CAST(net_revenue AS DOUBLE) AS net_revenue
+FROM retail_orders_prepared;
