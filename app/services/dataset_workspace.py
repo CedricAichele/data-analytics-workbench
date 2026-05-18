@@ -373,6 +373,9 @@ def sync_legacy_state(state: MutableMapping[str, Any] | None = None) -> None:
         "manufacturing_controlled_chart_result",
         "logistics_controlled_chart_result",
         "finance_controlled_chart_result",
+        "data_dictionary_result",
+        "generic_quality_report",
+        "quality_rules_result",
     ]
     dataset_id = current.get("active_dataset_id")
     dataset = current.get("datasets", {}).get(dataset_id) if dataset_id else None

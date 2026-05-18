@@ -16,10 +16,13 @@
 - Keep dataframe transformation logic in `app/services/transformations.py`.
 - Keep generic exploratory aggregation logic in `app/services/generic_analytics.py`.
 - Keep template definitions in `app/services/template_registry.py`.
+- Keep Data Dictionary logic in `app/services/data_dictionary.py`.
+- Keep template-specific quality rules in `app/services/quality_rules.py`.
 - Keep manufacturing KPI logic in `app/services/manufacturing_analytics.py`.
 - Keep logistics KPI logic in `app/services/logistics_analytics.py`.
 - Keep finance KPI logic in `app/services/finance_analytics.py`.
 - Keep export conversion helpers in `app/services/export_service.py`.
+- Keep BI-ready workbook packaging in `app/services/export_package.py`.
 - Keep active dataset state changes centralized in `app/services/dataset_workspace.py`.
 - Use DuckDB SQL files in `sql/` for analytical aggregations.
 - Do not add external APIs, paid services, authentication, or cloud dependencies to the MVP.

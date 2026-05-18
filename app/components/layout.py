@@ -29,6 +29,7 @@ NAV_ITEMS = [
     NavItem("Overview", "main.py", ":material/home:"),
     NavItem("Data Upload", "pages/1_data_upload.py", ":material/upload_file:"),
     NavItem("Data Profile", "pages/2_data_profile.py", ":material/table_view:"),
+    NavItem("Data Dictionary", "pages/data_dictionary.py", ":material/menu_book:"),
     NavItem("Data Preparation", "pages/3_data_preparation.py", ":material/tune:"),
     NavItem("Data Quality", "pages/5_data_quality.py", ":material/verified_user:"),
     NavItem("Generic Analytics", "pages/6_generic_analytics.py", ":material/query_stats:"),

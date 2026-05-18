@@ -18,6 +18,7 @@ Navigation items:
 - Overview
 - Data Upload
 - Data Profile
+- Data Dictionary
 - Data Preparation
 - Data Quality
 - Generic Analytics
@@ -68,6 +69,14 @@ It shows row and column counts, duplicate count, generic quality score, column n
 
 If no dataset is active, the page shows a warning and stops safely.
 
+## Data Dictionary
+
+The Data Dictionary page works with any active `working_df` and documents column-level metadata after controlled preparation changes.
+
+It shows detected data types, missing value counts and percentages, unique counts, example values, numeric min/max/average, first and last dates where available, mapped business fields, template relevance, and quality notes. Users can filter by type, mapped/unmapped status, and columns with missing values.
+
+The dictionary can be downloaded as CSV, Excel `.xlsx`, or JSON `.json`.
+
 ## Data Preparation
 
 Data Preparation is the only page for user-triggered permanent transformations.
@@ -83,6 +92,8 @@ Structural changes clear stale mappings and analytics results for the active dat
 Data Quality shows explainable 0-100 scoring for any active dataset. It reports sub-scores, explanations, and recommended fixes for missing values, duplicates, invalid numeric values, schema completeness, and date parsing issues.
 
 When a template mapping exists, the page can calculate template-aware schema and field quality checks.
+
+Template-specific Quality Rules report mapped-domain issues for Sales / Retail, Manufacturing, Logistics, and Finance datasets. The rules show severity, affected rows, explanations, and recommended fixes. They report issues only and do not mutate data.
 
 ## Generic Analytics
 
@@ -156,8 +167,11 @@ It can export:
 
 - active working dataset as CSV, Excel `.xlsx`, or JSON `.json`
 - raw dataset only when explicitly selected
+- Data Dictionary as CSV, Excel `.xlsx`, or JSON `.json`
 - transformation log as CSV or JSON
+- template quality rules as CSV or Excel `.xlsx`
 - Generic Analytics aggregated result as CSV, Excel `.xlsx`, or JSON `.json`
 - available domain result tables as CSV, Excel `.xlsx`, or JSON `.json`
+- BI-ready Excel package containing cleaned data, data dictionary, quality report, transformation log, KPI summary, and available analytics result tables
 
 Exports use Streamlit download buttons and do not overwrite local files.

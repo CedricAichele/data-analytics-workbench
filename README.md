@@ -25,11 +25,13 @@ This app is built around that separation:
 - Manage several datasets in one Streamlit session, prevent duplicate loads, and choose the active dataset
 - Profile any active working dataframe for types, missingness, duplicates, unique values, and summaries
 - Prepare data through logged transformations on `working_df`
+- Generate a Data Dictionary from the active `working_df`
 - Score data quality with transparent sub-scores, explanations, and recommended fixes
+- Run template-specific quality rules that report issues without mutating data
 - Run Generic Analytics with one or multiple numeric measures
 - Map source columns to implemented domain templates
 - Run Sales / Retail, Manufacturing, Logistics, and Finance KPI analytics with chart controls
-- Export the active working dataset, transformation log, and analytics result tables
+- Export the active working dataset, documentation, analytics result tables, and a BI-ready Excel package
 - Generate deterministic template-aware management summaries without API keys
 
 ## Architecture
@@ -115,6 +117,29 @@ Data Preparation supports renaming columns, dropping columns, type conversion, d
 
 Analytics pages may create temporary derived analytical fields internally, but they do not overwrite `raw_df` or `working_df`.
 
+## Data Dictionary
+
+The Data Dictionary is generated from the active `working_df` by default, so controlled preparation changes such as column renaming are reflected across documentation, mapping, analytics, and exports.
+
+For each column it documents:
+
+- detected data type
+- missing value count and percentage
+- unique value count
+- example values
+- numeric min, max, and average where applicable
+- first and last date where applicable
+- mapped business field and template relevance where mappings exist
+- quality notes such as missingness, identifier-like columns, mapped required fields, and numeric zero or negative values
+
+The dictionary can be filtered in the app and exported as CSV, Excel `.xlsx`, or JSON `.json`.
+
+## Data Quality
+
+The generic data quality score works for any active dataset. It evaluates visible dimensions such as missing values, duplicate rows, invalid numeric values, schema completeness when a template mapping exists, and date parsing quality.
+
+Template-specific quality rules add explainable checks for mapped Sales / Retail, Manufacturing, Logistics, and Finance datasets. These rules report affected row counts, severity, explanations, and recommended fixes. They do not remove rows or mutate the dataset.
+
 ## Generic Analytics
 
 Generic Analytics works with any active `working_df` and does not assign business meaning.
@@ -165,15 +190,18 @@ Finance analytics requires interpretable transaction type values such as `revenu
 
 ## Export Center
 
-The Export Center makes output easy to find.
+The Export Center makes output easy to find and keeps the standard export target on the active `working_df`.
 
 Available exports:
 
 - active working dataset as CSV, Excel `.xlsx`, or JSON `.json`
 - optional raw dataset export when explicitly selected
+- Data Dictionary as CSV, Excel `.xlsx`, or JSON `.json`
 - transformation log as CSV or JSON
+- template quality rules as CSV or Excel `.xlsx`
 - Generic Analytics aggregated result as CSV, Excel `.xlsx`, or JSON `.json`
 - calculated domain result tables as CSV, Excel `.xlsx`, or JSON `.json`
+- BI-ready Excel package with sheets for cleaned data, data dictionary, quality report, transformation log, KPI summary, Generic Analytics result, and available domain result tables
 
 Exports use Streamlit download buttons and do not write files to disk.
 
@@ -279,14 +307,15 @@ This project was implemented using an AI-assisted coding workflow. The analytica
 - Finance analytics requires interpretable revenue/cost type values.
 - The management summary is deterministic and does not call an external LLM.
 - The app does not include authentication, user accounts, or a backend API.
+- The app is a portfolio-grade analytics prototype, not an enterprise governance or data catalog platform.
 
 ## Next Steps
 
 - Deploy the Streamlit app and add real screenshots.
 - Add saved mapping profiles for recurring datasets.
 - Add richer date parsing controls for regional formats.
-- Add optional packaged multi-sheet Excel exports for groups of result tables.
 - Add deeper compatibility diagnostics for user-uploaded domain datasets.
+- Add optional governance-style metadata fields to the Data Dictionary.
 
 ## Portfolio Positioning
 

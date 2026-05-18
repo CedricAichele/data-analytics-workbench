@@ -10,7 +10,12 @@ from app.config import (
     RETAIL_REQUIRED_FIELDS,
 )
 from app.services.dataset_workspace import get_active_template_mapping
+from app.services.dataset_workspace import set_active_analytics_result
+from app.services.export_service import dataframe_to_csv_bytes, dataframe_to_excel_bytes
+from app.services.column_mapper import initialize_template_mapping
 from app.services.quality_score import calculate_quality_score
+from app.services.quality_rules import run_template_quality_rules, summarize_rule_severity
+from app.services.schema_detector import detect_template_schema
 from app.services.template_registry import implemented_domain_templates
 
 
@@ -22,6 +27,7 @@ if df is None:
     st.stop()
 
 generic_report = calculate_quality_score(df)
+set_active_analytics_result("generic_quality_report", generic_report)
 st.subheader("Generic Quality Score")
 cols = st.columns(3)
 cols[0].metric("Overall score", f"{generic_report.overall_score:.1f}/100")
@@ -84,7 +90,18 @@ else:
     numeric_fields = []
 
 if not mapping:
-    st.info("Save a mapping on the Column Mapping page to include template completeness in the quality score.")
+    detection = detect_template_schema(selected_template_id, list(df.columns))
+    if not detection.requires_manual_mapping:
+        mapping = initialize_template_mapping(selected_template_id, list(df.columns), detection)
+        st.info("Using detected required fields for template checks. Save a manual mapping if you need to adjust these matches.")
+    else:
+        st.info("Save a mapping on the Column Mapping page to include template completeness and template-specific rules.")
+        mapping = None
+
+if not mapping:
+    set_active_analytics_result("quality_rules_result", None)
+    st.subheader("Template-specific Quality Rules")
+    st.info("Template-specific rules run after the active dataset has a detected or saved mapping for the selected template.")
 else:
     template_report = calculate_quality_score(
         df,
@@ -107,3 +124,33 @@ else:
         st.write("Recommended fixes")
         for fix in template_report.recommended_fixes:
             st.write(f"- {fix}")
+
+    st.subheader("Template-specific Quality Rules")
+    rule_results = run_template_quality_rules(df, selected_template_id, mapping)
+    set_active_analytics_result("quality_rules_result", rule_results)
+    severity_counts = summarize_rule_severity(rule_results)
+    severity_cols = st.columns(3)
+    severity_cols[0].metric("Critical rules", severity_counts["critical"])
+    severity_cols[1].metric("Warning rules", severity_counts["warning"])
+    severity_cols[2].metric("Info rules", severity_counts["info"])
+
+    if rule_results.empty:
+        st.success("No template-specific rules were available or no rule issues were found.")
+    else:
+        st.dataframe(rule_results, use_container_width=True, hide_index=True)
+        with st.expander("Recommended fixes from rule checks"):
+            for fix in rule_results["recommended_fix"].dropna().drop_duplicates().tolist():
+                st.write(f"- {fix}")
+        export_cols = st.columns(2)
+        export_cols[0].download_button(
+            "Download rule results as CSV",
+            data=dataframe_to_csv_bytes(rule_results),
+            file_name=f"{selected_template_id}_quality_rules.csv",
+            mime="text/csv",
+        )
+        export_cols[1].download_button(
+            "Download rule results as Excel",
+            data=dataframe_to_excel_bytes(rule_results, sheet_name="Quality_Rules"),
+            file_name=f"{selected_template_id}_quality_rules.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )

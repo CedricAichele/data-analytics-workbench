@@ -7,6 +7,7 @@ This report lists features implemented in the current Data Analytics Workbench c
 - Overview
 - Data Upload
 - Data Profile
+- Data Dictionary
 - Data Preparation
 - Data Quality
 - Generic Analytics
@@ -75,9 +76,17 @@ Implemented transformations:
 
 Transformations modify `working_df` only and append human-readable log entries.
 
+## Data Dictionary
+
+The Data Dictionary works with any active `working_df`. It documents column names, detected types, missingness, unique counts, example values, numeric summaries, date ranges, saved template mappings, template relevance, and quality notes.
+
+The page supports filtering by data type, mapped/unmapped status, and missing values. It can export the dictionary as CSV, Excel `.xlsx`, or JSON `.json`.
+
 ## Data Quality
 
 The quality score is deterministic and explainable. It evaluates missing values, duplicate rows, invalid numeric values, schema completeness when mapping exists, and mapped date parsing when date fields are provided.
+
+Template-specific quality rules are implemented for Sales / Retail, Manufacturing, Logistics, and Finance mappings. Rules report severity, affected rows, explanations, and recommended fixes without mutating the source dataframe.
 
 ## Generic Analytics
 
@@ -136,9 +145,12 @@ Export Center supports:
 
 - active working dataset as CSV, Excel `.xlsx`, and JSON `.json`
 - optional raw dataset export when explicitly selected
+- Data Dictionary as CSV, Excel `.xlsx`, and JSON `.json`
 - transformation log as CSV and JSON
+- template quality rules as CSV and Excel `.xlsx`
 - Generic Analytics aggregated result as CSV, Excel `.xlsx`, and JSON `.json`
 - domain analytics result tables as CSV, Excel `.xlsx`, and JSON `.json`
+- BI-ready Excel package with cleaned data, data dictionary, quality report, transformation log, KPI summary, Generic Analytics result when available, and domain result sheets when available
 
 ## Known Limitations
 
@@ -149,6 +161,7 @@ Export Center supports:
 - Rule-based schema detection may need manual mapping correction.
 - Domain KPIs require valid field mappings.
 - Finance interpretation requires meaningful type values such as `revenue` and `cost`.
+- The Data Dictionary is useful documentation, not a full enterprise data catalog.
 - Screenshots are not committed yet.
 
 ## Not-Yet-Implemented Ideas
@@ -156,5 +169,5 @@ Export Center supports:
 - Deployed screenshots.
 - Saved mapping profiles.
 - Richer locale-aware date parsing controls.
-- Multi-table exports bundled into one workbook.
 - Deeper compatibility diagnostics for uploaded domain datasets.
+- Optional owner/steward fields for the Data Dictionary.
