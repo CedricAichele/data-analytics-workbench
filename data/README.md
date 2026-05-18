@@ -1,6 +1,6 @@
 # Data
 
-This folder contains small sample datasets used by the local MVP.
+This folder contains small synthetic sample datasets used by Data Analytics Workbench.
 
 ## Sample Retail Orders
 
@@ -17,3 +17,31 @@ The sample includes intentional data quality issues:
 
 The data is synthetic and does not represent real customers or transactions.
 
+## Sample Manufacturing Operations
+
+`sample/sample_manufacturing_operations.csv` is a synthetic production operations dataset with more than 500 rows.
+
+The sample includes:
+
+- production timestamps
+- machine IDs
+- production lines
+- shifts
+- products
+- planned output
+- actual output
+- scrap count
+- downtime minutes
+- runtime minutes
+- quality status
+
+It includes intentional data quality issues:
+
+- missing machine IDs
+- duplicated rows
+- zero planned output
+- missing shift values
+- occasional high scrap counts
+- occasional high downtime
+
+The data is synthetic and does not represent a real factory, production line, customer, or product.

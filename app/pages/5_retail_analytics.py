@@ -27,7 +27,7 @@ df = get_working_dataframe()
 if df is None:
     st.stop()
 
-mapping = st.session_state.get("column_mapping")
+mapping = st.session_state.get("column_mapping") or st.session_state.get("template_mappings", {}).get("sales_retail")
 if not mapping:
     st.warning("Save a valid retail mapping before running the retail analytics template.")
     st.stop()

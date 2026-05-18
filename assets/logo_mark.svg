@@ -1,0 +1,22 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">DAW logo mark</title>
+  <desc id="desc">Compact Data Analytics Workbench mark with a worktable, KPI tiles, and a line chart.</desc>
+  <rect width="240" height="240" rx="34" fill="#F8FAFC"/>
+  <rect x="34" y="38" width="172" height="124" rx="18" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="5"/>
+  <rect x="55" y="143" width="130" height="16" rx="8" fill="#334155"/>
+  <rect x="68" y="158" width="17" height="44" rx="6" fill="#64748B"/>
+  <rect x="154" y="158" width="17" height="44" rx="6" fill="#64748B"/>
+  <rect x="54" y="60" width="34" height="34" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="3"/>
+  <rect x="102" y="60" width="34" height="34" rx="8" fill="#E0F2FE" stroke="#0EA5E9" stroke-width="3"/>
+  <rect x="150" y="60" width="34" height="34" rx="8" fill="#F1F5F9" stroke="#475569" stroke-width="3"/>
+  <rect x="62" y="80" width="8" height="8" rx="3" fill="#2563EB"/>
+  <rect x="74" y="70" width="8" height="18" rx="3" fill="#2563EB"/>
+  <rect x="110" y="74" width="8" height="14" rx="3" fill="#0EA5E9"/>
+  <rect x="122" y="68" width="8" height="20" rx="3" fill="#0EA5E9"/>
+  <path d="M157 84L166 74L178 82" stroke="#475569" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M54 118C75 106 88 124 110 113C134 101 148 118 175 102" stroke="#2563EB" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="54" cy="118" r="5" fill="#2563EB"/>
+  <circle cx="110" cy="113" r="5" fill="#2563EB"/>
+  <circle cx="175" cy="102" r="5" fill="#2563EB"/>
+  <text x="120" y="224" text-anchor="middle" fill="#0F172A" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="32" font-weight="800" letter-spacing="0">DAW</text>
+</svg>

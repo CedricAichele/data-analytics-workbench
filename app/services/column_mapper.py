@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from app.config import RETAIL_OPTIONAL_FIELDS, RETAIL_REQUIRED_FIELDS
 from app.services.schema_detector import SchemaDetectionResult
+from app.services.template_registry import get_template
 
 
 @dataclass(frozen=True)
@@ -36,18 +37,40 @@ def initialize_retail_mapping(
     return mapping
 
 
-def validate_retail_mapping(
+def initialize_template_mapping(
+    template_id: str,
+    columns: list[str],
+    detection: SchemaDetectionResult | None = None,
+) -> dict[str, str | None]:
+    """Create a mapping for any registered template."""
+    template = get_template(template_id)
+    mapping: dict[str, str | None] = {
+        field: None
+        for field in template.required_fields + template.optional_fields
+    }
+    if detection is None:
+        return mapping
+
+    available = set(columns)
+    for field, column in detection.matched_fields.items():
+        if field in mapping and column in available:
+            mapping[field] = column
+    return mapping
+
+
+def validate_template_mapping(
+    template_id: str,
     mapping: dict[str, str | None],
     columns: list[str],
 ) -> MappingValidation:
-    """Validate that required retail fields have unique, existing source columns."""
+    """Validate that required template fields map to unique existing columns."""
+    template = get_template(template_id)
     available = set(columns)
     missing_required = [
         field
-        for field in RETAIL_REQUIRED_FIELDS
+        for field in template.required_fields
         if not mapping.get(field)
     ]
-
     selected_columns = [
         column
         for column in mapping.values()
@@ -76,7 +99,7 @@ def validate_retail_mapping(
     if unknown_sources:
         messages.append(f"Mapped columns not found in dataset: {', '.join(unknown_sources)}.")
     if not messages:
-        messages.append("Mapping is valid for Retail / Sales Analytics.")
+        messages.append(f"Mapping is valid for {template.name}.")
 
     return MappingValidation(
         is_valid=not missing_required and not duplicate_sources and not unknown_sources,
@@ -86,3 +109,10 @@ def validate_retail_mapping(
         messages=messages,
     )
 
+
+def validate_retail_mapping(
+    mapping: dict[str, str | None],
+    columns: list[str],
+) -> MappingValidation:
+    """Validate that required retail fields have unique, existing source columns."""
+    return validate_template_mapping("sales_retail", mapping, columns)

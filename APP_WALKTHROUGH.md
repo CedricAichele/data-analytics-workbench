@@ -1,288 +1,211 @@
 # App Walkthrough
 
-This walkthrough is the final visual review package for Data Analytics Workbench. A live Streamlit preview was started successfully at:
+This walkthrough documents the current Data Analytics Workbench UI and workflow. Automated localhost screenshots were blocked in this environment, but the Streamlit smoke check confirms the app responds at:
 
 ```text
 http://127.0.0.1:8501
 ```
 
-Automated browser screenshots could not be captured in this environment because the in-app browser blocked local Streamlit URLs with `net::ERR_BLOCKED_BY_CLIENT`. The app itself responded successfully over HTTP, so the sections below document the visible UI and expected page states.
-
 ## Global Layout
 
-The app uses Streamlit wide layout with a clean light theme from `.streamlit/config.toml`. The sidebar shows the Data Analytics Workbench logo when `assets/logo.svg` is available, then the app title and subtitle.
+The app uses Streamlit wide layout with a light professional theme. The sidebar shows a larger workbench-themed analytics logo and a custom navigation menu with professional icon labels.
 
-The app title is:
+Navigation items:
 
-```text
-Data Analytics Workbench
-```
+- Overview
+- Data Upload
+- Data Profile
+- Data Preparation
+- Data Quality
+- Generic Analytics
+- Template Selection
+- Column Mapping
+- Sales Analytics
+- Manufacturing Analytics
+- Logistics Analytics
+- Finance Analytics
+- Management Summary
 
-The subtitle is:
+## Overview
 
-```text
-Profiling, Preparation, Data Quality & KPI Analytics
-```
+The Overview page explains the two-layer architecture:
 
-The app description explains that users can upload raw datasets, inspect data quality, apply controlled transformations, map business fields, and generate transparent KPI analytics.
+- Generic workflow for any supported tabular dataset
+- Domain templates that require schema detection or manual mapping
 
-## Landing Page
+It also explains that `raw_df` remains unchanged, `working_df` is the transformed copy, extra columns are preserved, and analytics pages do not permanently mutate data.
 
-Before a dataset is loaded, the landing page shows:
+Before data is loaded, the page shows that no dataset is loaded. After loading data, it shows raw and working row/column counts.
 
-- the app title and subtitle
-- the short app description
-- an info message that no dataset is loaded yet
-- a six-step workflow:
-  - Data Upload
-  - Data Profile
-  - Data Preparation
-  - Column Mapping
-  - Retail Analytics
-  - Summary
-- a Template Architecture table showing Retail / Sales Analytics as implemented and Operations / Manufacturing Analytics as planned
-- a Readiness panel with disabled checkboxes for dataset loaded, working copy ready, retail mapping saved, and retail analytics calculated
+## Data Upload
 
-After a dataset is loaded, the landing page status changes to show the dataset name plus raw and working row/column counts.
-
-## Data Upload Page
-
-Before a dataset is loaded, the page shows:
-
-- page title: `Data Upload`
-- accepted formats caption: `CSV, Excel .xlsx, JSON .json`
-- file uploader accepting `.csv`, `.xlsx`, and `.json`
-- a `Load uploaded dataset` button after a file is selected
-- a bundled sample section with `Load sample retail dataset`
-
-For Excel `.xlsx` uploads:
-
-- if the workbook has multiple sheets, the page displays an Excel sheet selectbox
-- if the workbook has one sheet, the page displays the selected sheet name as a caption
-
-After loading an uploaded CSV, XLSX, or JSON file, the page stores:
-
-- `raw_df`
-- `working_df`
-- `dataset_metadata`
-- `transformation_log`
-
-It also clears saved retail mapping and prior retail analytics results. The page then shows:
-
-- loaded file name
-- detected file type
-- row count
-- column count
-- source
-- sheet name for Excel files when available
-- working data preview
-- initial retail schema detection with confidence, matched fields, and missing required fields
-
-After loading the bundled sample dataset, the page shows the same metadata and preview, with `source` set to `sample`.
-
-## Data Profile Page
-
-Before a dataset is loaded, the page shows a clear warning telling the user to load a CSV, XLSX, JSON, or bundled sample dataset first, then stops cleanly.
-
-After a dataset is loaded, the page profiles `working_df`. It shows:
-
-- KPI cards for rows, columns, duplicate rows, and generic quality score
-- generic data quality score progress bar
-- sub-score table
-- expandable explanations and recommended fixes
-- column overview tabs:
-  - Types and Missingness
-  - Unique Values
-  - Numeric Summary
-  - Categorical Summary
-  - Detected Column Groups
-- visual profiling charts:
-  - missing values bar chart
-  - data type distribution chart
-  - selected numeric column distribution
-  - selected categorical column frequency
-
-The generic profiler is domain-neutral and does not require retail columns.
-
-## Data Quality View
-
-There is no standalone Data Quality page. Data quality is implemented in two places:
-
-- the Data Profile page shows a generic dataset-level quality score
-- the Retail Analytics page shows a template-aware quality score that includes schema, date, and numeric validation using the saved retail mapping
-
-Both views show sub-scores, plain-language explanations, and recommended fixes.
-
-## Data Preparation Page
-
-Before a dataset is loaded, the page shows the same missing-dataset warning and stops cleanly.
-
-After a dataset is loaded, the page operates only on `working_df`. It does not mutate `raw_df`.
-
-Visible sections include:
-
-- Dataset Status:
-  - raw data loaded status
-  - working row count
-  - working column count
-  - transformation count
-  - last transformation, when available
-- Preview Working Data:
-  - first rows of the current `working_df`
-- Column Operations:
-  - rename a selected column
-  - drop selected columns
-- Type Conversion:
-  - select column
-  - select target type: string, integer, float, datetime, boolean
-  - apply conversion with warning when missing values increase
-- Date Parsing:
-  - select a column
-  - parse as datetime
-  - show failed parse count
-- Missing Values:
-  - select a column
-  - choose strategy
-  - fill numeric missing with zero
-  - fill numeric missing with median
-  - fill text missing with Unknown
-  - drop rows with missing values
-- Duplicates:
-  - duplicate row count
-  - remove duplicate rows button
-- Row Filtering:
-  - select column
-  - choose operator
-  - enter comparison value
-  - apply filter
-- Calculated Column:
-  - choose quantity column
-  - choose unit price column
-  - create revenue column
-- Transformation Log:
-  - ordered list of applied transformations
-- Reset and Export:
-  - reset working data to original upload
-  - download `working_df` as CSV
-
-Every successful transformation appends a human-readable entry to `transformation_log`.
-
-## Column Mapping Page
-
-Before a dataset is loaded, the page shows the missing-dataset warning and stops cleanly.
-
-After a dataset is loaded, the page shows:
-
-- schema detection metrics:
-  - detected template
-  - confidence score
-  - whether manual mapping is required
-- expandable matched and missing fields
-- required retail field selectboxes:
-  - `order_id`
-  - `order_date`
-  - `customer_id`
-  - `product_name`
-  - `quantity`
-  - `unit_price`
-- optional retail field selectboxes:
-  - `country`
-  - `product_category`
-  - `invoice_status`
-- validation warnings or success message
-- disabled/enabled `Save retail mapping` button based on mapping validity
-- expandable current mapping JSON
-
-The page pre-fills mappings using schema detection when possible.
-
-## Retail Analytics Page
-
-Before a dataset is loaded, the page shows the missing-dataset warning and stops cleanly.
-
-If a dataset is loaded but no valid retail mapping is saved, the page warns the user to save a valid retail mapping first and stops cleanly.
-
-After a valid retail mapping is saved, the page shows:
-
-- Retail KPI cards:
-  - gross sales revenue
-  - net revenue
-  - valid orders
-  - valid customers
-  - average order value
-  - quantity sold
-  - return rate
-  - cancelled rate
-  - revenue from top 10 customers
-- expandable KPI definitions
-- template quality score and sub-scores
-- expandable quality explanations and recommended fixes
-- revenue and order charts:
-  - revenue by month
-  - order count by month
-  - returns by month
-  - revenue by product category when available
-- product and customer performance charts:
-  - top products by revenue
-  - top customers by revenue
-- country performance chart when country data is available
-- RFM Customer Segmentation:
-  - segment distribution chart
-  - segment summary table
-- detail tabs:
-  - Top Products
-  - Customer RFM
-  - Country Performance
-  - Data Quality Issues
-  - Cleaned Orders Preview
-
-The retail analytics page uses DuckDB-backed SQL queries for analytical aggregations after the retail cleaning step.
-
-## Management Summary Page
-
-Before a dataset is loaded, the page shows the missing-dataset warning and stops cleanly.
-
-If retail analytics have not been calculated and no valid retail mapping exists, the page warns the user to run Retail Analytics first or save a valid retail mapping.
-
-After retail analytics are available, the page shows:
-
-- a deterministic text summary generated from calculated metrics
-- an expandable placeholder for a future LLM summary extension
-- supporting metrics table
-
-The MVP does not call external LLM APIs and does not require API keys.
-
-## Upload Behavior by Format
-
-### CSV
-
-CSV uploads are read with UTF-8 first and latin1 fallback. Empty or non-tabular CSV files produce a clear error.
-
-### Excel XLSX
-
-Excel uploads use `openpyxl`. Multi-sheet workbooks show a sheet selector before loading. `.xls` files are rejected with a message asking the user to save as `.xlsx`.
-
-### JSON
-
-JSON uploads support:
-
-- arrays of records
-- records-oriented JSON objects
-- JSON Lines
-- simple nested records that can be flattened with `pandas.json_normalize`
-
-Deeply nested or scalar JSON is rejected with a clear error explaining that the JSON must represent tabular records.
-
-## Sample Dataset Flow
-
-Loading the bundled sample dataset:
-
-- loads `data/sample/sample_retail_orders.csv`
-- stores the original data in `raw_df`
-- stores a copy in `working_df`
-- sets `dataset_metadata` with `source = sample`
-- clears previous transformation log
-- clears previous column mapping and retail analytics results
-- runs initial retail schema detection
-
-The sample dataset includes intentional quality issues such as missing customer IDs, duplicate rows, returns, invalid prices, mixed date formats, and cancelled orders.
+The Data Upload page accepts:
 
+- CSV
+- Excel `.xlsx`
+- JSON `.json`
+
+Excel workbooks with multiple sheets show a sheet selector. JSON supports tabular records, JSON Lines, records-style objects, and simple nested records.
+
+The page also includes two sample buttons:
+
+- Load sample retail dataset
+- Load sample manufacturing dataset
+
+After loading any dataset, the app stores `raw_df`, copies it to `working_df`, records `dataset_metadata`, clears stale mappings and analytics, and runs initial template detection for Sales / Retail and Manufacturing.
+
+## Data Profile
+
+The Data Profile page works with any `working_df`.
+
+It shows:
+
+- row and column counts
+- duplicate row count
+- generic quality score
+- data types and missing values
+- unique values
+- numeric summary
+- categorical summary
+- detected date-like, numeric, and categorical columns
+- missing value chart
+- data type distribution chart
+- selected numeric distribution
+- selected categorical frequency chart
+
+If no dataset is loaded, the page shows a clear warning and stops safely.
+
+## Data Preparation
+
+The Data Preparation page is the only place for user-triggered permanent data transformations.
+
+It modifies `working_df` only and logs each successful transformation.
+
+Available actions:
+
+- rename column
+- drop columns
+- change column type
+- parse datetime column
+- fill missing values
+- drop rows with missing values
+- remove duplicate rows
+- filter rows
+- create revenue column
+- reset `working_df` to `raw_df`
+- download `working_df` as CSV
+
+When a transformation changes structure, stale mappings and analytics outputs are cleared.
+
+## Data Quality
+
+The Data Quality page shows:
+
+- generic quality score for any dataset
+- missing value, duplicate, and invalid numeric sub-scores
+- explanations and recommended fixes
+- optional template-aware quality score when a valid mapping exists
+
+Template-aware scoring checks schema completeness, mapped date parsing, and mapped numeric fields.
+
+## Generic Analytics
+
+The Generic Analytics page works with arbitrary supported datasets.
+
+Users select:
+
+- numeric measure
+- optional category
+- optional date column
+- aggregation
+- chart type
+
+The page returns:
+
+- aggregated table
+- Plotly chart
+- basic insights
+- missing value counts for selected fields
+- rows used
+- CSV download of the aggregated result
+
+It does not assume sales, manufacturing, finance, or logistics meaning.
+
+## Template Selection
+
+Template Selection shows cards for:
+
+- Generic Analytics
+- Sales / Retail Analytics
+- Manufacturing Analytics
+- Logistics Analytics
+- Finance Analytics
+
+Each card shows purpose, status, required fields, optional fields, mapping requirement, sample dataset availability, and notes.
+
+Sales / Retail and Manufacturing are implemented. Logistics and Finance are visible planned templates.
+
+## Column Mapping
+
+Column Mapping supports implemented domain templates:
+
+- Sales / Retail
+- Manufacturing
+
+The page shows schema detection confidence, matched fields, missing required fields, and selectboxes for required and optional field mapping. Mappings are validated before saving.
+
+Sales / Retail mapping is kept compatible with the existing `column_mapping` state key. Manufacturing mapping is stored separately and also in `template_mappings`.
+
+## Sales Analytics
+
+Sales Analytics requires a valid Sales / Retail mapping.
+
+It shows:
+
+- gross sales revenue
+- net revenue
+- valid orders
+- valid customers
+- average order value
+- quantity sold
+- return rate
+- cancelled order rate
+- top 10 customer revenue share
+- revenue and order charts
+- product, customer, country, RFM, issue, and cleaned preview tables
+
+It uses mapped fields for KPI logic and preserves extra dataset columns outside the temporary analytical layer.
+
+## Manufacturing Analytics
+
+Manufacturing Analytics requires a valid Manufacturing mapping.
+
+It shows:
+
+- total output
+- total scrap
+- scrap rate
+- downtime minutes
+- average downtime per machine
+- production attainment when planned output is available
+- availability approximation when runtime and downtime are available
+- quality rate approximation
+- simplified OEE approximation when defensible
+- output and downtime trends
+- machine performance charts and tables
+- output by line and shift when available
+- issue summary
+
+The simplified OEE metric is labeled as an approximation, not a certified OEE standard.
+
+## Logistics Analytics
+
+Logistics Analytics is a planned template page. It documents the intended schema and directs users to Generic Analytics for logistics datasets today.
+
+## Finance Analytics
+
+Finance Analytics is a planned template page. It documents the intended schema and warns that finance interpretation requires an explicit type, category, or sign convention.
+
+## Management Summary
+
+Management Summary generates deterministic text from calculated Sales / Retail analytics. It includes an LLM extension placeholder but does not call external APIs or require API keys.

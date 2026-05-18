@@ -11,7 +11,7 @@ from typing import Any, BinaryIO
 import pandas as pd
 from pandas.errors import EmptyDataError
 
-from app.config import SAMPLE_RETAIL_PATH
+from app.config import SAMPLE_MANUFACTURING_PATH, SAMPLE_RETAIL_PATH
 
 
 @dataclass(frozen=True)
@@ -215,5 +215,25 @@ def load_sample_retail_orders() -> LoadedDataset:
         "rows": int(len(df)),
         "columns": int(len(df.columns)),
         "source": "sample",
+        "suggested_template": "sales_retail",
+    }
+    return LoadedDataset(df, metadata)
+
+
+def load_sample_manufacturing_operations() -> LoadedDataset:
+    """Load the bundled synthetic manufacturing operations dataset."""
+    if not SAMPLE_MANUFACTURING_PATH.exists():
+        raise FileNotFoundError(
+            "Sample manufacturing dataset was not found. Restore "
+            "data/sample/sample_manufacturing_operations.csv or upload your own CSV, XLSX, or JSON file."
+        )
+    df = load_csv(SAMPLE_MANUFACTURING_PATH)
+    metadata = {
+        "file_name": SAMPLE_MANUFACTURING_PATH.name,
+        "file_type": "csv",
+        "rows": int(len(df)),
+        "columns": int(len(df.columns)),
+        "source": "sample",
+        "suggested_template": "manufacturing",
     }
     return LoadedDataset(df, metadata)

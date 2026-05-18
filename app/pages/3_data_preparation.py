@@ -77,9 +77,16 @@ def _save_working_df(
     st.session_state.setdefault("transformation_log", []).append(create_transformation_log_entry(action, details))
     st.session_state.pop("retail_analytics_result", None)
     st.session_state.pop("retail_clean_result", None)
+    st.session_state.pop("manufacturing_analytics_result", None)
+    st.session_state.pop("manufacturing_clean_result", None)
     st.session_state.pop("retail_schema_detection", None)
+    st.session_state.pop("sales_retail_schema_detection", None)
+    st.session_state.pop("manufacturing_schema_detection", None)
+    st.session_state.pop("template_schema_detections", None)
     if clear_mapping:
         st.session_state.pop("column_mapping", None)
+        st.session_state.pop("manufacturing_mapping", None)
+        st.session_state["template_mappings"] = {}
     st.session_state["prep_feedback"] = {"level": level, "message": details}
     st.rerun()
 
@@ -258,7 +265,14 @@ with reset_col:
         st.session_state.pop("retail_analytics_result", None)
         st.session_state.pop("retail_clean_result", None)
         st.session_state.pop("retail_schema_detection", None)
+        st.session_state.pop("manufacturing_analytics_result", None)
+        st.session_state.pop("manufacturing_clean_result", None)
+        st.session_state.pop("sales_retail_schema_detection", None)
+        st.session_state.pop("manufacturing_schema_detection", None)
+        st.session_state.pop("template_schema_detections", None)
         st.session_state.pop("column_mapping", None)
+        st.session_state.pop("manufacturing_mapping", None)
+        st.session_state["template_mappings"] = {}
         st.session_state["prep_feedback"] = {"level": "success", "message": "Working data reset to the original upload."}
         st.rerun()
 

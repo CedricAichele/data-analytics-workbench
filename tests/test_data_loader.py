@@ -9,6 +9,7 @@ from app.services.data_loader import (
     load_csv,
     load_excel,
     load_json,
+    load_sample_manufacturing_operations,
     load_uploaded_file,
     normalize_json_to_dataframe,
     validate_loaded_dataframe,
@@ -110,3 +111,11 @@ def test_unsupported_extension_error():
 def test_empty_dataframe_validation_error():
     with pytest.raises(ValueError, match="tabular data"):
         validate_loaded_dataframe(pd.DataFrame())
+
+
+def test_load_sample_manufacturing_operations():
+    loaded = load_sample_manufacturing_operations()
+
+    assert loaded.metadata["suggested_template"] == "manufacturing"
+    assert loaded.metadata["rows"] >= 500
+    assert {"timestamp", "machine_id", "actual_output", "scrap_count", "downtime_minutes"} <= set(loaded.dataframe.columns)

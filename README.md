@@ -2,94 +2,231 @@
 
 Profiling, Preparation, Data Quality & KPI Analytics.
 
-Data Analytics Workbench is a professional Streamlit portfolio project that demonstrates a realistic analyst workflow: upload raw datasets, inspect data quality, apply controlled transformations, map business fields and generate transparent KPI analytics.
+Data Analytics Workbench is a Streamlit portfolio project that demonstrates a realistic analyst workflow: load raw data, inspect quality, prepare a working copy, explore any tabular dataset, map domain fields, and generate transparent KPI analytics.
 
 GitHub repository: `https://github.com/CedricAichele/data-analytics-workbench`
 
-The project is intentionally split into two layers:
-
-- Generic data profiling works with any supported tabular upload.
-- Business KPI analytics requires a valid domain schema or manual column mapping.
-
-The first implemented domain template is Retail / Sales Analytics. The codebase also leaves a clear extension point for future Operations / Manufacturing Analytics.
-
 ## Business Problem
 
-Analysts rarely receive perfect datasets. A practical analytics workflow needs to separate raw-data inspection from business metric calculation, document data preparation decisions, and avoid changing source data without traceability.
+Analysts rarely receive clean, perfectly modeled datasets. A practical workflow needs to separate generic data understanding from domain-specific KPI logic, preserve source data, and document preparation decisions before reporting business metrics.
 
-This app demonstrates that workflow by keeping the original upload as `raw_df`, creating a separate `working_df` for transformations, and recording every preparation step in a transformation log.
+This project is built around that separation:
+
+- Generic analytics works with any supported tabular dataset.
+- Domain KPI templates require schema detection or manual field mapping.
+- Extra columns are preserved for profiling, preparation, generic analytics, and export.
 
 ## Feature Overview
 
-- CSV, Excel `.xlsx`, and JSON `.json` upload for arbitrary tabular datasets
-- Bundled synthetic retail sample dataset with realistic data quality issues
-- Generic profiling for rows, columns, data types, missing values, duplicate rows, unique counts, numeric summaries, categorical summaries, and detected date-like columns
-- Controlled Data Preparation page for renaming columns, dropping columns, type conversion, datetime parsing, missing-value handling, duplicate removal, row filtering, and calculated revenue creation
-- Transparent transformation log
-- Export of transformed `working_df` as CSV
-- Explainable 0-100 data quality score
-- Rule-based retail schema detection with synonym and fuzzy matching
-- Manual retail column mapping with validation
-- Retail cleaning pipeline that flags returns, invalid prices, missing customers, cancelled orders, duplicate rows, and date issues
-- DuckDB SQL layer for analytical aggregations
-- Retail KPIs, monthly trends, product/customer/country performance, and RFM customer segmentation
-- Deterministic management summary with no API key or external LLM dependency
+- Upload CSV, Excel `.xlsx`, and tabular JSON `.json`
+- Load bundled Sales / Retail and Manufacturing sample datasets
+- Profile any working dataframe for rows, columns, types, missingness, duplicates, unique values, summaries, and detected column groups
+- Score data quality with transparent sub-scores, explanations, and recommended fixes
+- Prepare data through logged transformations on `working_df`
+- Run Generic Analytics for arbitrary tabular datasets
+- Map source columns to implemented domain templates
+- Run Sales / Retail KPIs, charts, and RFM segmentation
+- Run Manufacturing output, scrap, downtime, attainment, and machine performance analytics
+- Show Logistics and Finance as planned template extensions
+- Use DuckDB SQL for the Sales / Retail analytical layer
+- Generate deterministic management summaries without API keys
 
-## Architecture Overview
+## Architecture
 
 ```text
 app/
   main.py                 Streamlit entrypoint
-  pages/                  Multipage workflow
-  components/             Reusable UI components and Plotly charts
-  services/               Testable profiling, preparation, quality, mapping, SQL, retail, and summary logic
-assets/                   SVG logo and portfolio branding assets
-sql/                      DuckDB SQL files used by the analytics layer
-data/sample/              Synthetic sample dataset
+  pages/                  Workflow pages
+  components/             Shared layout, KPI cards, and chart helpers
+  services/               Testable data loading, profiling, quality, mapping, and analytics logic
+assets/
+  logo.svg                Main workbench-themed logo
+  logo_mark.svg           Compact logo mark
+  icons/                  Local SVG icon asset set
+data/sample/              Synthetic sample datasets
+sql/                      DuckDB SQL files for retail analytics
 tests/                    pytest coverage for core services
 ```
 
-The Streamlit pages orchestrate the workflow. Business logic lives in `app/services/` so it can be tested without the UI.
+Streamlit pages orchestrate the user workflow. Business logic lives in `app/services/` so it can be tested without the UI.
+
+## Two-Layer Analytics Model
+
+### Layer 1: Generic Workflow
+
+Works with any supported tabular dataset:
+
+- upload
+- profile
+- prepare
+- quality score
+- generic analytics
+- export
+
+No predefined schema is required.
+
+### Layer 2: Domain KPI Templates
+
+Business KPI analytics requires schema detection or manual mapping because the app must know which columns carry domain meaning.
+
+Implemented templates:
+
+- Sales / Retail Analytics
+- Manufacturing Analytics
+
+Visible planned templates:
+
+- Logistics Analytics
+- Finance Analytics
+
+Templates use only mapped fields for KPI calculations. They do not remove or hide extra dataset columns.
+
+## Supported Input Formats
+
+Uploaded files are converted internally into pandas DataFrames.
+
+- CSV `.csv`
+- Excel `.xlsx`, including multi-sheet selection
+- JSON `.json`, best effort for arrays of records, records-style objects, JSON Lines, and simple nested records that can be normalized
+
+Deeply nested API JSON may require preprocessing before upload. Parquet, XML, databases, and API connections are intentionally out of scope for this MVP.
 
 ## Data Preparation Model
 
 The app never silently modifies the original uploaded dataset.
 
-- `raw_df` stores the original upload or bundled sample.
-- `working_df` stores the transformed dataset used by profiling, mapping, quality scoring, and analytics.
-- `transformation_log` stores human-readable descriptions of every applied transformation.
-- `column_mapping` stores the saved mapping for domain-specific analytics.
+- `raw_df` stores the original upload or sample dataset.
+- `working_df` stores the transformed dataset used by profiling, mapping, quality scoring, generic analytics, domain analytics, and export.
+- `transformation_log` records user-triggered transformations in order.
+- `column_mapping` preserves the existing Sales / Retail mapping path.
+- `template_mappings` stores mappings for implemented templates.
 
-Users can reset `working_df` back to the original upload at any time and can export the transformed working dataset as CSV.
+Data Preparation supports:
 
-## Supported Input Formats
+- rename column
+- drop columns
+- change column type
+- parse datetime column
+- remove duplicate rows
+- fill missing values
+- drop rows with missing values
+- filter rows
+- create revenue column
+- reset working data to the original upload
+- download `working_df` as CSV
 
-The app converts every uploaded file into a pandas DataFrame before profiling, preparation, mapping, and analytics.
+Analytics pages may create temporary derived fields internally, but they do not overwrite `raw_df` or `working_df`.
 
-- CSV is the primary format for simple tabular datasets.
-- Excel `.xlsx` is supported through `openpyxl`; workbooks with multiple sheets can be loaded by selecting the desired sheet.
-- JSON `.json` is supported as a best-effort tabular import for arrays of records, records-oriented files, JSON Lines, and simple nested records that can be normalized.
+## Generic Analytics
 
-Deeply nested API JSON may require manual preprocessing before upload. JSON files must represent tabular records or normalizable nested records; the app shows a clear error instead of crashing when the structure is not suitable.
+The Generic Analytics page works with any `working_df`.
 
-## Generic Profiling vs KPI Analytics
+Users can select:
 
-Generic profiling answers questions such as:
+- numeric measure
+- optional categorical grouping column
+- optional date column
+- aggregation: sum, average, count, min, max
+- chart type: bar, line, scatter, histogram
 
-- How many rows and columns are present?
-- Which columns have missing values?
-- Are there duplicate rows?
-- Which columns appear numeric, categorical, or date-like?
-- What are the distributions of selected fields?
+The page shows an aggregated table, Plotly chart, basic insights, missing values in selected columns, rows used, and CSV download of the aggregated result.
 
-Business KPI analytics answers domain-specific questions such as:
+## Sales / Retail Analytics
 
-- What is net sales revenue?
-- Which products and customers drive revenue?
-- How concentrated is revenue among top customers?
-- Which customers are Champions, Loyal Customers, At Risk, or Low Value?
+Required fields:
 
-Those KPI questions require the app to know which columns represent order ID, order date, customer ID, product, quantity, unit price, and optional business fields. The schema detector can suggest mappings, but users can also map fields manually.
+| Field | Meaning |
+| --- | --- |
+| `order_id` | Order or invoice identifier |
+| `order_date` | Transaction date |
+| `customer_id` | Customer identifier |
+| `product_name` | Product or item |
+| `quantity` | Units sold; negative values are returns |
+| `unit_price` | Unit price |
+
+Optional fields:
+
+| Field | Meaning |
+| --- | --- |
+| `country` | Market or country |
+| `product_category` | Product group |
+| `invoice_status` | Used to identify cancelled orders |
+
+Implemented Sales / Retail outputs:
+
+- gross sales revenue
+- net revenue
+- valid orders and customers
+- average order value
+- quantity sold
+- return rate
+- cancelled order rate
+- revenue share from top 10 customers
+- revenue by month
+- order count by month
+- returns by month
+- top products and customers
+- country performance when available
+- RFM customer segmentation
+- data quality issue table
+
+Retail aggregations use SQL files in `sql/` through DuckDB.
+
+## Manufacturing Analytics
+
+Required fields:
+
+| Field | Meaning |
+| --- | --- |
+| `timestamp` | Production record timestamp |
+| `machine_id` | Machine or asset identifier |
+| `actual_output` | Produced units |
+| `scrap_count` | Defective or rejected units |
+| `downtime_minutes` | Downtime minutes |
+
+Optional fields:
+
+| Field | Meaning |
+| --- | --- |
+| `planned_output` | Target production |
+| `runtime_minutes` | Operating minutes |
+| `line` | Production line |
+| `shift` | Shift |
+| `product` | Product or SKU |
+| `quality_status` | Inspection or quality state |
+
+Implemented Manufacturing outputs:
+
+- total output
+- total scrap
+- scrap rate
+- total downtime minutes
+- average downtime per machine
+- production attainment when planned output exists
+- availability approximation when runtime and downtime exist
+- quality rate approximation
+- simplified OEE approximation when the required inputs exist
+- output and downtime over time
+- output, scrap rate, and downtime by machine
+- output by line and shift when available
+- issue summary, downtime table, and scrap table
+
+The simplified OEE metric is labeled as an approximation and is not presented as a certified OEE standard.
+
+## Logistics and Finance Status
+
+Logistics and Finance are visible planned templates. Their schema definitions, required fields, optional fields, and limitations are documented in the app, but full KPI pages are not implemented yet.
+
+Finance analytics does not guess whether rows are revenue or cost. A future implementation will require a reliable type, category, or sign convention.
+
+## Sample Datasets
+
+Included samples:
+
+- `data/sample/sample_retail_orders.csv`
+- `data/sample/sample_manufacturing_operations.csv`
+
+Both are synthetic and intentionally include realistic quality issues for portfolio demonstration.
 
 ## Tech Stack
 
@@ -101,77 +238,48 @@ Those KPI questions require the app to know which columns represent order ID, or
 - openpyxl
 - pytest
 
-No external database, paid API, cloud service, or notebook runtime is required.
+No external database, paid API, cloud credential, or notebook runtime is required.
 
-## How To Run Locally
+## Run Locally
 
 ```bash
 git clone https://github.com/CedricAichele/data-analytics-workbench.git
 cd data-analytics-workbench
 python -m venv .venv
-.venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
 streamlit run app/main.py
 ```
 
-On macOS or Linux:
-
-```bash
-source .venv/bin/activate
-```
-
-## Running on Windows
-
-Open the repository folder in Windows Explorer after cloning or downloading the project. The folder name should be:
-
-```text
-data-analytics-workbench
-```
-
-If you are already in PowerShell, make sure you change into the repository root before running project commands:
+On Windows PowerShell:
 
 ```powershell
-cd path\to\data-analytics-workbench
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+streamlit run app/main.py
 ```
 
-The easiest startup option is to double-click:
+If PowerShell blocks activation:
 
-```text
-start_app.bat
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
 ```
 
-The batch file changes into the repository folder, creates `.venv` if needed, installs `requirements.txt`, and starts Streamlit at:
+The app opens at:
 
 ```text
 http://127.0.0.1:8501
 ```
 
-To run from PowerShell, open PowerShell in the repository root, not `C:\WINDOWS\system32`, and run:
+Optional local helpers are included:
 
-```powershell
-.\start_app.ps1
-```
+- `start_app.bat`
+- `start_app.ps1`
+- `setup_windows.ps1`
 
-If PowerShell blocks script execution, run:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\start_app.ps1
-```
-
-For first-time setup and validation:
-
-```powershell
-.\setup_windows.ps1
-```
-
-Troubleshooting:
-
-- If `python` is not recognized, try `py`.
-- If neither `python` nor `py` works, install Python 3.12 or newer from `https://www.python.org/downloads/`.
-- If Windows opens Microsoft Store, disable App Execution Aliases for `python.exe` and `python3.exe`.
-- App Execution Aliases are under Settings > Apps > Advanced app settings > App execution aliases.
-- Always run commands from the repository root, not `C:\WINDOWS\system32`.
+They are not required for Streamlit Community Cloud deployment.
 
 ## Run Tests
 
@@ -180,36 +288,7 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
-## Upload to GitHub
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/CedricAichele/data-analytics-workbench.git
-git push -u origin main
-```
-
 ## Deployment
-
-This app is ready for Streamlit Community Cloud deployment.
-
-1. Push this repository to GitHub.
-2. Go to Streamlit Community Cloud.
-3. Create a new app.
-4. Select repository `CedricAichele/data-analytics-workbench`.
-5. Select branch `main`.
-6. Set the main file path to `app/main.py`.
-7. Deploy.
-8. Open the generated `streamlit.app` URL.
-
-Deployment notes:
-
-- `requirements.txt` contains the runtime dependencies Streamlit Community Cloud installs.
-- `.streamlit/config.toml` contains the Streamlit theme and startup config.
-- No secrets are required for the MVP.
-- No external database, paid API, local file outside the repository, or local environment variable is required.
 
 Streamlit Community Cloud settings:
 
@@ -219,141 +298,74 @@ Streamlit Community Cloud settings:
 | Branch | `main` |
 | Main file path | `app/main.py` |
 
-## Expected Retail Dataset Schema
+Deployment steps:
 
-Required fields:
+1. Push this repository to GitHub.
+2. Go to Streamlit Community Cloud.
+3. Create a new app.
+4. Select repository `CedricAichele/data-analytics-workbench`.
+5. Select branch `main`.
+6. Set main file path to `app/main.py`.
+7. Deploy.
 
-| Field | Meaning |
-| --- | --- |
-| `order_id` | Unique order or invoice identifier |
-| `order_date` | Date or timestamp of the transaction |
-| `customer_id` | Customer identifier |
-| `product_name` | Product or item description |
-| `quantity` | Units purchased; negative values are treated as returns |
-| `unit_price` | Price per unit; values `<= 0` are treated as invalid for revenue |
+No Streamlit secrets are required for the MVP.
 
-Optional fields:
+## Upload to GitHub
 
-| Field | Meaning |
-| --- | --- |
-| `country` | Customer or order market |
-| `product_category` | Product category or department |
-| `invoice_status` | Order status used to identify cancellations |
+```bash
+git init
+git status
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/CedricAichele/data-analytics-workbench.git
+git push -u origin main
+```
 
-Supported synonym examples include `invoice_no`, `invoice_date`, `client_id`, `description`, `qty`, `sales_price`, `market`, and `order_status`.
+If `origin` already exists:
 
-## Data Quality Score
-
-The score is transparent. In generic profiling mode it evaluates dataset-level issues. When a domain template is selected, it also evaluates schema completeness and mapped date parsing.
-
-- missing values
-- duplicate rows
-- invalid numeric values
-- schema completeness for the selected template
-- date parsing issues
-
-The UI shows sub-scores, plain-language explanations, and recommended fixes.
-
-## Retail Cleaning Rules
-
-The retail pipeline:
-
-- standardizes mapped columns to internal names
-- parses `order_date`
-- calculates `gross_revenue` and `net_revenue`
-- flags returns where `quantity < 0`
-- flags invalid prices where `unit_price <= 0`
-- flags missing customers
-- flags cancelled orders from `invoice_status`
-- flags exact duplicate rows after standardization
-- retains a data quality issue summary for auditability
-
-Flagged rows remain visible in the cleaned data preview. KPI calculations exclude rows that would distort net revenue.
-
-## KPI Definitions
-
-| KPI | Definition |
-| --- | --- |
-| Gross sales revenue | Positive `quantity * unit_price` for rows with valid dates and non-duplicate records, before return and cancellation exclusions |
-| Net revenue | Positive valid sales excluding returns, cancelled orders, invalid prices, invalid dates, and duplicate rows |
-| Valid orders | Distinct order IDs included in net revenue |
-| Valid customers | Distinct customers included in net revenue |
-| Average order value | Net revenue divided by valid orders |
-| Total quantity sold | Sum of positive quantities included in net revenue |
-| Return rate | Non-duplicate return rows divided by non-duplicate rows |
-| Cancelled order rate | Distinct cancelled orders divided by distinct non-duplicate orders |
-| Top 10 customer share | Net revenue from the 10 highest-revenue customers divided by total net revenue |
-
-## RFM Segmentation
-
-RFM is calculated from valid net revenue rows:
-
-- Recency: days since last purchase, using the dataset's latest valid order date as the reference point
-- Frequency: number of distinct valid orders
-- Monetary: total valid net revenue
-
-Each metric receives a 1-5 score using percentile ranks. Segments use simple, explainable rules:
-
-- Champions: recent buyers with high frequency and high monetary value
-- Loyal Customers: high frequency and solid monetary value
-- Potential Loyalists: recent customers with moderate repeat behavior
-- New Customers: recent customers with low frequency
-- At Risk: historically active customers with poor recent activity
-- Low Value: fallback for low monetary/frequency profiles
+```bash
+git remote set-url origin https://github.com/CedricAichele/data-analytics-workbench.git
+git push -u origin main
+```
 
 ## Screenshots
 
-Add screenshots after running the app locally:
-
-- `screenshots/data_upload.png`
-- `screenshots/data_profile.png`
-- `screenshots/data_preparation.png`
-- `screenshots/column_mapping.png`
-- `screenshots/retail_analytics.png`
-- `screenshots/management_summary.png`
-
-## Example Insights
-
-With the bundled sample dataset, the app can surface insights such as:
-
-- net revenue trend by month
-- products and categories contributing the most revenue
-- countries with stronger order volume
-- customer revenue concentration in the top 10 customers
-- customer segment distribution across Champions, Loyal Customers, At Risk, and Low Value
-- data quality risks such as returns, cancellations, invalid prices, duplicates, and missing customer IDs
+Screenshots will be added after the deployed Streamlit app is finalized.
 
 ## Development Approach
 
-This project was implemented using an AI-assisted coding workflow. The analytical concept, data quality rules, KPI definitions, validation logic and documentation are specified, reviewed and refined manually.
+This project was implemented using an AI-assisted coding workflow. The analytical concept, data quality rules, KPI definitions, validation logic, testing, and documentation were specified, reviewed, and refined manually.
 
 ## Limitations
 
-- The MVP runs locally and does not include authentication or user accounts.
-- Uploaded data is held in Streamlit session state, not persisted to a database.
-- Schema detection is rule-based and intentionally simple.
-- JSON loading is designed for tabular or normalizable records, not deeply nested API payload exploration.
+- Uploaded data is held in Streamlit session state and is not persisted to a database.
+- JSON support is limited to tabular or normalizable records.
+- `.xls` Excel files are not supported.
+- Schema detection is rule-based and may require manual correction.
+- Sales / Retail and Manufacturing KPIs require valid field mappings.
+- Logistics and Finance templates are planned, not fully implemented.
 - The management summary is deterministic and does not call an external LLM.
-- The Operations / Manufacturing template is only an architecture placeholder.
+- The app does not include authentication, user accounts, or a backend API.
 
 ## Next Steps
 
-- Add screenshot assets for the README.
-- Add an Operations / Manufacturing template with downtime, throughput, and defect KPIs.
-- Add saved mapping profiles for repeated datasets.
+- Add deployed app screenshots.
+- Implement Logistics KPIs for shipment lead time and on-time delivery.
+- Implement Finance KPIs with explicit type/sign-convention controls.
+- Add saved mapping profiles for recurring datasets.
 - Add richer date parsing controls for regional formats.
-- Add screenshots from the deployed Streamlit app.
+- Add optional Excel export for prepared data.
 
 ## Portfolio Positioning
 
-This project is designed to show recruiter-relevant analytics skills for Junior Data Analyst and BI Analyst roles:
+This project is designed to show Junior Data Analyst / BI Analyst readiness:
 
-- ability to reason about messy raw data
-- controlled data preparation with an auditable transformation log
-- separation of exploratory profiling from business metric logic
-- transparent data quality scoring
-- practical KPI definitions
-- SQL-based aggregation with DuckDB
-- customer segmentation using RFM
-- readable Streamlit product workflow
-- testable Python service design
+- working with messy raw data
+- separating generic profiling from business KPI logic
+- documenting data preparation decisions
+- building explainable quality checks
+- using SQL-backed analytics with DuckDB
+- implementing KPI definitions transparently
+- supporting multiple domains without restricting arbitrary datasets
+- writing testable Python services behind a Streamlit app

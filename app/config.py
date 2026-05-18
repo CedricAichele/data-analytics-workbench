@@ -9,8 +9,11 @@ ASSETS_DIR = PROJECT_ROOT / "assets"
 DATA_DIR = PROJECT_ROOT / "data"
 SAMPLE_DATA_DIR = DATA_DIR / "sample"
 SAMPLE_RETAIL_PATH = SAMPLE_DATA_DIR / "sample_retail_orders.csv"
+SAMPLE_MANUFACTURING_PATH = SAMPLE_DATA_DIR / "sample_manufacturing_operations.csv"
 SQL_DIR = PROJECT_ROOT / "sql"
 LOGO_PATH = ASSETS_DIR / "logo.svg"
+LOGO_MARK_PATH = ASSETS_DIR / "logo_mark.svg"
+ICONS_DIR = ASSETS_DIR / "icons"
 
 APP_TITLE = "Data Analytics Workbench"
 APP_SUBTITLE = "Profiling, Preparation, Data Quality & KPI Analytics"
@@ -20,6 +23,7 @@ APP_DESCRIPTION = (
 )
 
 RETAIL_TEMPLATE_NAME = "Retail / Sales Analytics"
+MANUFACTURING_TEMPLATE_NAME = "Manufacturing Analytics"
 
 RETAIL_REQUIRED_FIELDS = [
     "order_id",
@@ -38,8 +42,21 @@ RETAIL_OPTIONAL_FIELDS = [
 
 ALL_RETAIL_FIELDS = RETAIL_REQUIRED_FIELDS + RETAIL_OPTIONAL_FIELDS
 
-OPERATIONS_TEMPLATE_PLACEHOLDER = {
-    "name": "Operations / Manufacturing Analytics",
-    "status": "planned",
-    "description": "Architecture placeholder for future production throughput, downtime, and defect analytics.",
-}
+MANUFACTURING_REQUIRED_FIELDS = [
+    "timestamp",
+    "machine_id",
+    "actual_output",
+    "scrap_count",
+    "downtime_minutes",
+]
+
+MANUFACTURING_OPTIONAL_FIELDS = [
+    "planned_output",
+    "runtime_minutes",
+    "line",
+    "shift",
+    "product",
+    "quality_status",
+]
+
+ALL_MANUFACTURING_FIELDS = MANUFACTURING_REQUIRED_FIELDS + MANUFACTURING_OPTIONAL_FIELDS

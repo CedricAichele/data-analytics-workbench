@@ -1,5 +1,5 @@
 from app.config import RETAIL_TEMPLATE_NAME
-from app.services.schema_detector import detect_retail_schema
+from app.services.schema_detector import detect_retail_schema, detect_template_schema
 
 
 def test_detect_retail_schema_with_synonyms():
@@ -23,3 +23,13 @@ def test_detect_retail_schema_requires_mapping_when_fields_missing():
     assert result.requires_manual_mapping
     assert "customer_id" in result.missing_fields
 
+
+def test_detect_manufacturing_schema_with_synonyms():
+    columns = ["event_time", "asset_id", "units_produced", "defect_count", "down_minutes", "crew"]
+
+    result = detect_template_schema("manufacturing", columns)
+
+    assert result.detected_template == "Manufacturing Analytics"
+    assert result.confidence_score == 100
+    assert result.matched_fields["machine_id"] == "asset_id"
+    assert result.matched_fields["actual_output"] == "units_produced"
