@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import pandas as pd
 import plotly.express as px
 import streamlit as st
 
 from app.components.kpi_cards import format_number, format_percent, render_kpi_grid
 from app.components.layout import configure_page, get_working_dataframe, page_title
 from app.config import MANUFACTURING_REQUIRED_FIELDS
+from app.services.chart_controls import apply_date_range_filter, apply_value_filters, download_csv_bytes, top_n
 from app.services.column_mapper import initialize_template_mapping, validate_template_mapping
 from app.services.dataset_workspace import get_active_template_mapping, set_active_analytics_result
 from app.services.manufacturing_analytics import build_manufacturing_analytics, clean_manufacturing_operations
@@ -100,6 +102,96 @@ st.dataframe(
     use_container_width=True,
     hide_index=True,
 )
+
+st.subheader("Chart Controls")
+controlled_ops = clean_result.analysis_rows.copy()
+date_values = controlled_ops["timestamp"].dropna()
+control_cols = st.columns([1, 1, 1, 1])
+if not date_values.empty:
+    selected_dates = control_cols[0].date_input(
+        "Timestamp range",
+        value=(date_values.min().date(), date_values.max().date()),
+        min_value=date_values.min().date(),
+        max_value=date_values.max().date(),
+    )
+    if isinstance(selected_dates, tuple) and len(selected_dates) == 2:
+        controlled_ops = apply_date_range_filter(controlled_ops, "timestamp", selected_dates[0], selected_dates[1])
+
+measure_options = ["actual_output", "scrap_count", "downtime_minutes"]
+if "planned_output" in controlled_ops.columns and controlled_ops["planned_output"].notna().any():
+    measure_options.append("production_attainment")
+measure_options.append("scrap_rate")
+selected_measure = control_cols[1].selectbox("Measure", measure_options, format_func=lambda value: value.replace("_", " ").title())
+trend_chart_type = control_cols[2].selectbox("Trend chart", ["line", "bar", "area"])
+top_n_value = control_cols[3].slider("Top N machines", min_value=5, max_value=25, value=10, step=5)
+
+filter_cols = st.columns(4)
+filter_values: dict[str, list[object]] = {}
+for col, field, label in [
+    (filter_cols[0], "machine_id", "Machine"),
+    (filter_cols[1], "line", "Line"),
+    (filter_cols[2], "shift", "Shift"),
+    (filter_cols[3], "product", "Product"),
+]:
+    if field in controlled_ops.columns and controlled_ops[field].dropna().nunique() > 0:
+        options = sorted(controlled_ops[field].dropna().astype(str).unique().tolist())[:100]
+        filter_values[field] = col.multiselect(label, options)
+controlled_ops = apply_value_filters(controlled_ops, filter_values)
+
+trend_source = controlled_ops.copy()
+trend_source["period"] = trend_source["timestamp"].dt.to_period("D").dt.to_timestamp()
+if selected_measure == "scrap_rate":
+    controlled_trend = trend_source.groupby("period", as_index=False).agg(actual_output=("actual_output", "sum"), scrap_count=("scrap_count", "sum"))
+    controlled_trend["value"] = controlled_trend["scrap_count"] / controlled_trend["actual_output"].replace(0, pd.NA)
+elif selected_measure == "production_attainment":
+    controlled_trend = trend_source.groupby("period", as_index=False).agg(actual_output=("actual_output", "sum"), planned_output=("planned_output", "sum"))
+    controlled_trend["value"] = controlled_trend["actual_output"] / controlled_trend["planned_output"].replace(0, pd.NA)
+else:
+    controlled_trend = trend_source.groupby("period", as_index=False).agg(value=(selected_measure, "sum"))
+controlled_trend["value"] = controlled_trend["value"].fillna(0)
+
+machine_controlled = (
+    controlled_ops.groupby("machine_id", as_index=False)
+    .agg(
+        actual_output=("actual_output", "sum"),
+        scrap_count=("scrap_count", "sum"),
+        downtime_minutes=("downtime_minutes", "sum"),
+        planned_output=("planned_output", "sum"),
+    )
+)
+machine_controlled["scrap_rate"] = machine_controlled["scrap_count"] / machine_controlled["actual_output"].replace(0, pd.NA)
+machine_controlled["production_attainment"] = machine_controlled["actual_output"] / machine_controlled["planned_output"].replace(0, pd.NA)
+machine_controlled = machine_controlled.fillna(0)
+controlled_machine_top = top_n(machine_controlled, selected_measure if selected_measure in machine_controlled.columns else "actual_output", top_n_value)
+controlled_tables = {"trend": controlled_trend, "machine_performance": controlled_machine_top}
+set_active_analytics_result("manufacturing_controlled_chart_result", controlled_tables)
+
+interactive_tabs = st.tabs(["Controlled Trend", "Controlled Machine Ranking"])
+with interactive_tabs[0]:
+    if controlled_trend.empty:
+        st.info("No rows match the selected chart controls.")
+    else:
+        title = f"{selected_measure.replace('_', ' ').title()} Over Time"
+        if trend_chart_type == "bar":
+            fig = px.bar(controlled_trend, x="period", y="value", title=title)
+        elif trend_chart_type == "area":
+            fig = px.area(controlled_trend, x="period", y="value", title=title)
+        else:
+            fig = px.line(controlled_trend, x="period", y="value", markers=True, title=title)
+        st.plotly_chart(fig, use_container_width=True)
+        st.download_button("Download controlled trend CSV", download_csv_bytes(controlled_trend), "manufacturing_controlled_trend.csv", "text/csv")
+with interactive_tabs[1]:
+    st.plotly_chart(
+        px.bar(
+            controlled_machine_top.sort_values(selected_measure if selected_measure in controlled_machine_top.columns else "actual_output"),
+            x=selected_measure if selected_measure in controlled_machine_top.columns else "actual_output",
+            y="machine_id",
+            orientation="h",
+            title="Controlled Machine Ranking",
+        ),
+        use_container_width=True,
+    )
+    st.download_button("Download controlled machine ranking CSV", download_csv_bytes(controlled_machine_top), "manufacturing_controlled_machine_ranking.csv", "text/csv")
 
 st.subheader("Production Trends")
 left, right = st.columns(2)

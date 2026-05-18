@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 from dataclasses import dataclass
 
 import streamlit as st
@@ -56,6 +57,18 @@ def inject_layout_css() -> None:
         <style>
         .block-container {padding-top: 2rem; padding-bottom: 3rem;}
         div[data-testid="stSidebarNav"] {display: none;}
+        .daw-logo-wrap {
+            display: flex;
+            justify-content: center;
+            padding: 0.45rem 0 0.25rem;
+            width: 100%;
+        }
+        .daw-logo-wrap img {
+            display: block;
+            height: auto;
+            max-width: 92px;
+            width: 92px;
+        }
         div[data-testid="stMetric"] {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -107,9 +120,11 @@ def render_sidebar_branding() -> None:
     """Render consistent app branding in the sidebar."""
     if LOGO_MARK_PATH.exists():
         try:
-            st.sidebar.image(str(LOGO_MARK_PATH), width=104)
-        except TypeError:
-            st.sidebar.image(str(LOGO_MARK_PATH), width=104)
+            encoded_logo = base64.b64encode(LOGO_MARK_PATH.read_bytes()).decode("ascii")
+            st.sidebar.markdown(
+                f'<div class="daw-logo-wrap"><img src="data:image/svg+xml;base64,{encoded_logo}" alt="{APP_TITLE} logo mark"></div>',
+                unsafe_allow_html=True,
+            )
         except Exception:
             pass
     st.sidebar.markdown(

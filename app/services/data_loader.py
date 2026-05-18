@@ -216,6 +216,7 @@ def load_sample_retail_orders() -> LoadedDataset:
         "columns": int(len(df.columns)),
         "source": "sample",
         "suggested_template": "sales_retail",
+        "dataset_id": "sample-retail-orders",
     }
     return LoadedDataset(df, metadata)
 
@@ -235,6 +236,7 @@ def load_sample_manufacturing_operations() -> LoadedDataset:
         "columns": int(len(df.columns)),
         "source": "sample",
         "suggested_template": "manufacturing",
+        "dataset_id": "sample-manufacturing-operations",
     }
     return LoadedDataset(df, metadata)
 
@@ -254,6 +256,7 @@ def load_sample_logistics_shipments() -> LoadedDataset:
         "columns": int(len(df.columns)),
         "source": "sample",
         "suggested_template": "logistics",
+        "dataset_id": "sample-logistics-shipments",
     }
     return LoadedDataset(df, metadata)
 
@@ -273,5 +276,6 @@ def load_sample_finance_transactions() -> LoadedDataset:
         "columns": int(len(df.columns)),
         "source": "sample",
         "suggested_template": "finance",
+        "dataset_id": "sample-finance-transactions",
     }
     return LoadedDataset(df, metadata)

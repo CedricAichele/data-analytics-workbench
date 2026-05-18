@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import MutableMapping
 from dataclasses import dataclass
 from typing import Any
+import hashlib
 import re
 
 import pandas as pd
@@ -66,6 +67,33 @@ def _new_dataset_id(name: str, datasets: dict[str, Any]) -> str:
     return candidate
 
 
+def compute_dataset_hash(file_bytes_or_df: bytes | bytearray | pd.DataFrame) -> str:
+    """Compute a stable hash for uploaded bytes or a loaded dataframe."""
+    if isinstance(file_bytes_or_df, bytes | bytearray):
+        return hashlib.sha256(bytes(file_bytes_or_df)).hexdigest()
+    if isinstance(file_bytes_or_df, pd.DataFrame):
+        df = file_bytes_or_df.copy()
+        header = "|".join(f"{column}:{dtype}" for column, dtype in zip(df.columns, df.dtypes)).encode("utf-8")
+        values = pd.util.hash_pandas_object(df, index=True).values.tobytes()
+        return hashlib.sha256(header + values).hexdigest()
+    raise TypeError("compute_dataset_hash expects bytes or a pandas DataFrame.")
+
+
+def dataset_exists(
+    dataset_id_or_hash: str,
+    state: MutableMapping[str, Any] | None = None,
+) -> bool:
+    """Return whether a dataset id or content hash already exists in the workspace."""
+    current = _state(state)
+    initialize_workspace(current)
+    if dataset_id_or_hash in current["datasets"]:
+        return True
+    return any(
+        dataset.get("metadata", {}).get("dataset_hash") == dataset_id_or_hash
+        for dataset in current["datasets"].values()
+    )
+
+
 def add_dataset(
     name: str,
     raw_df: pd.DataFrame,
@@ -100,6 +128,60 @@ def add_dataset(
     return dataset_id
 
 
+def add_or_activate_dataset(
+    name: str,
+    raw_df: pd.DataFrame,
+    metadata: dict[str, Any] | None = None,
+    *,
+    dataset_id: str | None = None,
+    dataset_hash: str | None = None,
+    state: MutableMapping[str, Any] | None = None,
+) -> tuple[str, bool]:
+    """Add a dataset unless the same id or content hash is already loaded.
+
+    Returns `(dataset_id, created)` where `created` is False when an existing
+    dataset was activated instead of adding a duplicate.
+    """
+    current = _state(state)
+    initialize_workspace(current)
+    current.setdefault("datasets", {})
+    metadata_copy = dict(metadata or {})
+    stable_id = dataset_id or metadata_copy.get("dataset_id")
+    content_hash = dataset_hash or metadata_copy.get("dataset_hash") or compute_dataset_hash(raw_df)
+
+    if stable_id and stable_id in current["datasets"]:
+        current["active_dataset_id"] = stable_id
+        sync_legacy_state(current)
+        return stable_id, False
+
+    for existing_id, dataset in current["datasets"].items():
+        if dataset.get("metadata", {}).get("dataset_hash") == content_hash:
+            current["active_dataset_id"] = existing_id
+            sync_legacy_state(current)
+            return existing_id, False
+
+    metadata_copy["dataset_hash"] = content_hash
+    if stable_id:
+        metadata_copy["dataset_id"] = stable_id
+        raw_copy = raw_df.copy()
+        current["datasets"][stable_id] = {
+            "dataset_id": stable_id,
+            "name": name,
+            "raw_df": raw_copy,
+            "working_df": raw_copy.copy(),
+            "metadata": metadata_copy,
+            "transformation_log": [],
+            "template_mappings": {},
+            "analytics_results": {},
+        }
+        current["active_dataset_id"] = stable_id
+        sync_legacy_state(current)
+        return stable_id, True
+
+    created_id = add_dataset(name, raw_df, metadata_copy, state=current)
+    return created_id, True
+
+
 def list_datasets(state: MutableMapping[str, Any] | None = None) -> list[dict[str, Any]]:
     """Return workspace datasets as lightweight display records."""
     current = _state(state)
@@ -116,6 +198,24 @@ def list_datasets(state: MutableMapping[str, Any] | None = None) -> list[dict[st
         }
         for dataset_id, dataset in current["datasets"].items()
     ]
+
+
+def get_loaded_dataset_summary(state: MutableMapping[str, Any] | None = None) -> pd.DataFrame:
+    """Return a tabular workspace summary for display and tests."""
+    rows = []
+    for dataset in list_datasets(state):
+        metadata = dataset.get("metadata", {})
+        rows.append(
+            {
+                "dataset_id": dataset["dataset_id"],
+                "name": dataset["name"],
+                "source": metadata.get("source", "dataset"),
+                "file_type": metadata.get("file_type", "data"),
+                "raw_shape": f"{dataset['raw_rows']:,} x {dataset['raw_columns']:,}",
+                "working_shape": f"{dataset['working_rows']:,} x {dataset['working_columns']:,}",
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 def set_active_dataset(dataset_id: str, state: MutableMapping[str, Any] | None = None) -> None:
@@ -269,6 +369,10 @@ def sync_legacy_state(state: MutableMapping[str, Any] | None = None) -> None:
         "logistics_analytics_result",
         "finance_clean_result",
         "finance_analytics_result",
+        "retail_controlled_chart_result",
+        "manufacturing_controlled_chart_result",
+        "logistics_controlled_chart_result",
+        "finance_controlled_chart_result",
     ]
     dataset_id = current.get("active_dataset_id")
     dataset = current.get("datasets", {}).get(dataset_id) if dataset_id else None

@@ -142,6 +142,13 @@ result_sources = [
     ),
 ]
 
+controlled_result_sources = [
+    ("Sales / Retail Controlled Charts", get_active_analytics_result("retail_controlled_chart_result")),
+    ("Manufacturing Controlled Charts", get_active_analytics_result("manufacturing_controlled_chart_result")),
+    ("Logistics Controlled Charts", get_active_analytics_result("logistics_controlled_chart_result")),
+    ("Finance Controlled Charts", get_active_analytics_result("finance_controlled_chart_result")),
+]
+
 st.subheader("Analytics Result Tables")
 available_results = False
 for result_label, result, table_names in result_sources:
@@ -151,6 +158,24 @@ for result_label, result, table_names in result_sources:
         tables = [("aggregated_result", result.aggregated)] if not result.aggregated.empty else []
     else:
         tables = _result_tables(result, table_names)
+    if not tables:
+        continue
+    available_results = True
+    with st.expander(result_label, expanded=False):
+        for table_name, table_df in tables:
+            st.markdown(f"**{table_name.replace('_', ' ').title()}**")
+            st.dataframe(table_df, use_container_width=True, hide_index=True)
+            _download_buttons(
+                table_df,
+                f"{result_label}_{table_name}",
+                "Download table as",
+                f"{result_label}-{table_name}".lower().replace(" ", "-").replace("/", "-"),
+            )
+
+for result_label, result in controlled_result_sources:
+    if not isinstance(result, dict):
+        continue
+    tables = [(name, table) for name, table in result.items() if isinstance(table, pd.DataFrame) and not table.empty]
     if not tables:
         continue
     available_results = True

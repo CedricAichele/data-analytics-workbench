@@ -6,6 +6,7 @@ import streamlit as st
 from app.components.kpi_cards import format_currency, format_number, format_percent, render_kpi_grid
 from app.components.layout import configure_page, get_working_dataframe, page_title
 from app.config import FINANCE_REQUIRED_FIELDS
+from app.services.chart_controls import apply_date_range_filter, apply_value_filters, download_csv_bytes, top_n
 from app.services.column_mapper import initialize_template_mapping, validate_template_mapping
 from app.services.dataset_workspace import get_active_template_mapping, set_active_analytics_result
 from app.services.finance_analytics import build_finance_analytics, clean_finance_transactions
@@ -94,6 +95,88 @@ st.dataframe(
     use_container_width=True,
     hide_index=True,
 )
+
+st.subheader("Chart Controls")
+controlled_transactions = clean_result.analysis_rows.copy()
+date_values = controlled_transactions["date"].dropna()
+control_cols = st.columns([1, 1, 1, 1])
+if not date_values.empty:
+    selected_dates = control_cols[0].date_input(
+        "Date range",
+        value=(date_values.min().date(), date_values.max().date()),
+        min_value=date_values.min().date(),
+        max_value=date_values.max().date(),
+    )
+    if isinstance(selected_dates, tuple) and len(selected_dates) == 2:
+        controlled_transactions = apply_date_range_filter(controlled_transactions, "date", selected_dates[0], selected_dates[1])
+
+measure_options = ["revenue", "cost", "net_result", "amount"]
+if {"budget", "actual"} <= set(controlled_transactions.columns) and controlled_transactions[["budget", "actual"]].notna().any().any():
+    measure_options.append("budget_variance")
+selected_measure = control_cols[1].selectbox("Measure", measure_options, format_func=lambda value: value.replace("_", " ").title())
+trend_chart_type = control_cols[2].selectbox("Monthly chart", ["line", "bar", "area"])
+top_n_value = control_cols[3].slider("Top N categories", min_value=5, max_value=25, value=10, step=5)
+
+filter_cols = st.columns(4)
+filter_values: dict[str, list[object]] = {}
+for col, field, label in [
+    (filter_cols[0], "normalized_type", "Type"),
+    (filter_cols[1], "category", "Category"),
+    (filter_cols[2], "account", "Account"),
+    (filter_cols[3], "cost_center", "Cost center"),
+]:
+    if field in controlled_transactions.columns and controlled_transactions[field].dropna().nunique() > 0:
+        options = sorted(controlled_transactions[field].dropna().astype(str).unique().tolist())[:100]
+        filter_values[field] = col.multiselect(label, options)
+controlled_transactions = apply_value_filters(controlled_transactions, filter_values)
+
+trend_source = controlled_transactions.copy()
+trend_source["period"] = trend_source["date"].dt.to_period("M").dt.to_timestamp()
+monthly = trend_source.groupby("period", as_index=False).agg(
+    revenue=("abs_amount", lambda s: s[trend_source.loc[s.index, "normalized_type"] == "revenue"].sum()),
+    cost=("abs_amount", lambda s: s[trend_source.loc[s.index, "normalized_type"] == "cost"].sum()),
+    amount=("abs_amount", "sum"),
+    budget=("budget", "sum"),
+    actual=("actual", "sum"),
+)
+monthly["net_result"] = monthly["revenue"] - monthly["cost"]
+monthly["budget_variance"] = monthly["actual"] - monthly["budget"]
+value_columns = ["revenue", "cost"] if selected_measure in {"revenue", "cost"} else [selected_measure]
+
+category_controlled = (
+    controlled_transactions.assign(category=controlled_transactions["category"].fillna("Missing"))
+    .groupby("category", as_index=False)
+    .agg(
+        revenue=("abs_amount", lambda s: s[controlled_transactions.loc[s.index, "normalized_type"] == "revenue"].sum()),
+        cost=("abs_amount", lambda s: s[controlled_transactions.loc[s.index, "normalized_type"] == "cost"].sum()),
+        amount=("abs_amount", "sum"),
+        budget=("budget", "sum"),
+        actual=("actual", "sum"),
+    )
+)
+category_controlled["net_result"] = category_controlled["revenue"] - category_controlled["cost"]
+category_controlled["budget_variance"] = category_controlled["actual"] - category_controlled["budget"]
+category_top = top_n(category_controlled, selected_measure, top_n_value)
+controlled_tables = {"monthly": monthly, "category": category_top}
+set_active_analytics_result("finance_controlled_chart_result", controlled_tables)
+
+interactive_tabs = st.tabs(["Controlled Monthly View", "Controlled Category Ranking"])
+with interactive_tabs[0]:
+    if monthly.empty:
+        st.info("No rows match the selected chart controls.")
+    else:
+        title = f"{selected_measure.replace('_', ' ').title()} Monthly View"
+        if trend_chart_type == "bar":
+            fig = px.bar(monthly, x="period", y=value_columns, barmode="group", title=title)
+        elif trend_chart_type == "area":
+            fig = px.area(monthly, x="period", y=value_columns, title=title)
+        else:
+            fig = px.line(monthly, x="period", y=value_columns, markers=True, title=title)
+        st.plotly_chart(fig, use_container_width=True)
+        st.download_button("Download controlled monthly CSV", download_csv_bytes(monthly), "finance_controlled_monthly.csv", "text/csv")
+with interactive_tabs[1]:
+    st.plotly_chart(px.bar(category_top, x="category", y=selected_measure, title="Controlled Category Ranking"), use_container_width=True)
+    st.download_button("Download controlled category CSV", download_csv_bytes(category_top), "finance_controlled_category.csv", "text/csv")
 
 st.subheader("Monthly Performance")
 left, right = st.columns(2)

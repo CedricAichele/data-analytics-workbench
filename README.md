@@ -22,13 +22,13 @@ This app is built around that separation:
 
 - Upload CSV, Excel `.xlsx`, and tabular JSON `.json`
 - Load bundled Sales / Retail, Manufacturing, Logistics, and Finance sample datasets
-- Manage several datasets in one Streamlit session and choose the active dataset
+- Manage several datasets in one Streamlit session, prevent duplicate loads, and choose the active dataset
 - Profile any active working dataframe for types, missingness, duplicates, unique values, and summaries
 - Prepare data through logged transformations on `working_df`
 - Score data quality with transparent sub-scores, explanations, and recommended fixes
 - Run Generic Analytics with one or multiple numeric measures
 - Map source columns to implemented domain templates
-- Run Sales / Retail, Manufacturing, Logistics, and Finance KPI analytics
+- Run Sales / Retail, Manufacturing, Logistics, and Finance KPI analytics with chart controls
 - Export the active working dataset, transformation log, and analytics result tables
 - Generate deterministic template-aware management summaries without API keys
 
@@ -82,6 +82,7 @@ Templates use mapped fields for KPI calculations. They do not remove unmapped or
 The app supports a lightweight in-session dataset workspace.
 
 - Uploads and bundled samples are added as separate datasets.
+- Loading the same sample or identical upload content again activates the existing dataset instead of creating a duplicate.
 - One dataset is active at a time.
 - Profiling, preparation, quality, mapping, analytics, and export operate on the active dataset.
 - Switching datasets switches the active `raw_df`, `working_df`, transformation log, mappings, and analytics results.
@@ -129,6 +130,8 @@ Users can select:
 The page returns an aggregated table, Plotly chart, insight bullets, missing values for selected measures, rows used, and CSV export of the aggregated result. Multi-measure results show one result column per selected measure.
 
 ## Domain Templates
+
+All implemented domain pages include chart controls for date range, relevant categorical filters, top-N rankings, and chart type selection where meaningful. The defaults show a useful dashboard immediately, while the controls let users explore the same KPI layer more like a workbench.
 
 ### Sales / Retail Analytics
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pandas as pd
+import plotly.express as px
 import streamlit as st
 
 from app.components.charts import (
@@ -16,6 +18,7 @@ from app.components.kpi_cards import format_currency, format_number, format_perc
 from app.components.layout import configure_page, get_working_dataframe, page_title
 from app.config import RETAIL_REQUIRED_FIELDS
 from app.services.column_mapper import initialize_template_mapping, validate_retail_mapping
+from app.services.chart_controls import apply_date_range_filter, apply_value_filters, download_csv_bytes, monthly_sum, top_n
 from app.services.dataset_workspace import get_active_template_mapping, set_active_analytics_result
 from app.services.quality_score import calculate_quality_score
 from app.services.retail_analytics import build_retail_analytics, clean_retail_orders
@@ -121,6 +124,76 @@ with st.expander("Quality explanations and recommended fixes"):
     st.write("Recommended fixes")
     for fix in quality.recommended_fixes:
         st.write(f"- {fix}")
+
+st.subheader("Chart Controls")
+controlled_orders = clean_result.cleaned_orders.copy()
+date_values = pd.to_datetime(controlled_orders["order_date"], errors="coerce").dropna()
+control_cols = st.columns([1, 1, 1, 1])
+if not date_values.empty:
+    selected_dates = control_cols[0].date_input(
+        "Order date range",
+        value=(date_values.min().date(), date_values.max().date()),
+        min_value=date_values.min().date(),
+        max_value=date_values.max().date(),
+    )
+    if isinstance(selected_dates, tuple) and len(selected_dates) == 2:
+        controlled_orders = apply_date_range_filter(controlled_orders, "order_date", selected_dates[0], selected_dates[1])
+
+revenue_measure = control_cols[1].selectbox("Revenue measure", ["net_revenue", "gross_revenue"], format_func=lambda value: value.replace("_", " ").title())
+trend_chart_type = control_cols[2].selectbox("Revenue trend chart", ["line", "bar", "area"])
+top_n_value = control_cols[3].slider("Top N", min_value=5, max_value=25, value=10, step=5)
+
+filter_cols = st.columns(3)
+filter_values: dict[str, list[object]] = {}
+for col, field, label in [
+    (filter_cols[0], "country", "Country"),
+    (filter_cols[1], "product_category", "Product category"),
+    (filter_cols[2], "product_name", "Product"),
+]:
+    if field in controlled_orders.columns and controlled_orders[field].dropna().nunique() > 0:
+        options = sorted(controlled_orders[field].dropna().astype(str).unique().tolist())[:100]
+        filter_values[field] = col.multiselect(label, options)
+controlled_orders = apply_value_filters(controlled_orders, filter_values)
+
+controlled_trend = monthly_sum(controlled_orders, "order_date", revenue_measure, "revenue")
+controlled_products = (
+    controlled_orders.dropna(subset=["product_name"])
+    .groupby("product_name", as_index=False)
+    .agg(revenue=(revenue_measure, "sum"), quantity=("quantity", "sum"))
+)
+controlled_customers = (
+    controlled_orders.dropna(subset=["customer_id"])
+    .groupby("customer_id", as_index=False)
+    .agg(revenue=(revenue_measure, "sum"), order_count=("order_id", "nunique"))
+)
+controlled_products = top_n(controlled_products, "revenue", top_n_value)
+controlled_customers = top_n(controlled_customers, "revenue", top_n_value)
+controlled_tables = {
+    "trend": controlled_trend,
+    "top_products": controlled_products,
+    "top_customers": controlled_customers,
+}
+set_active_analytics_result("retail_controlled_chart_result", controlled_tables)
+
+interactive_tabs = st.tabs(["Revenue Trend", "Top Products", "Top Customers"])
+with interactive_tabs[0]:
+    if controlled_trend.empty:
+        st.info("No rows match the selected chart controls.")
+    else:
+        if trend_chart_type == "bar":
+            fig = px.bar(controlled_trend, x="period", y="revenue", title="Controlled Revenue Trend")
+        elif trend_chart_type == "area":
+            fig = px.area(controlled_trend, x="period", y="revenue", title="Controlled Revenue Trend")
+        else:
+            fig = px.line(controlled_trend, x="period", y="revenue", markers=True, title="Controlled Revenue Trend")
+        st.plotly_chart(fig, use_container_width=True)
+        st.download_button("Download controlled revenue trend CSV", download_csv_bytes(controlled_trend), "retail_controlled_revenue_trend.csv", "text/csv")
+with interactive_tabs[1]:
+    st.plotly_chart(px.bar(controlled_products.sort_values("revenue"), x="revenue", y="product_name", orientation="h", title="Controlled Top Products"), use_container_width=True)
+    st.download_button("Download controlled top products CSV", download_csv_bytes(controlled_products), "retail_controlled_top_products.csv", "text/csv")
+with interactive_tabs[2]:
+    st.plotly_chart(px.bar(controlled_customers.sort_values("revenue"), x="revenue", y="customer_id", orientation="h", title="Controlled Top Customers"), use_container_width=True)
+    st.download_button("Download controlled top customers CSV", download_csv_bytes(controlled_customers), "retail_controlled_top_customers.csv", "text/csv")
 
 st.subheader("Revenue and Orders")
 left, right = st.columns(2)

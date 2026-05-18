@@ -15,10 +15,13 @@ from app.services.data_loader import (
     load_uploaded_file,
 )
 from app.services.dataset_workspace import (
-    add_dataset,
+    add_or_activate_dataset,
     get_active_dataset,
+    get_loaded_dataset_summary,
     initialize_workspace,
     list_datasets,
+    remove_dataset,
+    reset_active_working_df,
     set_active_dataset,
     sync_legacy_state,
 )
@@ -30,12 +33,24 @@ configure_page("Data Upload")
 page_title("Data Upload", APP_DESCRIPTION)
 st.caption("Accepted formats: CSV, Excel workbooks .xlsx, JSON .json. Legacy .xls files are not supported.")
 initialize_workspace()
+feedback = st.session_state.pop("dataset_load_feedback", None)
+if feedback:
+    feedback_type, feedback_message = feedback
+    if feedback_type == "success":
+        st.success(feedback_message)
+    else:
+        st.info(feedback_message)
 
 
-def _store_dataset(loaded: LoadedDataset) -> None:
+def _store_dataset(loaded: LoadedDataset) -> bool:
     df = loaded.dataframe
     dataset_name = loaded.metadata.get("file_name", "Dataset")
-    add_dataset(dataset_name, df, loaded.metadata)
+    dataset_id, created = add_or_activate_dataset(
+        dataset_name,
+        df,
+        loaded.metadata,
+        dataset_id=loaded.metadata.get("dataset_id"),
+    )
     detections = {
         template.template_id: detect_template_schema(template.template_id, list(df.columns))
         for template in implemented_domain_templates()
@@ -55,6 +70,20 @@ def _store_dataset(loaded: LoadedDataset) -> None:
         if detected_template:
             st.session_state["selected_template_id"] = detected_template
     sync_legacy_state()
+    st.session_state["last_loaded_dataset_id"] = dataset_id
+    st.session_state["last_loaded_dataset_created"] = created
+    return created
+
+
+def _set_load_feedback(loaded: LoadedDataset, created: bool) -> None:
+    verb = "Loaded" if created else "Activated existing"
+    dataset_name = loaded.metadata.get("file_name", "dataset")
+    message = (
+        f"{verb} {dataset_name} "
+        f"({loaded.metadata.get('file_type', 'data').upper()}) with "
+        f"{loaded.metadata['rows']:,} rows and {loaded.metadata['columns']:,} columns."
+    )
+    st.session_state["dataset_load_feedback"] = ("success" if created else "info", message)
 
 
 left, right = st.columns([1, 1])
@@ -78,12 +107,9 @@ with left:
         if should_load:
             try:
                 loaded = load_uploaded_file(uploaded, sheet_name=sheet_name)
-                _store_dataset(loaded)
-                st.success(
-                    f"Loaded {loaded.metadata['file_name']} "
-                    f"({loaded.metadata['file_type'].upper()}) with "
-                    f"{loaded.metadata['rows']:,} rows and {loaded.metadata['columns']:,} columns."
-                )
+                created = _store_dataset(loaded)
+                _set_load_feedback(loaded, created)
+                st.rerun()
             except Exception as exc:
                 st.error(f"Could not load uploaded file: {exc}")
     else:
@@ -95,41 +121,33 @@ with right:
         try:
             loaded = load_sample_retail_orders()
             loaded.metadata["suggested_template"] = "sales_retail"
-            _store_dataset(loaded)
-            st.success(
-                f"Loaded sample dataset with {loaded.metadata['rows']:,} rows "
-                f"and {loaded.metadata['columns']:,} columns."
-            )
+            created = _store_dataset(loaded)
+            _set_load_feedback(loaded, created)
+            st.rerun()
         except Exception as exc:
             st.error(f"Could not load sample dataset: {exc}")
     if st.button("Load sample manufacturing dataset"):
         try:
             loaded = load_sample_manufacturing_operations()
-            _store_dataset(loaded)
-            st.success(
-                f"Loaded manufacturing sample with {loaded.metadata['rows']:,} rows "
-                f"and {loaded.metadata['columns']:,} columns."
-            )
+            created = _store_dataset(loaded)
+            _set_load_feedback(loaded, created)
+            st.rerun()
         except Exception as exc:
             st.error(f"Could not load manufacturing sample: {exc}")
     if st.button("Load sample logistics dataset"):
         try:
             loaded = load_sample_logistics_shipments()
-            _store_dataset(loaded)
-            st.success(
-                f"Loaded logistics sample with {loaded.metadata['rows']:,} rows "
-                f"and {loaded.metadata['columns']:,} columns."
-            )
+            created = _store_dataset(loaded)
+            _set_load_feedback(loaded, created)
+            st.rerun()
         except Exception as exc:
             st.error(f"Could not load logistics sample: {exc}")
     if st.button("Load sample finance dataset"):
         try:
             loaded = load_sample_finance_transactions()
-            _store_dataset(loaded)
-            st.success(
-                f"Loaded finance sample with {loaded.metadata['rows']:,} rows "
-                f"and {loaded.metadata['columns']:,} columns."
-            )
+            created = _store_dataset(loaded)
+            _set_load_feedback(loaded, created)
+            st.rerun()
         except Exception as exc:
             st.error(f"Could not load finance sample: {exc}")
 
@@ -137,6 +155,7 @@ workspace_datasets = list_datasets()
 if workspace_datasets:
     st.divider()
     st.subheader("Dataset Workspace")
+    st.caption(f"{len(workspace_datasets)} dataset{'s' if len(workspace_datasets) != 1 else ''} loaded. The app analyzes one active dataset at a time.")
     active = get_active_dataset()
     active_id = active["dataset_id"] if active else workspace_datasets[0]["dataset_id"]
     selected_dataset_id = st.selectbox(
@@ -147,6 +166,16 @@ if workspace_datasets:
     )
     if selected_dataset_id != active_id:
         set_active_dataset(selected_dataset_id)
+        st.rerun()
+    st.dataframe(get_loaded_dataset_summary(), use_container_width=True, hide_index=True)
+    action_cols = st.columns(2)
+    if action_cols[0].button("Reset active working data to raw"):
+        reset_active_working_df()
+        st.success("Active working dataset reset to the original raw data.")
+        st.rerun()
+    if action_cols[1].button("Remove active dataset", disabled=len(workspace_datasets) == 0):
+        remove_dataset(selected_dataset_id)
+        st.success("Dataset removed from the workspace.")
         st.rerun()
 
 if "raw_df" in st.session_state:
