@@ -33,3 +33,11 @@ def test_detect_manufacturing_schema_with_synonyms():
     assert result.confidence_score == 100
     assert result.matched_fields["machine_id"] == "asset_id"
     assert result.matched_fields["actual_output"] == "units_produced"
+
+
+def test_detect_logistics_and_finance_schemas():
+    logistics = detect_template_schema("logistics", ["tracking_id", "ship_date", "arrival_date", "promised_date"])
+    finance = detect_template_schema("finance", ["journal_id", "posting_date", "transaction_amount", "entry_type"])
+
+    assert logistics.detected_template == "Logistics Analytics"
+    assert finance.detected_template == "Finance Analytics"

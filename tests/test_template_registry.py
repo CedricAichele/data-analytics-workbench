@@ -6,6 +6,6 @@ def test_template_registry_contains_expected_templates():
 
     assert template_ids == ["generic", "sales_retail", "manufacturing", "logistics", "finance"]
     assert get_template("manufacturing").status == "Implemented"
-    assert get_template("logistics").status == "Planned"
+    assert get_template("logistics").status == "Implemented"
+    assert get_template("finance").status == "Implemented"
     assert not get_template("generic").mapping_required
-

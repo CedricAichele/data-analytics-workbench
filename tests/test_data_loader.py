@@ -9,6 +9,8 @@ from app.services.data_loader import (
     load_csv,
     load_excel,
     load_json,
+    load_sample_finance_transactions,
+    load_sample_logistics_shipments,
     load_sample_manufacturing_operations,
     load_uploaded_file,
     normalize_json_to_dataframe,
@@ -108,6 +110,13 @@ def test_unsupported_extension_error():
         load_uploaded_file(file)
 
 
+def test_legacy_xls_error_message():
+    file = _named_bytes(b"legacy excel", "sample.xls")
+
+    with pytest.raises(ValueError, match="Legacy .xls files are not supported"):
+        load_uploaded_file(file)
+
+
 def test_empty_dataframe_validation_error():
     with pytest.raises(ValueError, match="tabular data"):
         validate_loaded_dataframe(pd.DataFrame())
@@ -119,3 +128,19 @@ def test_load_sample_manufacturing_operations():
     assert loaded.metadata["suggested_template"] == "manufacturing"
     assert loaded.metadata["rows"] >= 500
     assert {"timestamp", "machine_id", "actual_output", "scrap_count", "downtime_minutes"} <= set(loaded.dataframe.columns)
+
+
+def test_load_sample_logistics_shipments():
+    loaded = load_sample_logistics_shipments()
+
+    assert loaded.metadata["suggested_template"] == "logistics"
+    assert loaded.metadata["rows"] >= 500
+    assert {"shipment_id", "order_date", "delivery_date", "planned_delivery_date"} <= set(loaded.dataframe.columns)
+
+
+def test_load_sample_finance_transactions():
+    loaded = load_sample_finance_transactions()
+
+    assert loaded.metadata["suggested_template"] == "finance"
+    assert loaded.metadata["rows"] >= 500
+    assert {"transaction_id", "date", "amount", "type"} <= set(loaded.dataframe.columns)

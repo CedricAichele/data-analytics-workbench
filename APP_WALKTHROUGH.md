@@ -1,14 +1,17 @@
 # App Walkthrough
 
-This walkthrough documents the current Data Analytics Workbench UI and workflow. Automated localhost screenshots were blocked in this environment, but the Streamlit smoke check confirms the app responds at:
+This walkthrough documents the current Data Analytics Workbench UI and workflow. The app is designed for Streamlit wide layout and a clean sidebar with a readable logo mark, app name, subtitle, active dataset selector, and icon-based navigation.
 
-```text
-http://127.0.0.1:8501
-```
+## Global Sidebar
 
-## Global Layout
+The sidebar shows:
 
-The app uses Streamlit wide layout with a light professional theme. The sidebar shows a larger workbench-themed analytics logo and a custom navigation menu with professional icon labels.
+- icon-only workbench/data logo mark
+- Data Analytics Workbench title
+- subtitle: Profiling, Preparation, Data Quality & KPI Analytics
+- active dataset selector when datasets are loaded
+- active dataset source, file type, and working shape
+- navigation links for the full workflow
 
 Navigation items:
 
@@ -25,111 +28,67 @@ Navigation items:
 - Logistics Analytics
 - Finance Analytics
 - Management Summary
+- Export Center
 
 ## Overview
 
 The Overview page explains the two-layer architecture:
 
-- Generic workflow for any supported tabular dataset
-- Domain templates that require schema detection or manual mapping
+- generic workflow for any supported tabular dataset
+- domain KPI templates that require schema detection or manual mapping
 
 It also explains that `raw_df` remains unchanged, `working_df` is the transformed copy, extra columns are preserved, and analytics pages do not permanently mutate data.
 
-Before data is loaded, the page shows that no dataset is loaded. After loading data, it shows raw and working row/column counts.
+Before data is loaded, the page shows that no dataset is active. After loading data, it shows raw and working row/column counts.
 
 ## Data Upload
 
 The Data Upload page accepts:
 
-- CSV
-- Excel `.xlsx`
-- JSON `.json`
+- CSV `.csv`
+- Excel workbooks `.xlsx`
+- tabular JSON `.json`
 
-Excel workbooks with multiple sheets show a sheet selector. JSON supports tabular records, JSON Lines, records-style objects, and simple nested records.
+Legacy `.xls` workbooks are rejected with a clear message telling the user to save the file as `.xlsx`.
 
-The page also includes two sample buttons:
+The page can load bundled synthetic samples:
 
-- Load sample retail dataset
-- Load sample manufacturing dataset
+- Sales / Retail
+- Manufacturing
+- Logistics
+- Finance
 
-After loading any dataset, the app stores `raw_df`, copies it to `working_df`, records `dataset_metadata`, clears stale mappings and analytics, and runs initial template detection for Sales / Retail and Manufacturing.
+Every upload or sample is added to the in-session Dataset Workspace. The newly loaded dataset becomes active, `raw_df` is copied to `working_df`, mappings and logs start clean for that dataset, and schema detection runs for implemented templates.
 
 ## Data Profile
 
-The Data Profile page works with any `working_df`.
+The Data Profile page works with any active `working_df`.
 
-It shows:
+It shows row and column counts, duplicate count, generic quality score, column names, data types, missing values, unique values, numeric summaries, categorical summaries, detected date-like columns, detected numeric columns, detected categorical columns, and Plotly profile charts.
 
-- row and column counts
-- duplicate row count
-- generic quality score
-- data types and missing values
-- unique values
-- numeric summary
-- categorical summary
-- detected date-like, numeric, and categorical columns
-- missing value chart
-- data type distribution chart
-- selected numeric distribution
-- selected categorical frequency chart
-
-If no dataset is loaded, the page shows a clear warning and stops safely.
+If no dataset is active, the page shows a warning and stops safely.
 
 ## Data Preparation
 
-The Data Preparation page is the only place for user-triggered permanent data transformations.
+Data Preparation is the only page for user-triggered permanent transformations.
 
-It modifies `working_df` only and logs each successful transformation.
+It modifies only the active dataset `working_df` and logs each successful transformation.
 
-Available actions:
+Available actions include rename column, drop columns, change type, parse datetime, fill missing values, drop missing rows, remove duplicates, filter rows, create a revenue column, reset to raw data, and export the prepared data as CSV.
 
-- rename column
-- drop columns
-- change column type
-- parse datetime column
-- fill missing values
-- drop rows with missing values
-- remove duplicate rows
-- filter rows
-- create revenue column
-- reset `working_df` to `raw_df`
-- download `working_df` as CSV
-
-When a transformation changes structure, stale mappings and analytics outputs are cleared.
+Structural changes clear stale mappings and analytics results for the active dataset.
 
 ## Data Quality
 
-The Data Quality page shows:
+Data Quality shows explainable 0-100 scoring for any active dataset. It reports sub-scores, explanations, and recommended fixes for missing values, duplicates, invalid numeric values, schema completeness, and date parsing issues.
 
-- generic quality score for any dataset
-- missing value, duplicate, and invalid numeric sub-scores
-- explanations and recommended fixes
-- optional template-aware quality score when a valid mapping exists
-
-Template-aware scoring checks schema completeness, mapped date parsing, and mapped numeric fields.
+When a template mapping exists, the page can calculate template-aware schema and field quality checks.
 
 ## Generic Analytics
 
-The Generic Analytics page works with arbitrary supported datasets.
+Generic Analytics works with arbitrary active datasets and does not assume sales, manufacturing, logistics, or finance meaning.
 
-Users select:
-
-- numeric measure
-- optional category
-- optional date column
-- aggregation
-- chart type
-
-The page returns:
-
-- aggregated table
-- Plotly chart
-- basic insights
-- missing value counts for selected fields
-- rows used
-- CSV download of the aggregated result
-
-It does not assume sales, manufacturing, finance, or logistics meaning.
+Users can choose one or multiple numeric measures, optional category grouping, optional date grouping, aggregation, and chart type. The page shows basic insights, an aggregated table, Plotly chart, and CSV download of the aggregated result.
 
 ## Template Selection
 
@@ -141,71 +100,64 @@ Template Selection shows cards for:
 - Logistics Analytics
 - Finance Analytics
 
-Each card shows purpose, status, required fields, optional fields, mapping requirement, sample dataset availability, and notes.
-
-Sales / Retail and Manufacturing are implemented. Logistics and Finance are visible planned templates.
+Cards show purpose, implementation status, required fields, optional fields, mapping requirements, sample availability, and limitations.
 
 ## Column Mapping
 
-Column Mapping supports implemented domain templates:
+Column Mapping supports all implemented templates:
 
 - Sales / Retail
 - Manufacturing
+- Logistics
+- Finance
 
-The page shows schema detection confidence, matched fields, missing required fields, and selectboxes for required and optional field mapping. Mappings are validated before saving.
+The user chooses a template, reviews schema detection confidence, maps required and optional fields through selectboxes, and saves a mapping for the active dataset. Unmapped extra columns remain available for profiling, preparation, generic analytics, and export.
 
-Sales / Retail mapping is kept compatible with the existing `column_mapping` state key. Manufacturing mapping is stored separately and also in `template_mappings`.
+## Domain Analytics Pages
+
+Each domain analytics page checks compatibility before showing KPIs. If the active dataset is not mapped or detected for that template, the page shows:
+
+- "The active dataset is not mapped to this analytics template."
+- required fields
+- detected and missing fields
+- guidance to use Column Mapping, Generic Analytics, or a compatible sample dataset
+
+Compatible datasets show KPI cards, charts, result tables, and issue summaries.
 
 ## Sales Analytics
 
-Sales Analytics requires a valid Sales / Retail mapping.
-
-It shows:
-
-- gross sales revenue
-- net revenue
-- valid orders
-- valid customers
-- average order value
-- quantity sold
-- return rate
-- cancelled order rate
-- top 10 customer revenue share
-- revenue and order charts
-- product, customer, country, RFM, issue, and cleaned preview tables
-
-It uses mapped fields for KPI logic and preserves extra dataset columns outside the temporary analytical layer.
+Sales Analytics calculates SQL-backed revenue, order, customer, product, country, return, cancellation, and RFM metrics from mapped Sales / Retail fields.
 
 ## Manufacturing Analytics
 
-Manufacturing Analytics requires a valid Manufacturing mapping.
-
-It shows:
-
-- total output
-- total scrap
-- scrap rate
-- downtime minutes
-- average downtime per machine
-- production attainment when planned output is available
-- availability approximation when runtime and downtime are available
-- quality rate approximation
-- simplified OEE approximation when defensible
-- output and downtime trends
-- machine performance charts and tables
-- output by line and shift when available
-- issue summary
-
-The simplified OEE metric is labeled as an approximation, not a certified OEE standard.
+Manufacturing Analytics calculates output, scrap, downtime, production attainment, availability approximation, quality rate approximation, simplified OEE approximation where defensible, and machine/line/shift performance tables.
 
 ## Logistics Analytics
 
-Logistics Analytics is a planned template page. It documents the intended schema and directs users to Generic Analytics for logistics datasets today.
+Logistics Analytics calculates shipment count, average lead time, on-time delivery rate, delayed shipments, average delay days, shipping cost KPIs when available, carrier performance, destination performance, and delayed shipment tables.
 
 ## Finance Analytics
 
-Finance Analytics is a planned template page. It documents the intended schema and warns that finance interpretation requires an explicit type, category, or sign convention.
+Finance Analytics calculates total revenue, total cost, net result, margin, transaction count, average transaction amount, budget variance when available, monthly revenue/cost, category summaries, cost center summaries, and largest transactions.
+
+Finance requires interpretable type values such as `revenue` and `cost`; ambiguous types are flagged instead of guessed.
 
 ## Management Summary
 
-Management Summary generates deterministic text from calculated Sales / Retail analytics. It includes an LLM extension placeholder but does not call external APIs or require API keys.
+Management Summary is deterministic and template-aware. It can summarize Sales, Manufacturing, Logistics, or Finance metrics when the active dataset is mapped. If no domain mapping is available, it shows a generic data summary with rows, columns, missingness, duplicates, quality score, and recommended next actions.
+
+No external LLM or API key is used.
+
+## Export Center
+
+Export Center shows the active dataset name, source, file type, and working shape.
+
+It can export:
+
+- active working dataset as CSV, Excel `.xlsx`, or JSON `.json`
+- raw dataset only when explicitly selected
+- transformation log as CSV or JSON
+- Generic Analytics aggregated result as CSV, Excel `.xlsx`, or JSON `.json`
+- available domain result tables as CSV, Excel `.xlsx`, or JSON `.json`
+
+Exports use Streamlit download buttons and do not overwrite local files.

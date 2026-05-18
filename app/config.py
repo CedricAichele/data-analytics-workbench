@@ -10,6 +10,8 @@ DATA_DIR = PROJECT_ROOT / "data"
 SAMPLE_DATA_DIR = DATA_DIR / "sample"
 SAMPLE_RETAIL_PATH = SAMPLE_DATA_DIR / "sample_retail_orders.csv"
 SAMPLE_MANUFACTURING_PATH = SAMPLE_DATA_DIR / "sample_manufacturing_operations.csv"
+SAMPLE_LOGISTICS_PATH = SAMPLE_DATA_DIR / "sample_logistics_shipments.csv"
+SAMPLE_FINANCE_PATH = SAMPLE_DATA_DIR / "sample_finance_transactions.csv"
 SQL_DIR = PROJECT_ROOT / "sql"
 LOGO_PATH = ASSETS_DIR / "logo.svg"
 LOGO_MARK_PATH = ASSETS_DIR / "logo_mark.svg"
@@ -60,3 +62,37 @@ MANUFACTURING_OPTIONAL_FIELDS = [
 ]
 
 ALL_MANUFACTURING_FIELDS = MANUFACTURING_REQUIRED_FIELDS + MANUFACTURING_OPTIONAL_FIELDS
+
+LOGISTICS_REQUIRED_FIELDS = [
+    "shipment_id",
+    "order_date",
+    "delivery_date",
+    "planned_delivery_date",
+]
+
+LOGISTICS_OPTIONAL_FIELDS = [
+    "carrier",
+    "origin",
+    "destination",
+    "shipping_cost",
+    "delivery_status",
+]
+
+ALL_LOGISTICS_FIELDS = LOGISTICS_REQUIRED_FIELDS + LOGISTICS_OPTIONAL_FIELDS
+
+FINANCE_REQUIRED_FIELDS = [
+    "transaction_id",
+    "date",
+    "amount",
+    "type",
+]
+
+FINANCE_OPTIONAL_FIELDS = [
+    "category",
+    "account",
+    "cost_center",
+    "budget",
+    "actual",
+]
+
+ALL_FINANCE_FIELDS = FINANCE_REQUIRED_FIELDS + FINANCE_OPTIONAL_FIELDS

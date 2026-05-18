@@ -11,7 +11,7 @@ from typing import Any, BinaryIO
 import pandas as pd
 from pandas.errors import EmptyDataError
 
-from app.config import SAMPLE_MANUFACTURING_PATH, SAMPLE_RETAIL_PATH
+from app.config import SAMPLE_FINANCE_PATH, SAMPLE_LOGISTICS_PATH, SAMPLE_MANUFACTURING_PATH, SAMPLE_RETAIL_PATH
 
 
 @dataclass(frozen=True)
@@ -195,7 +195,7 @@ def load_uploaded_file(uploaded_file: BinaryIO, *, sheet_name: str | int | None 
         df = load_json(uploaded_file)
         return LoadedDataset(df, _metadata(uploaded_file, "json", df))
     if extension == "xls":
-        raise ValueError("Excel .xls files are not supported. Please save the workbook as .xlsx and upload again.")
+        raise ValueError("Legacy .xls files are not supported. Please save the workbook as .xlsx.")
 
     supported = ", ".join(get_supported_file_types())
     raise ValueError(f"Unsupported file format '.{extension}'. Supported formats: {supported}.")
@@ -235,5 +235,43 @@ def load_sample_manufacturing_operations() -> LoadedDataset:
         "columns": int(len(df.columns)),
         "source": "sample",
         "suggested_template": "manufacturing",
+    }
+    return LoadedDataset(df, metadata)
+
+
+def load_sample_logistics_shipments() -> LoadedDataset:
+    """Load the bundled synthetic logistics shipments dataset."""
+    if not SAMPLE_LOGISTICS_PATH.exists():
+        raise FileNotFoundError(
+            "Sample logistics dataset was not found. Restore "
+            "data/sample/sample_logistics_shipments.csv or upload your own CSV, XLSX, or JSON file."
+        )
+    df = load_csv(SAMPLE_LOGISTICS_PATH)
+    metadata = {
+        "file_name": SAMPLE_LOGISTICS_PATH.name,
+        "file_type": "csv",
+        "rows": int(len(df)),
+        "columns": int(len(df.columns)),
+        "source": "sample",
+        "suggested_template": "logistics",
+    }
+    return LoadedDataset(df, metadata)
+
+
+def load_sample_finance_transactions() -> LoadedDataset:
+    """Load the bundled synthetic finance transactions dataset."""
+    if not SAMPLE_FINANCE_PATH.exists():
+        raise FileNotFoundError(
+            "Sample finance dataset was not found. Restore "
+            "data/sample/sample_finance_transactions.csv or upload your own CSV, XLSX, or JSON file."
+        )
+    df = load_csv(SAMPLE_FINANCE_PATH)
+    metadata = {
+        "file_name": SAMPLE_FINANCE_PATH.name,
+        "file_type": "csv",
+        "rows": int(len(df)),
+        "columns": int(len(df.columns)),
+        "source": "sample",
+        "suggested_template": "finance",
     }
     return LoadedDataset(df, metadata)

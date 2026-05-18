@@ -1,6 +1,6 @@
 # Feature Report
 
-This report lists implemented features in the current Data Analytics Workbench codebase.
+This report lists features implemented in the current Data Analytics Workbench codebase.
 
 ## Implemented Pages
 
@@ -14,36 +14,48 @@ This report lists implemented features in the current Data Analytics Workbench c
 - Column Mapping
 - Sales / Retail Analytics
 - Manufacturing Analytics
-- Logistics Analytics planned page
-- Finance Analytics planned page
+- Logistics Analytics
+- Finance Analytics
 - Management Summary
+- Export Center
 
 ## Supported File Formats
 
 - CSV `.csv`
-- Excel `.xlsx`
+- Excel workbooks `.xlsx`
 - JSON `.json`
 
-Excel sheet selection is implemented. JSON support is limited to tabular or normalizable records.
+Excel sheet selection is implemented for `.xlsx`. Legacy `.xls` workbooks are not supported and produce a clear conversion message. JSON support is limited to tabular or normalizable records.
 
-## Upload Behavior
+## Dataset Workspace
 
-Uploaded files are converted to pandas DataFrames, validated as non-empty tabular data, stored as `raw_df`, and copied to `working_df`.
+The app supports multiple datasets in the current Streamlit session. Each dataset stores:
 
-The app clears stale transformation logs, mappings, and analytics outputs when loading a new dataset.
+- `raw_df`
+- `working_df`
+- metadata
+- transformation log
+- template mappings
+- analytics results
 
-## Sample Dataset Behavior
+One dataset is active at a time. All workflow pages operate on the active dataset. No joins, relationships, or cross-dataset analytics are implemented.
+
+## Upload and Sample Behavior
+
+Uploads and sample datasets are validated as non-empty tabular DataFrames, added to the Dataset Workspace, and made active.
 
 Implemented samples:
 
 - `sample_retail_orders.csv`
 - `sample_manufacturing_operations.csv`
+- `sample_logistics_shipments.csv`
+- `sample_finance_transactions.csv`
 
-Both are synthetic and include intentional data quality issues.
+The samples are synthetic and include intentional data quality issues.
 
 ## Data Profiling
 
-The profiler works with any `working_df` and reports row counts, column counts, data types, missing values, duplicates, unique values, numeric summaries, categorical summaries, detected date-like columns, detected numeric columns, detected categorical columns, and visual profile charts.
+The profiler works with any active `working_df` and reports row counts, column counts, data types, missing values, duplicates, unique values, numeric summaries, categorical summaries, detected date-like columns, detected numeric columns, detected categorical columns, and profile charts.
 
 ## Data Preparation
 
@@ -69,100 +81,80 @@ The quality score is deterministic and explainable. It evaluates missing values,
 
 ## Generic Analytics
 
-Generic Analytics works with any tabular `working_df`. It supports numeric measure selection, optional category grouping, optional date grouping, sum/average/count/min/max aggregation, bar/line/scatter/histogram charts, insight text, aggregated table, and CSV export.
+Generic Analytics works with any active tabular `working_df`. It supports one or multiple numeric measures, optional category grouping, optional date grouping, sum/average/count/min/max aggregation, bar/line/scatter/histogram/box charts, insight text, aggregated table, and CSV export of the aggregated result.
 
 ## Template Registry
-
-Implemented in `app/services/template_registry.py`.
 
 Registered templates:
 
 - generic: always available
 - sales_retail: implemented
 - manufacturing: implemented
-- logistics: planned
-- finance: planned
+- logistics: implemented
+- finance: implemented
+
+Each template defines purpose, status, required fields, optional fields, synonyms, sample dataset, implemented page, and limitations.
 
 ## Schema Detection and Mapping
 
-Rule-based schema detection supports Sales / Retail and Manufacturing using synonyms and fuzzy matching.
-
-Column Mapping supports implemented domain templates:
+Rule-based schema detection uses synonyms and fuzzy matching. Column Mapping supports all implemented domain templates:
 
 - Sales / Retail
 - Manufacturing
+- Logistics
+- Finance
 
-Mappings validate required fields, duplicate source columns, and unknown source columns.
+Mappings validate required fields, duplicate source columns, and unknown source columns. Mappings are stored per active dataset and template.
 
 ## Sales / Retail Analytics
 
-Implemented outputs:
-
-- gross revenue
-- net revenue
-- valid order count
-- valid customer count
-- average order value
-- total quantity sold
-- return rate
-- cancelled order rate
-- top 10 customer revenue share
-- revenue by month
-- returns by month
-- order count by month
-- revenue by product/category/country where available
-- RFM segmentation
-- quality issue table
+Implemented outputs include gross revenue, net revenue, valid order count, valid customer count, average order value, quantity sold, return rate, cancelled order rate, top 10 customer revenue share, revenue by month, returns by month, order count by month, revenue by product/category/country where available, RFM segmentation, and quality issue tables.
 
 Retail aggregations use DuckDB SQL files from `sql/`.
 
 ## Manufacturing Analytics
 
-Implemented outputs:
+Implemented outputs include total output, total scrap, scrap rate, total downtime minutes, average downtime per machine, production attainment, availability approximation, quality rate approximation, simplified OEE approximation when inputs support it, output and downtime trends, machine performance, output by line and shift, and issue summary.
 
-- total output
-- total scrap
-- scrap rate
-- total downtime minutes
-- average downtime per machine
-- production attainment when planned output exists
-- availability approximation when runtime and downtime exist
-- quality rate approximation
-- simplified OEE approximation when inputs support it
-- output and downtime trends
-- machine performance
-- output by line and shift when available
-- issue summary
+## Logistics Analytics
 
-## Logistics and Finance
+Implemented outputs include shipment count, average lead time, on-time delivery rate, delayed shipment count, average delay days, shipping cost KPIs when available, shipments over time, lead time trends, on-time versus delayed summary, carrier performance, destination performance, delayed shipments table, and issue summary.
 
-Logistics and Finance are planned templates. They appear in navigation, template selection, and dedicated planned pages, but their KPI logic is not implemented yet.
+## Finance Analytics
+
+Implemented outputs include total revenue, total cost, net result, margin, transaction count, average transaction amount, budget variance when available, monthly revenue/cost, net result trend, category summaries, cost center summaries, largest transactions, and issue summary.
+
+Finance rows with uninterpretable transaction types are flagged and excluded from KPI calculations.
 
 ## Management Summary
 
-Management Summary is deterministic and currently uses calculated Sales / Retail analytics. It does not call external LLM APIs.
+Management Summary is deterministic and template-aware. It summarizes Sales, Manufacturing, Logistics, or Finance analytics when compatible mappings exist. If no domain mapping exists, it returns a generic data summary with quality context and next actions. It does not call external LLM APIs.
 
 ## Export Features
 
-Implemented export:
+Export Center supports:
 
-- `working_df` as CSV from Data Preparation
-- aggregated Generic Analytics result as CSV
+- active working dataset as CSV, Excel `.xlsx`, and JSON `.json`
+- optional raw dataset export when explicitly selected
+- transformation log as CSV and JSON
+- Generic Analytics aggregated result as CSV, Excel `.xlsx`, and JSON `.json`
+- domain analytics result tables as CSV, Excel `.xlsx`, and JSON `.json`
 
 ## Known Limitations
 
-- Uploaded data is stored in Streamlit session state, not a database.
+- Data is stored in Streamlit session state, not a database.
+- Dataset Workspace does not implement joins or semantic relationships.
 - JSON support is not a full JSON schema explorer.
-- `.xls`, Parquet, XML, and database connections are not implemented.
-- Logistics and Finance KPI pages are planned only.
-- Management Summary is retail-oriented.
+- Legacy `.xls`, Parquet, XML, and database connections are not implemented.
+- Rule-based schema detection may need manual mapping correction.
+- Domain KPIs require valid field mappings.
+- Finance interpretation requires meaningful type values such as `revenue` and `cost`.
 - Screenshots are not committed yet.
 
 ## Not-Yet-Implemented Ideas
 
-- Full Logistics KPI implementation.
-- Full Finance KPI implementation with explicit type/sign controls.
 - Deployed screenshots.
 - Saved mapping profiles.
-- Optional Excel export.
-- More configurable date parsing.
+- Richer locale-aware date parsing controls.
+- Multi-table exports bundled into one workbook.
+- Deeper compatibility diagnostics for uploaded domain datasets.

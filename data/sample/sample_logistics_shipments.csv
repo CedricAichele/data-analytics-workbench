@@ -1,0 +1,524 @@
+shipment_id,order_date,delivery_date,planned_delivery_date,carrier,origin,destination,shipping_cost,delivery_status
+SHP-100000,2025-03-24,2025-03-27,2025-03-27,DHL Freight,Hamburg Port,Amsterdam,319.12,Delivered On Time
+SHP-100001,2025-01-10,2025-01-12,2025-01-12,DHL Freight,Berlin DC,Vienna,90.73,Delivered On Time
+SHP-100002,2025-02-27,2025-03-08,2025-03-05,Local Courier,Hamburg Port,Milan,121.63,Delivered Late
+SHP-100003,2025-03-16,2025-03-21,2025-03-21,DHL Freight,Hamburg Port,Warsaw,287.9,Delivered On Time
+SHP-100004,2025-04-06,2025-04-08,2025-04-08,DHL Freight,Munich Hub,Paris,260.74,Delivered On Time
+SHP-100005,2025-04-30,2025-05-09,2025-05-06,FedEx,Berlin DC,Warsaw,179.65,Delivered Late
+SHP-100006,2025-05-28,2025-06-01,2025-06-01,FedEx,Cologne DC,Prague,204.45,Delivered On Time
+SHP-100007,2025-02-12,2025-02-16,2025-02-16,DB Schenker,Munich Hub,Milan,107.89,Delivered On Time
+SHP-100008,2025-03-29,2025-04-02,2025-04-02,Local Courier,Berlin DC,Prague,85.11,Delivered On Time
+SHP-100009,2025-01-16,2025-01-20,2025-01-20,DB Schenker,Cologne DC,Warsaw,335.56,Delivered On Time
+SHP-100010,2025-04-01,2025-04-04,2025-04-04,DB Schenker,Cologne DC,Paris,135.46,Delivered On Time
+SHP-100011,2025-04-11,2025-04-16,2025-04-16,DB Schenker,Munich Hub,Milan,298.56,Delivered On Time
+SHP-100012,2025-04-17,2025-04-21,2025-04-21,DB Schenker,Hamburg Port,Vienna,115.86,Delivered On Time
+SHP-100013,2025-01-04,2025-01-11,2025-01-09,UPS,Munich Hub,Warsaw,173.93,Delivered Late
+SHP-100014,2025-02-02,2025-02-11,2025-02-08,DHL Freight,Cologne DC,Prague,462.33,Delivered Late
+SHP-100015,2025-04-12,2025-04-17,2025-04-17,DB Schenker,Hamburg Port,Milan,86.51,Delivered On Time
+SHP-100016,2025-01-29,2025-02-02,2025-02-02,DHL Freight,Berlin DC,Paris,268.29,Delivered On Time
+SHP-100017,2025-01-19,2025-01-22,2025-01-22,UPS,Berlin DC,Warsaw,383.13,Delivered On Time
+SHP-100018,2025-05-05,2025-05-10,2025-05-10,FedEx,Cologne DC,Amsterdam,160.31,Delivered On Time
+SHP-100019,2025-02-11,2025-02-16,2025-02-17,Local Courier,Munich Hub,Madrid,146.64,Delivered On Time
+SHP-100020,2025-01-24,2025-01-28,2025-01-28,UPS,Munich Hub,Madrid,333.3,Delivered On Time
+SHP-100021,2025-02-27,2025-03-06,2025-03-05,,Cologne DC,Vienna,402.74,Delivered Late
+SHP-100022,2025-04-02,2025-04-12,2025-04-04,FedEx,Cologne DC,Prague,261.37,Delivered Late
+SHP-100023,2025-03-31,2025-04-04,2025-04-04,DHL Freight,Berlin DC,Vienna,226.4,Delivered On Time
+SHP-100024,2025-05-03,2025-05-08,2025-05-07,DHL Freight,Cologne DC,Amsterdam,406.07,Delivered Late
+SHP-100025,2025-02-15,2025-02-21,2025-02-20,FedEx,Cologne DC,Amsterdam,402.28,Delivered Late
+SHP-100026,2025-01-22,2025-01-25,2025-01-25,UPS,Hamburg Port,Paris,140.07,Delivered On Time
+SHP-100027,2025-05-02,2025-05-06,2025-05-06,Local Courier,Berlin DC,Zurich,109.57,Delivered On Time
+SHP-100028,2025-05-15,2025-05-18,2025-05-18,UPS,Munich Hub,Vienna,71.84,Delivered On Time
+SHP-100029,2025-03-08,2025-03-14,2025-03-14,UPS,Cologne DC,Paris,385.1,Delivered On Time
+SHP-100030,2025-05-09,2025-05-12,2025-05-12,Local Courier,Hamburg Port,Paris,364.17,Delivered On Time
+SHP-100031,2025-02-14,2025-02-17,2025-02-17,DHL Freight,Berlin DC,Paris,179.43,Delivered On Time
+SHP-100032,2025-05-24,2025-05-26,2025-05-26,FedEx,Berlin DC,Paris,309.8,Delivered On Time
+SHP-100033,2025-04-24,2025-04-28,2025-04-28,Local Courier,Cologne DC,Vienna,303.62,Delivered On Time
+SHP-100034,2025-05-10,2025-05-14,2025-05-13,FedEx,Cologne DC,Vienna,332.8,Delivered Late
+SHP-100035,2025-03-22,,2025-03-24,DB Schenker,Hamburg Port,Amsterdam,126.11,Delivered On Time
+SHP-100036,2025-04-04,2025-04-07,2025-04-07,UPS,Cologne DC,Prague,163.83,Delivered On Time
+SHP-100037,2025-02-11,2025-02-14,2025-02-14,DB Schenker,Munich Hub,Milan,170.06,Delivered On Time
+SHP-100038,2025-01-05,2025-01-09,2025-01-09,DB Schenker,Berlin DC,Paris,209.2,Delivered On Time
+SHP-100039,2025-01-29,2025-02-06,2025-02-01,DHL Freight,Munich Hub,Amsterdam,162.88,Delivered Late
+SHP-100040,2025-02-03,2025-02-10,2025-02-08,FedEx,Munich Hub,Milan,207.58,Delivered Late
+SHP-100041,2025-01-23,2025-01-27,2025-01-27,UPS,Munich Hub,Milan,1217.71,Delivered On Time
+SHP-100042,2025-01-22,2025-01-30,2025-01-28,DHL Freight,Cologne DC,Warsaw,399.19,Delivered Late
+SHP-100043,2025-03-10,2025-03-16,2025-03-16,Local Courier,Hamburg Port,Vienna,445.74,Delivered On Time
+SHP-100044,2025-02-21,2025-02-25,2025-02-25,Local Courier,Munich Hub,Vienna,178.21,Delivered On Time
+SHP-100045,2025-01-05,2025-01-09,2025-01-09,DHL Freight,Cologne DC,Vienna,235.28,Delivered On Time
+SHP-100046,2025-05-07,2025-05-15,2025-05-13,DB Schenker,Hamburg Port,Warsaw,402.74,Delivered Late
+SHP-100047,2025-04-14,2025-04-23,2025-04-18,UPS,Hamburg Port,Paris,193.84,Delivered Late
+SHP-100048,2025-01-15,2025-01-17,2025-01-17,DB Schenker,Hamburg Port,Warsaw,259.81,Delivered On Time
+SHP-100049,2025-02-10,2025-02-14,2025-02-14,FedEx,Hamburg Port,Madrid,418.32,Delivered On Time
+SHP-100050,2025-01-09,2025-01-13,2025-01-13,UPS,Hamburg Port,Paris,169.33,Delivered On Time
+SHP-100051,2025-03-05,2025-03-12,2025-03-11,DHL Freight,Cologne DC,Warsaw,343.92,Delivered Late
+SHP-100052,2025-01-06,2025-01-10,2025-01-10,UPS,Cologne DC,Amsterdam,273.85,Delivered On Time
+SHP-100053,2025-03-25,2025-03-30,2025-03-30,Local Courier,Cologne DC,Zurich,134.39,Delivered On Time
+SHP-100054,2025-05-10,2025-05-16,2025-05-13,Local Courier,Hamburg Port,Paris,377.86,Delivered Late
+SHP-100055,2025-01-22,2025-01-24,2025-01-24,FedEx,Berlin DC,Amsterdam,182.4,Delivered On Time
+SHP-100056,2025-05-17,2025-05-20,2025-05-20,DHL Freight,Berlin DC,Prague,339.09,Delivered On Time
+SHP-100057,2025-05-15,2025-05-18,2025-05-17,DB Schenker,Hamburg Port,Warsaw,346.87,Delivered Late
+SHP-100058,2025-03-01,2025-03-06,2025-03-06,DB Schenker,Hamburg Port,Amsterdam,262.18,Delivered On Time
+SHP-100059,2025-01-20,2025-01-26,2025-01-26,FedEx,Cologne DC,Warsaw,274.73,Delivered On Time
+SHP-100060,2025-03-10,2025-03-12,2025-03-12,DB Schenker,Berlin DC,Warsaw,283.42,Delivered On Time
+SHP-100061,2025-05-21,2025-05-24,2025-05-24,DHL Freight,Cologne DC,Prague,78.84,Delivered On Time
+SHP-100062,2025-03-10,2025-03-15,2025-03-15,UPS,Munich Hub,Amsterdam,256.83,Delivered On Time
+SHP-100063,2025-02-03,2025-02-10,2025-02-09,Local Courier,Cologne DC,Warsaw,420.95,Delivered Late
+SHP-100064,2025-04-11,2025-04-13,2025-04-13,DB Schenker,Cologne DC,Prague,199.28,Delivered On Time
+SHP-100065,2025-03-22,2025-03-26,2025-03-24,DHL Freight,Hamburg Port,Madrid,343.72,Delivered Late
+SHP-100066,2025-01-04,2025-01-08,2025-01-08,DHL Freight,Cologne DC,Milan,230.79,Delivered On Time
+SHP-100067,2025-03-12,2025-03-14,2025-03-14,DHL Freight,Cologne DC,Warsaw,256.09,Delivered On Time
+SHP-100068,2025-05-11,2025-05-15,2025-05-15,FedEx,Hamburg Port,Milan,384.67,Delivered On Time
+SHP-100069,2025-01-21,2025-01-26,2025-01-23,DB Schenker,Cologne DC,Prague,267.24,Delivered Late
+SHP-100070,2025-01-13,2025-01-19,2025-01-19,DB Schenker,Munich Hub,Milan,200.3,Delivered On Time
+SHP-100071,2025-04-14,2025-04-17,2025-04-17,Local Courier,Cologne DC,Milan,119.09,Delivered On Time
+SHP-100072,2025-05-21,2025-05-24,2025-05-24,FedEx,Hamburg Port,Prague,212.93,Delivered On Time
+SHP-100073,2025-03-29,2025-04-04,2025-04-04,UPS,Cologne DC,Madrid,196.01,Delivered On Time
+SHP-100074,2025-04-09,2025-04-15,2025-04-14,UPS,Munich Hub,Milan,215.11,Delivered Late
+SHP-100075,2025-02-02,2025-02-08,2025-02-08,UPS,Cologne DC,Amsterdam,173.05,Delivered On Time
+SHP-100076,2025-04-21,2025-04-27,2025-04-25,DHL Freight,Cologne DC,Zurich,135.85,Delivered Late
+SHP-100077,2025-05-31,2025-06-04,2025-06-05,DB Schenker,Hamburg Port,Prague,381.09,Delivered On Time
+SHP-100078,2025-02-08,2025-02-19,2025-02-14,DHL Freight,Berlin DC,Prague,811.79,Delivered Late
+SHP-100079,2025-03-19,2025-03-22,2025-03-22,Local Courier,Hamburg Port,Milan,280.86,Delivered On Time
+SHP-100080,2025-04-10,2025-04-14,2025-04-14,Local Courier,Munich Hub,Paris,78.21,Delivered On Time
+SHP-100081,2025-03-04,2025-03-09,2025-03-09,Local Courier,Berlin DC,Vienna,100.14,Delivered On Time
+SHP-100082,2025-01-06,2025-01-09,2025-01-09,DB Schenker,Hamburg Port,Amsterdam,737.28,Delivered On Time
+SHP-100083,2025-05-07,2025-05-10,2025-05-09,DB Schenker,Berlin DC,Madrid,279.38,Delivered Late
+SHP-100084,2025-02-22,2025-03-04,2025-02-27,FedEx,Munich Hub,Vienna,186.4,Delivered Late
+SHP-100085,2025-01-28,2025-02-03,2025-02-03,UPS,Hamburg Port,Vienna,296.72,Delivered On Time
+SHP-100086,2025-04-11,2025-04-13,2025-04-13,Local Courier,Cologne DC,Zurich,201.97,Delivered On Time
+SHP-100087,2025-03-22,2025-04-01,2025-03-24,UPS,Cologne DC,Madrid,233.98,Delivered Late
+SHP-100088,2025-01-09,2025-01-13,2025-01-13,DB Schenker,Berlin DC,Madrid,396.0,Delivered On Time
+SHP-100089,2025-03-13,2025-03-15,2025-03-15,DHL Freight,Cologne DC,Vienna,192.41,Delivered On Time
+SHP-100090,2025-01-23,2025-01-26,2025-01-25,UPS,Cologne DC,Madrid,244.95,Delivered Late
+SHP-100091,2025-01-08,2025-01-13,2025-01-13,DB Schenker,Berlin DC,Paris,213.91,Delivered On Time
+SHP-100092,2025-03-07,2025-03-11,2025-03-10,Local Courier,Berlin DC,Madrid,192.18,Delivered Late
+SHP-100093,2025-03-09,2025-03-16,2025-03-13,FedEx,Berlin DC,Paris,357.83,Delivered Late
+SHP-100094,2025-01-07,2025-01-10,2025-01-10,DB Schenker,Hamburg Port,Milan,343.52,Delivered On Time
+SHP-100095,2025-05-08,2025-05-10,2025-05-11,FedEx,Munich Hub,Zurich,252.29,Delivered On Time
+SHP-100096,2025-01-21,2025-01-27,2025-01-27,UPS,Munich Hub,Vienna,250.23,Delivered On Time
+SHP-100097,2025-02-11,2025-02-18,2025-02-16,DHL Freight,Cologne DC,Warsaw,289.04,Delivered Late
+SHP-100098,2025-02-14,2025-02-17,2025-02-17,DB Schenker,Berlin DC,Vienna,327.43,Delivered On Time
+SHP-100099,2025-03-17,2025-03-21,2025-03-21,FedEx,Hamburg Port,Madrid,153.37,Delivered On Time
+SHP-100100,2025-03-04,2025-03-07,2025-03-07,Local Courier,Hamburg Port,Vienna,174.41,Delivered On Time
+SHP-100101,2025-01-26,2025-02-08,2025-01-31,DHL Freight,Munich Hub,Paris,394.05,Delivered Late
+SHP-100102,2025-01-11,2025-01-15,2025-01-15,DHL Freight,Berlin DC,Vienna,295.32,Delivered On Time
+SHP-100103,2025-04-06,2025-04-14,2025-04-12,DB Schenker,Munich Hub,Warsaw,1842.66,Delivered Late
+SHP-100104,2025-02-25,2025-02-27,2025-02-27,UPS,Hamburg Port,Paris,122.0,Delivered On Time
+SHP-100105,2025-01-03,2025-01-07,2025-01-07,FedEx,Cologne DC,Zurich,259.85,Delivered On Time
+SHP-100106,2025-05-21,2025-05-26,2025-05-26,DHL Freight,Hamburg Port,Milan,283.98,Delivered On Time
+SHP-100107,2025-04-12,2025-04-16,2025-04-16,FedEx,Munich Hub,Warsaw,193.75,Delivered On Time
+SHP-100108,2025-04-17,2025-04-21,2025-04-22,FedEx,Cologne DC,Vienna,204.93,Delivered On Time
+SHP-100109,2025-02-10,2025-02-15,2025-02-15,DHL Freight,Hamburg Port,Milan,271.27,Delivered On Time
+SHP-100110,2025-01-04,2025-01-06,2025-01-06,DB Schenker,Hamburg Port,Amsterdam,258.13,Delivered On Time
+SHP-100111,2025-02-07,2025-02-11,2025-02-11,Local Courier,Hamburg Port,Zurich,358.4,Delivered On Time
+SHP-100112,2025-03-19,2025-03-24,2025-03-22,DHL Freight,Berlin DC,Prague,204.55,Delivered Late
+SHP-100113,2025-02-11,2025-02-14,2025-02-14,Local Courier,Cologne DC,Vienna,325.37,Delivered On Time
+SHP-100114,2025-05-13,2025-05-16,2025-05-16,DHL Freight,Berlin DC,Zurich,163.01,Delivered On Time
+SHP-100115,2025-05-24,2025-05-26,2025-05-26,FedEx,Munich Hub,Amsterdam,186.73,Delivered On Time
+SHP-100116,2025-04-18,2025-04-22,2025-04-22,DB Schenker,Berlin DC,Milan,292.53,Delivered On Time
+SHP-100117,2025-01-01,2025-01-12,2025-01-07,DB Schenker,Hamburg Port,Vienna,323.35,Delivered Late
+SHP-100118,2025-05-02,2025-05-07,2025-05-07,UPS,Berlin DC,Madrid,205.35,Delivered On Time
+SHP-100119,2025-01-11,2025-01-14,2025-01-14,FedEx,Hamburg Port,Amsterdam,92.42,Delivered On Time
+SHP-100120,2025-01-07,2025-01-17,2025-01-09,DHL Freight,Hamburg Port,Vienna,247.85,Delivered Late
+SHP-100121,2025-02-26,2025-03-02,2025-02-28,Local Courier,Cologne DC,Warsaw,158.69,Delivered Late
+SHP-100122,2025-02-06,2025-02-10,2025-02-10,DB Schenker,Munich Hub,Vienna,280.71,Delivered On Time
+SHP-100123,2025-01-10,2025-01-13,2025-01-13,UPS,Munich Hub,Warsaw,307.75,Delivered On Time
+SHP-100124,2025-01-30,2025-02-05,2025-02-05,FedEx,Berlin DC,Prague,291.27,Delivered On Time
+SHP-100125,2025-03-06,2025-03-12,2025-03-12,DB Schenker,Munich Hub,Madrid,233.39,Delivered On Time
+SHP-100126,2025-03-26,2025-03-28,2025-03-28,UPS,Munich Hub,Paris,158.7,Delivered On Time
+SHP-100127,2025-01-01,2025-01-03,2025-01-03,FedEx,Cologne DC,Milan,193.02,Delivered On Time
+SHP-100128,2025-02-28,2025-03-06,2025-03-06,DHL Freight,Munich Hub,Paris,96.65,Delivered On Time
+SHP-100129,2025-05-17,2025-05-20,2025-05-20,FedEx,Hamburg Port,Zurich,145.14,Delivered On Time
+SHP-100130,2025-01-04,2025-01-08,2025-01-07,DB Schenker,Munich Hub,Amsterdam,86.35,Delivered Late
+SHP-100131,2025-04-13,2025-04-22,2025-04-17,DHL Freight,Cologne DC,Madrid,340.01,Delivered Late
+SHP-100132,2025-03-05,2025-03-10,2025-03-08,DHL Freight,Berlin DC,Paris,259.44,Delivered Late
+SHP-100133,2025-01-27,2025-01-29,2025-01-29,UPS,Cologne DC,Zurich,195.9,Delivered On Time
+SHP-100134,2025-02-14,2025-02-20,2025-02-20,FedEx,Berlin DC,Paris,442.95,Delivered On Time
+SHP-100135,2025-04-07,2025-04-13,2025-04-12,DB Schenker,Berlin DC,Amsterdam,339.89,Delivered Late
+SHP-100136,2025-03-08,2025-03-11,2025-03-11,DHL Freight,Munich Hub,Madrid,376.28,Delivered On Time
+SHP-100137,2025-01-14,2025-01-18,2025-01-18,DB Schenker,Berlin DC,Warsaw,204.01,Delivered On Time
+SHP-100138,2025-05-10,2025-05-12,2025-05-12,UPS,Cologne DC,Vienna,371.31,Delivered On Time
+SHP-100139,2025-03-26,2025-04-01,2025-04-01,Local Courier,Hamburg Port,Prague,850.17,Delivered On Time
+SHP-100140,2025-05-27,2025-06-01,2025-05-31,DB Schenker,Berlin DC,Amsterdam,253.74,Delivered Late
+SHP-100141,2025-01-28,2025-02-06,2025-02-03,FedEx,Berlin DC,Zurich,304.72,Delivered Late
+SHP-100142,2025-01-18,2025-01-20,2025-01-20,Local Courier,Berlin DC,Madrid,140.11,Delivered On Time
+SHP-100143,2025-04-09,2025-04-11,2025-04-11,UPS,Berlin DC,Amsterdam,87.35,Delivered On Time
+SHP-100144,2025-03-15,2025-03-20,2025-03-20,DHL Freight,Munich Hub,Vienna,179.19,Delivered On Time
+SHP-100145,2025-03-07,2025-03-11,2025-03-11,FedEx,Munich Hub,Madrid,336.33,Delivered On Time
+SHP-100146,2025-01-08,2025-01-12,2025-01-13,Local Courier,Hamburg Port,Amsterdam,207.74,Delivered On Time
+SHP-100147,2025-01-24,2025-01-31,2025-01-30,UPS,Berlin DC,Milan,90.21,Delivered Late
+SHP-100148,2025-01-02,2025-01-06,2025-01-06,DB Schenker,Munich Hub,Zurich,398.74,Delivered On Time
+SHP-100149,2025-05-28,2025-05-31,2025-05-31,UPS,Berlin DC,Vienna,217.08,Delivered On Time
+SHP-100150,2025-05-06,2025-05-13,2025-05-12,FedEx,Berlin DC,Madrid,191.25,Delivered Late
+SHP-100151,2025-04-19,2025-04-21,2025-04-21,FedEx,Hamburg Port,Warsaw,201.38,Delivered On Time
+SHP-100152,2025-04-28,2025-05-01,2025-05-01,Local Courier,Cologne DC,Paris,178.54,Delivered On Time
+SHP-100153,2025-05-22,2025-05-26,2025-05-26,DB Schenker,Hamburg Port,Warsaw,249.24,Delivered On Time
+SHP-100154,2025-05-10,2025-05-13,2025-05-13,Local Courier,Munich Hub,Zurich,324.96,Delivered On Time
+SHP-100155,2025-02-11,2025-02-14,2025-02-14,UPS,Berlin DC,Warsaw,394.7,Delivered On Time
+SHP-100156,2025-02-20,2025-02-25,2025-02-25,UPS,Berlin DC,Warsaw,325.63,Delivered On Time
+SHP-100157,2025-03-13,2025-03-18,2025-03-16,DB Schenker,Hamburg Port,Paris,125.82,Delivered Late
+SHP-100158,2025-05-09,2025-05-13,2025-05-13,UPS,Cologne DC,Warsaw,272.64,Delivered On Time
+SHP-100159,2025-05-27,2025-06-03,2025-06-02,DB Schenker,Hamburg Port,Vienna,346.33,Delivered Late
+SHP-100160,2025-02-16,2025-02-18,2025-02-18,FedEx,Cologne DC,Warsaw,252.53,Delivered On Time
+SHP-100161,2025-02-10,2025-02-16,2025-02-14,DB Schenker,Hamburg Port,Prague,144.37,Delivered Late
+SHP-100162,2025-03-25,2025-03-27,2025-03-27,DB Schenker,Hamburg Port,Amsterdam,77.34,Delivered On Time
+SHP-100163,2025-05-13,2025-05-17,2025-05-17,Local Courier,Munich Hub,Prague,270.22,Delivered On Time
+SHP-100164,2025-05-14,2025-05-18,2025-05-18,DB Schenker,Berlin DC,Vienna,383.2,Delivered On Time
+SHP-100165,2025-04-02,2025-04-04,2025-04-04,DB Schenker,Munich Hub,Milan,71.66,Delivered On Time
+SHP-100166,2025-05-29,2025-06-02,2025-06-02,FedEx,Cologne DC,Milan,386.41,Delivered On Time
+SHP-100167,2025-04-29,2025-05-02,2025-05-02,DHL Freight,Hamburg Port,Vienna,226.8,Delivered On Time
+SHP-100168,2025-04-01,2025-04-06,2025-04-06,FedEx,Hamburg Port,Zurich,342.85,Delivered On Time
+SHP-100169,2025-03-10,2025-03-15,2025-03-15,DB Schenker,Munich Hub,Zurich,271.52,Delivered On Time
+SHP-100170,2025-03-04,2025-03-08,2025-03-08,DB Schenker,Hamburg Port,Milan,261.01,Delivered On Time
+SHP-100171,2025-03-19,2025-03-24,2025-03-24,Local Courier,Berlin DC,Madrid,321.15,Delivered On Time
+SHP-100172,2025-01-03,2025-01-09,2025-01-06,FedEx,Hamburg Port,Warsaw,308.0,Delivered Late
+SHP-100173,2025-04-26,2025-05-01,2025-04-30,UPS,Berlin DC,Milan,325.51,Delivered Late
+SHP-100174,2025-05-21,2025-05-25,2025-05-25,UPS,Berlin DC,Amsterdam,318.49,Delivered On Time
+SHP-100175,2025-03-09,2025-03-14,2025-03-14,UPS,Hamburg Port,Prague,222.89,Delivered On Time
+SHP-100176,2025-05-06,2025-05-09,2025-05-09,Local Courier,Cologne DC,Paris,118.46,Delivered On Time
+SHP-100177,2025-03-17,2025-03-22,2025-03-22,DB Schenker,Berlin DC,Amsterdam,144.63,Delivered On Time
+SHP-100178,2025-01-12,2025-01-17,2025-01-16,DHL Freight,Cologne DC,Prague,278.96,Delivered Late
+SHP-100179,2025-02-02,2025-02-06,2025-02-06,FedEx,Hamburg Port,Madrid,238.33,Delivered On Time
+SHP-100180,2025-03-14,2025-03-19,2025-03-19,FedEx,Cologne DC,Paris,345.4,Delivered On Time
+SHP-100181,2025-03-27,2025-04-07,2025-04-02,Local Courier,Munich Hub,Madrid,496.85,Delivered Late
+SHP-100182,2025-02-19,2025-02-24,2025-02-23,UPS,Cologne DC,Amsterdam,314.18,Delivered Late
+SHP-100183,2025-05-20,2025-05-26,2025-05-26,FedEx,Berlin DC,Amsterdam,83.93,Delivered On Time
+SHP-100184,2025-05-09,2025-05-15,2025-05-15,Local Courier,Berlin DC,Zurich,323.82,Delivered On Time
+SHP-100185,2025-02-24,2025-02-26,2025-02-26,DB Schenker,Berlin DC,Zurich,87.31,Delivered On Time
+SHP-100186,2025-01-04,2025-01-10,2025-01-08,UPS,Cologne DC,Warsaw,266.42,Delivered Late
+SHP-100187,2025-01-09,2025-01-12,2025-01-13,Local Courier,Cologne DC,Paris,234.22,Delivered On Time
+SHP-100188,2025-05-28,2025-06-02,2025-06-02,,Hamburg Port,Milan,320.37,Delivered On Time
+SHP-100189,2025-05-02,2025-05-07,2025-05-07,DHL Freight,Berlin DC,Prague,449.96,Delivered On Time
+SHP-100190,2025-01-23,2025-01-28,2025-01-26,UPS,Hamburg Port,Prague,118.01,Delivered Late
+SHP-100191,2025-01-13,2025-01-18,2025-01-17,UPS,Munich Hub,Amsterdam,194.24,Delivered Late
+SHP-100192,2025-01-14,2025-01-15,2025-01-16,DHL Freight,Cologne DC,Amsterdam,174.06,Delivered On Time
+SHP-100193,2025-01-16,2025-01-20,2025-01-20,Local Courier,Berlin DC,Prague,216.72,Delivered On Time
+SHP-100194,2025-04-03,2025-04-06,2025-04-06,DB Schenker,Munich Hub,Prague,209.69,Delivered On Time
+SHP-100195,2025-03-16,2025-03-20,2025-03-20,Local Courier,Munich Hub,Madrid,1330.91,Delivered On Time
+SHP-100196,2025-05-30,2025-06-09,2025-06-04,UPS,Hamburg Port,Milan,257.85,Delivered Late
+SHP-100197,2025-04-26,2025-04-30,2025-04-30,FedEx,Berlin DC,Warsaw,152.04,Delivered On Time
+SHP-100198,2025-03-15,2025-03-19,2025-03-18,Local Courier,Cologne DC,Zurich,192.75,Delivered Late
+SHP-100199,2025-03-30,2025-04-05,2025-04-05,Local Courier,Hamburg Port,Prague,336.41,Delivered On Time
+SHP-100200,2025-03-21,2025-03-27,2025-03-27,DB Schenker,Berlin DC,Prague,369.04,Delivered On Time
+SHP-100201,2025-04-09,2025-04-14,2025-04-14,Local Courier,Munich Hub,Madrid,323.85,Delivered On Time
+SHP-100202,2025-05-14,2025-05-18,2025-05-18,Local Courier,Munich Hub,Vienna,128.92,Delivered On Time
+SHP-100203,2025-04-03,2025-04-09,2025-04-09,DB Schenker,Berlin DC,Zurich,221.82,Delivered On Time
+SHP-100204,2025-04-06,2025-04-12,2025-04-11,UPS,Berlin DC,Madrid,284.89,Delivered Late
+SHP-100205,2025-01-25,2025-01-27,2025-01-27,Local Courier,Munich Hub,Prague,242.55,Delivered On Time
+SHP-100206,2025-04-20,2025-04-25,2025-04-22,Local Courier,Hamburg Port,Zurich,145.42,Delivered Late
+SHP-100207,2025-04-07,2025-04-08,2025-04-09,DHL Freight,Berlin DC,Madrid,329.29,Delivered On Time
+SHP-100208,2025-04-12,2025-04-15,2025-04-14,DHL Freight,Cologne DC,Warsaw,165.14,Delivered Late
+SHP-100209,2025-02-16,2025-02-23,2025-02-21,FedEx,Munich Hub,Vienna,407.09,Delivered Late
+SHP-100210,2025-04-01,2025-04-05,2025-04-03,DHL Freight,Cologne DC,Paris,168.76,Delivered Late
+SHP-100211,2025-01-15,2025-01-17,2025-01-17,DHL Freight,Berlin DC,Vienna,273.62,Delivered On Time
+SHP-100212,2025-05-01,2025-05-05,2025-05-05,DB Schenker,Hamburg Port,Amsterdam,198.5,Delivered On Time
+SHP-100213,2025-01-04,2025-01-10,2025-01-09,UPS,Munich Hub,Paris,185.87,Delivered Late
+SHP-100214,2025-02-05,2025-02-15,2025-02-10,DB Schenker,Hamburg Port,Paris,345.15,Delivered Late
+SHP-100215,2025-05-03,2025-05-05,2025-05-05,UPS,Hamburg Port,Madrid,122.07,Delivered On Time
+SHP-100216,2025-04-23,2025-04-26,2025-04-26,DB Schenker,Munich Hub,Vienna,114.89,Delivered On Time
+SHP-100217,2025-02-12,2025-02-16,2025-02-16,FedEx,Berlin DC,Prague,351.6,Delivered On Time
+SHP-100218,2025-02-24,2025-03-02,2025-03-02,FedEx,Munich Hub,Amsterdam,164.91,Delivered On Time
+SHP-100219,2025-03-03,2025-03-06,2025-03-06,FedEx,Munich Hub,Milan,341.41,Delivered On Time
+SHP-100220,2025-02-06,2025-02-08,2025-02-08,Local Courier,Munich Hub,Madrid,224.83,Delivered On Time
+SHP-100221,2025-02-17,2025-02-21,2025-02-21,DB Schenker,Hamburg Port,Vienna,156.16,Delivered On Time
+SHP-100222,2025-02-14,2025-02-17,2025-02-17,DHL Freight,Hamburg Port,Prague,303.45,Delivered On Time
+SHP-100223,2025-05-30,2025-06-03,2025-06-03,DHL Freight,Munich Hub,Milan,376.77,Delivered On Time
+SHP-100224,2025-03-27,2025-04-02,2025-03-31,DB Schenker,Munich Hub,Amsterdam,147.37,Delivered Late
+SHP-100225,2025-03-05,2025-03-08,2025-03-08,FedEx,Berlin DC,Paris,121.58,Delivered On Time
+SHP-100226,2025-04-02,2025-04-11,2025-04-08,Local Courier,Munich Hub,Amsterdam,206.44,Delivered Late
+SHP-100227,2025-04-08,2025-04-15,2025-04-14,DHL Freight,Berlin DC,Warsaw,441.05,Delivered Late
+SHP-100228,2025-05-16,2025-05-22,2025-05-22,UPS,Munich Hub,Amsterdam,152.46,Delivered On Time
+SHP-100229,2025-05-23,2025-05-24,2025-05-25,UPS,Hamburg Port,Warsaw,60.02,Delivered On Time
+SHP-100230,2025-04-24,2025-04-26,2025-04-26,DHL Freight,Munich Hub,Zurich,67.81,Delivered On Time
+SHP-100231,2025-01-29,2025-01-31,2025-01-31,UPS,Cologne DC,Vienna,327.95,Delivered On Time
+SHP-100232,2025-02-12,2025-02-17,2025-02-14,DB Schenker,Berlin DC,Milan,294.05,Delivered Late
+SHP-100233,2025-04-03,2025-04-07,2025-04-07,FedEx,Munich Hub,Milan,357.69,Delivered On Time
+SHP-100234,2025-04-13,2025-04-19,2025-04-19,Local Courier,Cologne DC,Zurich,449.08,Delivered On Time
+SHP-100235,2025-01-03,2025-01-07,2025-01-07,UPS,Hamburg Port,Amsterdam,172.39,Delivered On Time
+SHP-100236,2025-02-05,2025-02-15,2025-02-10,DB Schenker,Berlin DC,Paris,463.16,Delivered Late
+SHP-100237,2025-03-10,2025-03-16,2025-03-16,Local Courier,Cologne DC,Paris,284.61,Delivered On Time
+SHP-100238,2025-03-02,2025-03-04,2025-03-04,FedEx,Munich Hub,Madrid,259.28,Delivered On Time
+SHP-100239,2025-01-22,2025-01-27,2025-01-27,UPS,Cologne DC,Prague,110.6,Delivered On Time
+SHP-100240,2025-05-28,2025-06-01,2025-06-01,DHL Freight,Cologne DC,Warsaw,359.2,Delivered On Time
+SHP-100241,2025-02-21,2025-02-28,2025-02-27,DB Schenker,Hamburg Port,Warsaw,310.83,Delivered Late
+SHP-100242,2025-03-27,2025-03-30,2025-03-30,Local Courier,Hamburg Port,Milan,378.99,Delivered On Time
+SHP-100243,2025-03-03,2025-03-07,2025-03-07,DB Schenker,Berlin DC,Warsaw,203.87,Delivered On Time
+SHP-100244,2025-02-10,2025-02-16,2025-02-16,FedEx,Munich Hub,Prague,1433.61,Delivered On Time
+SHP-100245,2025-01-28,2025-02-03,2025-02-03,UPS,Munich Hub,Milan,202.78,Delivered On Time
+SHP-100246,2025-05-13,2025-05-16,2025-05-15,DB Schenker,Hamburg Port,Warsaw,333.37,Delivered Late
+SHP-100247,2025-04-16,2025-04-17,2025-04-18,Local Courier,Cologne DC,Amsterdam,217.81,Delivered On Time
+SHP-100248,2025-03-13,2025-03-19,2025-03-19,DB Schenker,Munich Hub,Prague,310.46,Delivered On Time
+SHP-100249,2025-04-11,2025-04-17,2025-04-17,DB Schenker,Cologne DC,Madrid,130.8,Delivered On Time
+SHP-100250,2025-04-24,2025-04-28,2025-04-28,FedEx,Munich Hub,Zurich,217.65,Delivered On Time
+SHP-100251,2025-03-24,2025-04-01,2025-03-30,FedEx,Berlin DC,Vienna,482.95,Delivered Late
+SHP-100252,2025-01-13,2025-01-17,2025-01-17,DB Schenker,Cologne DC,Warsaw,393.97,Delivered On Time
+SHP-100253,2025-05-13,2025-05-20,2025-05-19,DB Schenker,Cologne DC,Milan,221.62,Delivered Late
+SHP-100254,2025-01-03,2025-01-05,2025-01-05,DHL Freight,Hamburg Port,Milan,180.29,Delivered On Time
+SHP-100255,2025-02-18,2025-02-23,2025-02-23,DB Schenker,Munich Hub,Madrid,334.17,Delivered On Time
+SHP-100256,2025-03-23,2025-04-01,2025-03-27,FedEx,Cologne DC,Zurich,225.85,Delivered Late
+SHP-100257,2025-02-10,2025-02-16,2025-02-16,Local Courier,Berlin DC,Vienna,242.36,Delivered On Time
+SHP-100258,2025-04-01,2025-04-15,2025-04-07,DHL Freight,Berlin DC,Milan,101.96,Delivered Late
+SHP-100259,2025-03-19,2025-03-26,2025-03-24,Local Courier,Munich Hub,Paris,301.73,Delivered Late
+SHP-100260,2025-05-17,2025-05-31,2025-05-23,Local Courier,Berlin DC,Vienna,252.54,Delivered Late
+SHP-100261,2025-01-08,2025-01-10,2025-01-10,Local Courier,Berlin DC,Prague,328.92,Delivered On Time
+SHP-100262,2025-01-04,2025-01-10,2025-01-10,UPS,Berlin DC,Madrid,156.36,Delivered On Time
+SHP-100263,2025-03-31,2025-04-03,2025-04-03,DB Schenker,Berlin DC,Paris,108.79,Delivered On Time
+SHP-100264,2025-04-23,2025-04-25,2025-04-25,UPS,Munich Hub,Vienna,90.05,Delivered On Time
+SHP-100265,2025-01-02,2025-01-07,2025-01-07,Local Courier,Hamburg Port,Warsaw,401.98,Delivered On Time
+SHP-100266,2025-04-10,2025-04-16,2025-04-16,FedEx,Hamburg Port,Milan,385.04,Delivered On Time
+SHP-100267,2025-01-23,2025-01-26,2025-01-26,DB Schenker,Munich Hub,Zurich,93.48,Delivered On Time
+SHP-100268,2025-01-30,2025-02-03,2025-02-03,DB Schenker,Munich Hub,Madrid,189.88,Delivered On Time
+SHP-100269,2025-05-22,2025-05-25,2025-05-25,DB Schenker,Berlin DC,Warsaw,181.84,Delivered On Time
+SHP-100270,2025-03-29,2025-04-01,2025-04-01,UPS,Cologne DC,Amsterdam,139.31,Delivered On Time
+SHP-100271,2025-04-30,2025-05-03,2025-05-03,FedEx,Hamburg Port,Vienna,299.57,Delivered On Time
+SHP-100272,2025-03-18,2025-03-23,2025-03-23,UPS,Cologne DC,Prague,342.69,Delivered On Time
+SHP-100273,2025-05-31,2025-06-04,2025-06-04,DB Schenker,Berlin DC,Vienna,139.95,Delivered On Time
+SHP-100274,2025-05-19,2025-05-24,2025-05-23,DB Schenker,Cologne DC,Paris,310.83,Delivered Late
+SHP-100275,2025-01-23,2025-01-27,2025-01-26,UPS,Munich Hub,Madrid,167.8,Delivered Late
+SHP-100276,2025-05-09,,2025-05-13,FedEx,Munich Hub,Amsterdam,137.07,Delivered On Time
+SHP-100277,2025-04-02,2025-04-09,2025-04-07,DB Schenker,Munich Hub,Zurich,385.17,Delivered Late
+SHP-100278,2025-04-16,2025-04-18,2025-04-18,DB Schenker,Berlin DC,Vienna,379.2,Delivered On Time
+SHP-100279,2025-02-16,2025-02-20,2025-02-20,Local Courier,Hamburg Port,Vienna,286.87,Delivered On Time
+SHP-100280,2025-04-21,2025-04-25,2025-04-24,UPS,Hamburg Port,Milan,323.72,Delivered Late
+SHP-100281,2025-05-25,2025-05-28,2025-05-28,Local Courier,Berlin DC,Warsaw,376.52,Delivered On Time
+SHP-100282,2025-01-29,2025-02-04,2025-02-02,Local Courier,Munich Hub,Paris,432.98,Delivered Late
+SHP-100283,2025-02-23,2025-02-28,2025-02-27,DHL Freight,Hamburg Port,Milan,310.46,Delivered Late
+SHP-100284,2025-03-13,2025-03-19,2025-03-19,DB Schenker,Cologne DC,Prague,419.9,Delivered On Time
+SHP-100285,2025-05-11,2025-05-13,2025-05-13,UPS,Cologne DC,Milan,287.76,Delivered On Time
+SHP-100286,2025-02-18,2025-02-23,2025-02-20,Local Courier,Hamburg Port,Warsaw,128.96,Delivered Late
+SHP-100287,2025-05-20,2025-05-24,2025-05-24,DHL Freight,Munich Hub,Zurich,194.84,Delivered On Time
+SHP-100288,2025-02-05,2025-02-08,2025-02-08,DB Schenker,Cologne DC,Prague,139.8,Delivered On Time
+SHP-100289,2025-02-04,2025-02-09,2025-02-08,UPS,Berlin DC,Zurich,265.7,Delivered Late
+SHP-100290,2025-05-21,2025-05-27,2025-05-26,UPS,Hamburg Port,Zurich,295.12,Delivered Late
+SHP-100291,2025-01-30,2025-02-02,2025-02-03,DB Schenker,Berlin DC,Vienna,105.42,Delivered On Time
+SHP-100292,2025-03-21,2025-03-31,2025-03-26,UPS,Berlin DC,Madrid,303.22,Delivered Late
+SHP-100293,2025-01-12,2025-01-14,2025-01-14,DB Schenker,Munich Hub,Amsterdam,296.93,Delivered On Time
+SHP-100294,2025-01-28,2025-02-05,2025-02-02,DB Schenker,Berlin DC,Vienna,359.32,Delivered Late
+SHP-100295,2025-03-15,2025-03-24,2025-03-21,FedEx,Cologne DC,Vienna,197.03,Delivered Late
+SHP-100296,2025-02-07,2025-02-11,2025-02-11,Local Courier,Munich Hub,Zurich,130.75,Delivered On Time
+SHP-100297,2025-04-08,2025-04-11,2025-04-11,FedEx,Munich Hub,Madrid,132.94,Delivered On Time
+SHP-100298,2025-03-03,2025-03-05,2025-03-05,Local Courier,Cologne DC,Milan,364.31,Delivered On Time
+SHP-100299,2025-02-10,2025-02-14,2025-02-14,DHL Freight,Cologne DC,Zurich,285.94,Delivered On Time
+SHP-100300,2025-01-23,2025-01-27,2025-01-25,DB Schenker,Cologne DC,Vienna,148.27,Delivered Late
+SHP-100301,2025-02-06,2025-02-10,2025-02-10,DHL Freight,Hamburg Port,Milan,1861.13,Delivered On Time
+SHP-100302,2025-02-12,2025-02-17,2025-02-17,DB Schenker,Cologne DC,Madrid,275.29,Delivered On Time
+SHP-100303,2025-04-20,2025-04-29,2025-04-26,UPS,Berlin DC,Milan,461.96,Delivered Late
+SHP-100304,2025-03-26,2025-04-01,2025-04-01,Local Courier,Munich Hub,Milan,409.38,Delivered On Time
+SHP-100305,2025-03-29,2025-04-06,2025-04-04,DHL Freight,Hamburg Port,Vienna,227.6,Delivered Late
+SHP-100306,2025-05-29,2025-06-02,2025-06-02,DB Schenker,Berlin DC,Madrid,258.16,Delivered On Time
+SHP-100307,2025-02-28,2025-03-08,2025-03-03,UPS,Hamburg Port,Amsterdam,238.14,Delivered Late
+SHP-100308,2025-05-16,2025-05-21,2025-05-20,UPS,Berlin DC,Prague,174.13,Delivered Late
+SHP-100309,2025-04-15,2025-04-18,2025-04-17,UPS,Cologne DC,Amsterdam,293.59,Delivered Late
+SHP-100310,2025-04-11,2025-04-17,2025-04-17,UPS,Berlin DC,Prague,323.94,Delivered On Time
+SHP-100311,2025-04-14,2025-04-17,2025-04-17,DHL Freight,Berlin DC,Paris,317.35,Delivered On Time
+SHP-100312,2025-02-04,2025-02-12,2025-02-09,DHL Freight,Hamburg Port,Vienna,355.78,Delivered Late
+SHP-100313,2025-04-04,2025-04-09,2025-04-08,DHL Freight,Munich Hub,Warsaw,127.14,Delivered Late
+SHP-100314,2025-05-06,2025-05-09,2025-05-08,FedEx,Berlin DC,Amsterdam,180.87,Delivered Late
+SHP-100315,2025-03-04,2025-03-08,2025-03-08,DB Schenker,Berlin DC,Paris,357.09,Delivered On Time
+SHP-100316,2025-05-05,2025-05-07,2025-05-07,FedEx,Cologne DC,Zurich,123.85,Delivered On Time
+SHP-100317,2025-02-06,2025-02-14,2025-02-12,Local Courier,Hamburg Port,Warsaw,377.25,Delivered Late
+SHP-100318,2025-05-05,2025-05-11,2025-05-11,DHL Freight,Cologne DC,Paris,141.84,Delivered On Time
+SHP-100319,2025-05-02,2025-05-05,2025-05-05,DB Schenker,Munich Hub,Milan,167.12,Delivered On Time
+SHP-100320,2025-03-26,2025-04-01,2025-04-01,UPS,Munich Hub,Paris,202.03,Delivered On Time
+SHP-100321,2025-05-28,2025-06-02,2025-06-02,FedEx,Berlin DC,Madrid,104.45,Delivered On Time
+SHP-100322,2025-03-05,2025-03-12,2025-03-10,Local Courier,Cologne DC,Paris,341.86,Delivered Late
+SHP-100323,2025-03-11,2025-03-13,2025-03-13,FedEx,Berlin DC,Madrid,245.72,Delivered On Time
+SHP-100324,2025-05-24,2025-05-28,2025-05-26,DB Schenker,Hamburg Port,Amsterdam,189.17,Delivered Late
+SHP-100325,2025-01-19,2025-01-28,2025-01-23,FedEx,Cologne DC,Madrid,319.87,Delivered Late
+SHP-100326,2025-03-27,2025-03-30,2025-03-29,FedEx,Munich Hub,Prague,251.74,Delivered Late
+SHP-100327,2025-02-08,2025-02-11,2025-02-11,DB Schenker,Hamburg Port,Milan,219.56,Delivered On Time
+SHP-100328,2025-05-31,2025-06-02,2025-06-02,FedEx,Munich Hub,Warsaw,296.51,Delivered On Time
+SHP-100329,2025-01-19,2025-01-22,2025-01-22,DHL Freight,Cologne DC,Zurich,165.59,Delivered On Time
+SHP-100330,2025-01-18,2025-01-23,2025-01-23,UPS,Munich Hub,Warsaw,385.73,Delivered On Time
+SHP-100331,2025-03-02,2025-03-04,2025-03-04,DB Schenker,Berlin DC,Prague,130.59,Delivered On Time
+SHP-100332,2025-02-20,2025-02-24,2025-02-23,UPS,Munich Hub,Paris,128.55,Delivered Late
+SHP-100333,2025-02-04,2025-02-06,2025-02-06,Local Courier,Munich Hub,Paris,279.33,Delivered On Time
+SHP-100334,2025-01-07,2025-01-12,2025-01-12,FedEx,Munich Hub,Zurich,109.27,Delivered On Time
+SHP-100335,2025-05-07,2025-05-13,2025-05-13,DB Schenker,Munich Hub,Paris,100.8,Delivered On Time
+SHP-100336,2025-01-15,2025-01-20,2025-01-20,FedEx,Berlin DC,Zurich,102.65,Delivered On Time
+SHP-100337,2025-04-02,2025-04-06,2025-04-06,Local Courier,Munich Hub,Zurich,300.73,Delivered On Time
+SHP-100338,2025-05-03,2025-05-06,2025-05-05,FedEx,Munich Hub,Prague,247.03,Delivered Late
+SHP-100339,2025-02-03,2025-02-06,2025-02-07,DB Schenker,Hamburg Port,Amsterdam,294.92,Delivered On Time
+SHP-100340,2025-04-13,2025-04-18,2025-04-15,Local Courier,Hamburg Port,Zurich,138.9,Delivered Late
+SHP-100341,2025-03-08,2025-03-14,2025-03-14,UPS,Berlin DC,Zurich,414.8,Delivered On Time
+SHP-100342,2025-03-31,2025-04-03,2025-04-03,DB Schenker,Cologne DC,Vienna,270.75,Delivered On Time
+SHP-100343,2025-02-24,2025-03-01,2025-02-28,DHL Freight,Cologne DC,Amsterdam,272.97,Delivered Late
+SHP-100344,2025-03-31,2025-04-02,2025-04-02,DB Schenker,Hamburg Port,Milan,348.95,Delivered On Time
+SHP-100345,2025-01-08,2025-01-11,2025-01-12,DB Schenker,Munich Hub,Vienna,136.11,Delivered On Time
+SHP-100346,2025-03-18,2025-03-23,2025-03-23,Local Courier,Hamburg Port,Zurich,279.18,Delivered On Time
+SHP-100347,2025-03-18,2025-03-22,2025-03-22,DHL Freight,Cologne DC,Prague,349.31,Delivered On Time
+SHP-100348,2025-02-24,2025-03-02,2025-03-02,UPS,Cologne DC,Madrid,145.7,Delivered On Time
+SHP-100349,2025-02-05,2025-02-09,2025-02-09,DHL Freight,Hamburg Port,Zurich,368.37,Delivered On Time
+SHP-100350,2025-05-09,2025-05-13,2025-05-13,UPS,Cologne DC,Prague,280.17,Delivered On Time
+SHP-100351,2025-03-27,2025-03-29,2025-03-29,UPS,Cologne DC,Paris,76.18,Delivered On Time
+SHP-100352,2025-01-27,2025-01-29,2025-01-29,FedEx,Hamburg Port,Amsterdam,332.76,Delivered On Time
+SHP-100353,2025-05-15,2025-05-19,2025-05-20,UPS,Munich Hub,Zurich,289.91,Delivered On Time
+SHP-100354,2025-05-08,2025-05-10,2025-05-10,UPS,Munich Hub,Vienna,290.23,Delivered On Time
+SHP-100355,2025-03-10,2025-03-17,2025-03-12,UPS,Berlin DC,Paris,254.33,Delivered Late
+SHP-100356,2025-03-25,2025-03-27,2025-03-27,Local Courier,Munich Hub,Warsaw,243.85,Delivered On Time
+SHP-100357,2025-04-13,2025-04-18,2025-04-18,DB Schenker,Cologne DC,Milan,398.49,Delivered On Time
+SHP-100358,2025-02-06,2025-02-08,2025-02-08,Local Courier,Hamburg Port,Warsaw,291.03,Delivered On Time
+SHP-100359,2025-01-30,2025-02-03,2025-02-01,DHL Freight,Cologne DC,Paris,218.33,Delivered Late
+SHP-100360,2025-05-21,2025-05-25,2025-05-25,Local Courier,Munich Hub,Paris,244.81,Delivered On Time
+SHP-100361,2025-05-20,2025-05-25,2025-05-25,DB Schenker,Munich Hub,Madrid,316.02,Delivered On Time
+SHP-100362,2025-01-19,2025-01-25,2025-01-25,Local Courier,Munich Hub,Warsaw,220.05,Delivered On Time
+SHP-100363,2025-05-14,2025-05-20,2025-05-20,UPS,Hamburg Port,Zurich,150.55,Delivered On Time
+SHP-100364,2025-05-16,2025-05-20,2025-05-19,UPS,Berlin DC,Zurich,143.54,Delivered Late
+SHP-100365,2025-03-24,2025-03-29,2025-03-29,DB Schenker,Munich Hub,Amsterdam,241.57,Delivered On Time
+SHP-100366,2025-04-02,2025-04-08,2025-04-08,DB Schenker,Berlin DC,Amsterdam,177.86,Delivered On Time
+SHP-100367,2025-04-26,2025-05-02,2025-05-01,UPS,Hamburg Port,Zurich,78.85,Delivered Late
+SHP-100368,2025-04-05,2025-04-11,2025-04-11,DB Schenker,Berlin DC,Warsaw,88.52,Delivered On Time
+SHP-100369,2025-02-15,2025-02-20,2025-02-19,FedEx,Cologne DC,Madrid,161.87,Delivered Late
+SHP-100370,2025-01-23,2025-01-26,2025-01-26,FedEx,Berlin DC,Madrid,376.86,Delivered On Time
+SHP-100371,2025-03-17,2025-03-22,2025-03-22,Local Courier,Hamburg Port,Warsaw,201.02,Delivered On Time
+SHP-100372,2025-05-29,2025-06-02,2025-06-02,UPS,Cologne DC,Madrid,336.01,Delivered On Time
+SHP-100373,2025-05-15,2025-05-20,2025-05-20,DHL Freight,Cologne DC,Amsterdam,282.88,Delivered On Time
+SHP-100374,2025-04-17,2025-04-22,2025-04-22,DHL Freight,Berlin DC,Prague,197.91,Delivered On Time
+SHP-100375,2025-03-01,2025-03-04,2025-03-04,DHL Freight,Berlin DC,Warsaw,262.43,Delivered On Time
+SHP-100376,2025-01-24,2025-01-29,2025-01-27,Local Courier,Cologne DC,Paris,100.52,Delivered Late
+SHP-100377,2025-01-15,2025-01-19,2025-01-18,DB Schenker,Hamburg Port,Paris,274.9,Delivered Late
+SHP-100378,2025-04-15,2025-04-19,2025-04-17,UPS,Munich Hub,Madrid,1058.34,Delivered Late
+SHP-100379,2025-05-14,2025-05-18,2025-05-18,DB Schenker,Cologne DC,Warsaw,285.87,Delivered On Time
+SHP-100380,2025-01-14,2025-01-18,2025-01-18,DB Schenker,Berlin DC,Milan,344.81,Delivered On Time
+SHP-100381,2025-02-23,2025-03-01,2025-03-01,DB Schenker,Munich Hub,Prague,303.61,Delivered On Time
+SHP-100382,2025-02-21,2025-03-01,2025-02-26,Local Courier,Munich Hub,Paris,306.86,Delivered Late
+SHP-100383,2025-01-10,2025-01-14,2025-01-14,DB Schenker,Cologne DC,Warsaw,133.5,Delivered On Time
+SHP-100384,2025-04-14,2025-04-19,2025-04-19,UPS,Hamburg Port,Paris,179.35,Delivered On Time
+SHP-100385,2025-01-19,2025-01-25,2025-01-25,DHL Freight,Munich Hub,Zurich,281.04,Delivered On Time
+SHP-100386,2025-02-24,2025-03-04,2025-03-02,UPS,Berlin DC,Vienna,290.32,Delivered Late
+SHP-100387,2025-01-13,2025-01-18,2025-01-18,FedEx,Hamburg Port,Prague,290.96,Delivered On Time
+SHP-100388,2025-01-11,2025-01-16,2025-01-14,FedEx,Hamburg Port,Vienna,395.97,Delivered Late
+SHP-100389,2025-03-21,2025-03-25,2025-03-25,UPS,Berlin DC,Zurich,395.95,Delivered On Time
+SHP-100390,2025-03-25,2025-03-30,2025-03-30,FedEx,Hamburg Port,Vienna,318.83,Delivered On Time
+SHP-100391,2025-02-17,2025-02-22,2025-02-22,DB Schenker,Hamburg Port,Amsterdam,98.97,Delivered On Time
+SHP-100392,2025-05-15,2025-05-21,2025-05-21,DB Schenker,Berlin DC,Madrid,137.29,Delivered On Time
+SHP-100393,2025-02-21,2025-02-26,2025-02-26,FedEx,Hamburg Port,Amsterdam,158.95,Delivered On Time
+SHP-100394,2025-05-29,2025-06-02,2025-06-02,Local Courier,Munich Hub,Amsterdam,384.9,Delivered On Time
+SHP-100395,2025-01-13,2025-01-16,2025-01-16,DB Schenker,Munich Hub,Prague,163.85,Delivered On Time
+SHP-100396,2025-01-18,2025-01-24,2025-01-24,Local Courier,Berlin DC,Amsterdam,366.61,Delivered On Time
+SHP-100397,2025-01-11,2025-01-17,2025-01-17,DB Schenker,Hamburg Port,Zurich,268.4,Delivered On Time
+SHP-100398,2025-04-03,2025-04-06,2025-04-06,DHL Freight,Munich Hub,Madrid,82.65,Delivered On Time
+SHP-100399,2025-02-08,2025-02-12,2025-02-12,,Munich Hub,Amsterdam,121.82,Delivered On Time
+SHP-100400,2025-04-30,2025-05-03,2025-05-03,Local Courier,Cologne DC,Paris,230.57,Delivered On Time
+SHP-100401,2025-05-23,2025-05-31,2025-05-26,UPS,Cologne DC,Vienna,358.91,Delivered Late
+SHP-100402,2025-05-27,2025-05-30,2025-05-30,UPS,Berlin DC,Amsterdam,298.97,Delivered On Time
+SHP-100403,2025-04-19,2025-04-24,2025-04-24,DHL Freight,Hamburg Port,Warsaw,251.65,Delivered On Time
+SHP-100404,2025-03-01,2025-03-04,2025-03-04,Local Courier,Berlin DC,Paris,318.26,Delivered On Time
+SHP-100405,2025-01-11,2025-01-14,2025-01-14,UPS,Hamburg Port,Warsaw,196.82,Delivered On Time
+SHP-100406,2025-01-03,2025-01-10,2025-01-07,DB Schenker,Hamburg Port,Milan,157.54,Delivered Late
+SHP-100407,2025-02-08,2025-02-13,2025-02-12,UPS,Berlin DC,Vienna,404.14,Delivered Late
+SHP-100408,2025-01-01,2025-01-06,2025-01-06,Local Courier,Hamburg Port,Madrid,403.38,Delivered On Time
+SHP-100409,2025-01-13,2025-01-18,2025-01-17,DHL Freight,Cologne DC,Madrid,303.56,Delivered Late
+SHP-100410,2025-02-04,2025-02-10,2025-02-08,FedEx,Hamburg Port,Paris,372.82,Delivered Late
+SHP-100411,2025-04-22,2025-04-29,2025-04-27,Local Courier,Berlin DC,Warsaw,366.04,Delivered Late
+SHP-100412,2025-01-18,2025-01-23,2025-01-22,UPS,Cologne DC,Vienna,157.02,Delivered Late
+SHP-100413,2025-05-28,2025-05-30,2025-05-30,DB Schenker,Munich Hub,Madrid,323.97,Delivered On Time
+SHP-100414,2025-04-20,2025-04-23,2025-04-24,DB Schenker,Cologne DC,Paris,393.3,Delivered On Time
+SHP-100415,2025-03-18,2025-03-23,2025-03-23,Local Courier,Berlin DC,Vienna,116.0,Delivered On Time
+SHP-100416,2025-03-16,2025-03-20,2025-03-20,FedEx,Hamburg Port,Zurich,305.73,Delivered On Time
+SHP-100417,2025-01-31,2025-02-03,2025-02-03,DHL Freight,Hamburg Port,Milan,323.43,Delivered On Time
+SHP-100418,2025-04-03,2025-04-06,2025-04-06,Local Courier,Hamburg Port,Milan,165.5,Delivered On Time
+SHP-100419,2025-02-11,2025-02-16,2025-02-16,DHL Freight,Munich Hub,Zurich,112.2,Delivered On Time
+SHP-100420,2025-04-01,2025-04-08,2025-04-03,Local Courier,Cologne DC,Milan,186.77,Delivered Late
+SHP-100421,2025-01-20,2025-01-26,2025-01-26,DB Schenker,Cologne DC,Warsaw,400.99,Delivered On Time
+SHP-100422,2025-05-14,2025-05-19,2025-05-16,DB Schenker,Berlin DC,Prague,246.0,Delivered Late
+SHP-100423,2025-05-23,2025-05-28,2025-05-28,Local Courier,Munich Hub,Zurich,346.27,Delivered On Time
+SHP-100424,2025-05-04,2025-05-06,2025-05-07,FedEx,Cologne DC,Zurich,135.38,Delivered On Time
+SHP-100425,2025-02-14,2025-02-20,2025-02-20,FedEx,Cologne DC,Vienna,204.31,Delivered On Time
+SHP-100426,2025-01-22,2025-01-27,2025-01-27,FedEx,Berlin DC,Warsaw,223.44,Delivered On Time
+SHP-100427,2025-05-17,2025-05-23,2025-05-21,UPS,Munich Hub,Paris,179.58,Delivered Late
+SHP-100428,2025-01-14,2025-01-20,2025-01-20,DB Schenker,Cologne DC,Madrid,387.68,Delivered On Time
+SHP-100429,2025-02-20,2025-02-26,2025-02-26,DB Schenker,Cologne DC,Milan,122.34,Delivered On Time
+SHP-100430,2025-05-01,2025-05-05,2025-05-05,Local Courier,Munich Hub,Prague,240.26,Delivered On Time
+SHP-100431,2025-01-12,2025-01-15,2025-01-15,Local Courier,Berlin DC,Prague,299.93,Delivered On Time
+SHP-100432,2025-03-12,2025-03-17,2025-03-17,DB Schenker,Berlin DC,Warsaw,341.23,Delivered On Time
+SHP-100433,2025-01-11,2025-01-19,2025-01-17,Local Courier,Hamburg Port,Warsaw,291.73,Delivered Late
+SHP-100434,2025-01-18,2025-01-24,2025-01-24,Local Courier,Hamburg Port,Milan,391.13,Delivered On Time
+SHP-100435,2025-02-15,2025-02-18,2025-02-17,DB Schenker,Hamburg Port,Madrid,202.18,Delivered Late
+SHP-100436,2025-02-06,2025-02-13,2025-02-12,DB Schenker,Cologne DC,Warsaw,145.67,Delivered Late
+SHP-100437,2025-01-18,2025-01-23,2025-01-24,Local Courier,Munich Hub,Vienna,274.01,Delivered On Time
+SHP-100438,2025-02-03,2025-02-06,2025-02-06,UPS,Cologne DC,Amsterdam,377.42,Delivered On Time
+SHP-100439,2025-03-15,2025-03-18,2025-03-18,DB Schenker,Munich Hub,Warsaw,312.83,Delivered On Time
+SHP-100440,2025-02-24,2025-02-27,2025-02-27,FedEx,Munich Hub,Amsterdam,197.77,Delivered On Time
+SHP-100441,2025-02-25,2025-02-27,2025-02-27,UPS,Berlin DC,Prague,139.12,Delivered On Time
+SHP-100442,2025-01-11,2025-01-19,2025-01-17,DHL Freight,Munich Hub,Prague,215.88,Delivered Late
+SHP-100443,2025-05-16,2025-05-22,2025-05-22,Local Courier,Berlin DC,Vienna,237.39,Delivered On Time
+SHP-100444,2025-02-27,2025-03-01,2025-03-02,Local Courier,Berlin DC,Warsaw,186.57,Delivered On Time
+SHP-100445,2025-05-30,2025-06-01,2025-06-01,Local Courier,Munich Hub,Milan,146.25,Delivered On Time
+SHP-100446,2025-05-17,2025-05-21,2025-05-21,FedEx,Cologne DC,Amsterdam,294.32,Delivered On Time
+SHP-100447,2025-02-18,2025-02-22,2025-02-22,DHL Freight,Berlin DC,Milan,153.19,Delivered On Time
+SHP-100448,2025-04-23,2025-04-27,2025-04-26,UPS,Munich Hub,Warsaw,164.28,Delivered Late
+SHP-100449,2025-01-06,2025-01-13,2025-01-12,DHL Freight,Munich Hub,Madrid,136.67,Delivered Late
+SHP-100450,2025-05-23,2025-05-27,2025-05-27,Local Courier,Hamburg Port,Madrid,390.41,Delivered On Time
+SHP-100451,2025-04-01,2025-04-08,2025-04-06,DB Schenker,Cologne DC,Amsterdam,1184.175,Delivered Late
+SHP-100452,2025-05-05,2025-05-10,2025-05-07,FedEx,Munich Hub,Prague,415.68,Delivered Late
+SHP-100453,2025-05-11,2025-05-16,2025-05-16,FedEx,Cologne DC,Paris,373.65,Delivered On Time
+SHP-100454,2025-04-09,2025-04-13,2025-04-12,DB Schenker,Cologne DC,Zurich,108.21,Delivered Late
+SHP-100455,2025-01-08,2025-01-11,2025-01-10,DHL Freight,Berlin DC,Prague,310.72,Delivered Late
+SHP-100456,2025-03-24,2025-03-28,2025-03-28,DB Schenker,Munich Hub,Prague,1296.14,Delivered On Time
+SHP-100457,2025-04-08,2025-04-10,2025-04-10,UPS,Cologne DC,Vienna,205.95,Delivered On Time
+SHP-100458,2025-01-18,2025-01-25,2025-01-24,DHL Freight,Hamburg Port,Prague,187.62,Delivered Late
+SHP-100459,2025-05-01,2025-05-06,2025-05-06,DHL Freight,Hamburg Port,Prague,256.9,Delivered On Time
+SHP-100460,2025-01-02,2025-01-07,2025-01-07,UPS,Berlin DC,Paris,202.71,Delivered On Time
+SHP-100461,2025-01-10,2025-01-15,2025-01-15,UPS,Cologne DC,Vienna,311.65,Delivered On Time
+SHP-100462,2025-03-09,2025-03-11,2025-03-11,DHL Freight,Berlin DC,Prague,293.67,Delivered On Time
+SHP-100463,2025-02-17,2025-02-21,2025-02-20,UPS,Berlin DC,Madrid,135.71,Delivered Late
+SHP-100464,2025-01-19,2025-01-21,2025-01-21,DHL Freight,Cologne DC,Amsterdam,293.01,Delivered On Time
+SHP-100465,2025-04-12,2025-04-14,2025-04-14,UPS,Hamburg Port,Paris,123.78,Delivered On Time
+SHP-100466,2025-02-01,2025-02-04,2025-02-04,DHL Freight,Hamburg Port,Amsterdam,242.47,Delivered On Time
+SHP-100467,2025-01-26,2025-01-28,2025-01-28,FedEx,Munich Hub,Warsaw,296.59,Delivered On Time
+SHP-100468,2025-02-19,2025-02-21,2025-02-21,DHL Freight,Cologne DC,Amsterdam,288.64,Delivered On Time
+SHP-100469,2025-04-27,2025-05-05,2025-05-02,Local Courier,Berlin DC,Vienna,447.48,Delivered Late
+SHP-100470,2025-01-16,2025-01-18,2025-01-18,UPS,Munich Hub,Milan,306.29,Delivered On Time
+SHP-100471,2025-04-24,2025-04-29,2025-04-28,FedEx,Hamburg Port,Warsaw,333.11,Delivered Late
+SHP-100472,2025-04-24,2025-05-02,2025-04-27,DB Schenker,Berlin DC,Madrid,189.17,Delivered Late
+SHP-100473,2025-03-29,2025-04-01,2025-04-01,FedEx,Munich Hub,Madrid,86.93,Delivered On Time
+SHP-100474,2025-01-21,2025-01-27,2025-01-27,DHL Freight,Berlin DC,Madrid,229.45,Delivered On Time
+SHP-100475,2025-04-28,2025-05-01,2025-05-01,DHL Freight,Berlin DC,Vienna,369.38,Delivered On Time
+SHP-100476,2025-02-24,2025-02-27,2025-02-27,DHL Freight,Cologne DC,Warsaw,196.15,Delivered On Time
+SHP-100477,2025-02-12,2025-02-17,2025-02-16,,Hamburg Port,Madrid,145.7,Delivered Late
+SHP-100478,2025-03-08,2025-03-19,2025-03-14,Local Courier,Munich Hub,Zurich,386.72,Delivered Late
+SHP-100479,2025-01-20,2025-01-23,2025-01-22,Local Courier,Cologne DC,Paris,80.49,Delivered Late
+SHP-100480,2025-05-11,2025-05-18,2025-05-15,DB Schenker,Hamburg Port,Zurich,381.15,Delivered Late
+SHP-100481,2025-04-24,2025-04-28,2025-04-26,DB Schenker,Hamburg Port,Madrid,172.15,Delivered Late
+SHP-100482,2025-01-28,2025-02-01,2025-01-31,FedEx,Berlin DC,Warsaw,304.07,Delivered Late
+SHP-100483,2025-02-10,2025-02-16,2025-02-16,FedEx,Berlin DC,Zurich,120.96,Delivered On Time
+SHP-100484,2025-04-09,2025-04-13,2025-04-13,Local Courier,Hamburg Port,Vienna,94.3,Delivered On Time
+SHP-100485,2025-04-01,2025-04-05,2025-04-05,UPS,Hamburg Port,Zurich,216.74,Delivered On Time
+SHP-100486,2025-05-14,2025-05-18,2025-05-16,UPS,Hamburg Port,Warsaw,352.14,Delivered Late
+SHP-100487,2025-02-26,2025-03-05,2025-03-03,UPS,Cologne DC,Prague,154.35,Delivered Late
+SHP-100488,2025-04-05,2025-04-08,2025-04-08,DB Schenker,Cologne DC,Prague,213.62,Delivered On Time
+SHP-100489,2025-01-24,2025-01-29,2025-01-29,DB Schenker,Hamburg Port,Zurich,381.14,Delivered On Time
+SHP-100490,2025-01-18,2025-01-22,2025-01-22,DB Schenker,Hamburg Port,Vienna,386.9,Delivered On Time
+SHP-100491,2025-05-04,2025-05-07,2025-05-07,DB Schenker,Hamburg Port,Amsterdam,91.19,Delivered On Time
+SHP-100492,2025-05-11,2025-05-15,2025-05-15,DHL Freight,Hamburg Port,Prague,194.12,Delivered On Time
+SHP-100493,2025-01-20,2025-01-25,2025-01-25,DHL Freight,Cologne DC,Vienna,206.48,Delivered On Time
+SHP-100494,2025-05-04,2025-05-08,2025-05-08,DHL Freight,Hamburg Port,Paris,301.12,Delivered On Time
+SHP-100495,2025-05-08,2025-05-14,2025-05-14,FedEx,Berlin DC,Zurich,263.69,Delivered On Time
+SHP-100496,2025-04-05,2025-04-09,2025-04-08,DHL Freight,Berlin DC,Prague,349.3,Delivered Late
+SHP-100497,2025-03-15,2025-03-25,2025-03-20,UPS,Cologne DC,Warsaw,401.82,Delivered Late
+SHP-100498,2025-01-07,2025-01-09,2025-01-10,DB Schenker,Cologne DC,Vienna,81.4,Delivered On Time
+SHP-100499,2025-02-24,2025-03-05,2025-03-02,UPS,Hamburg Port,Prague,268.15,Delivered Late
+SHP-100500,2025-03-24,2025-03-26,2025-03-26,FedEx,Hamburg Port,Milan,263.28,Delivered On Time
+SHP-100501,2025-03-03,2025-03-05,2025-03-05,FedEx,Munich Hub,Prague,216.41,Delivered On Time
+SHP-100502,2025-03-03,2025-03-09,2025-03-09,DB Schenker,Munich Hub,Zurich,439.37,Delivered On Time
+SHP-100503,2025-01-15,,2025-01-18,UPS,Hamburg Port,Amsterdam,259.22,Delivered On Time
+SHP-100504,2025-02-08,2025-02-17,2025-02-12,DB Schenker,Berlin DC,Amsterdam,209.67,Delivered Late
+SHP-100505,2025-03-16,2025-03-18,2025-03-18,UPS,Berlin DC,Zurich,198.41,Delivered On Time
+SHP-100506,2025-04-25,2025-04-28,2025-04-28,Local Courier,Berlin DC,Madrid,380.23,Delivered On Time
+SHP-100507,2025-03-06,2025-03-12,2025-03-12,FedEx,Berlin DC,Vienna,277.36,Delivered On Time
+SHP-100508,2025-01-15,2025-01-21,2025-01-21,UPS,Hamburg Port,Madrid,321.08,Delivered On Time
+SHP-100509,2025-04-30,2025-05-05,2025-05-04,UPS,Cologne DC,Milan,158.25,Delivered Late
+SHP-100510,2025-02-04,2025-02-07,2025-02-07,FedEx,Hamburg Port,Milan,297.15,Delivered On Time
+SHP-100511,2025-02-25,2025-03-01,2025-03-01,Local Courier,Cologne DC,Zurich,373.79,Delivered On Time
+SHP-100512,2025-05-30,2025-06-07,2025-06-04,Local Courier,Cologne DC,Madrid,268.69,Delivered Late
+SHP-100513,2025-01-05,2025-01-08,2025-01-08,DHL Freight,Hamburg Port,Warsaw,346.67,Delivered On Time
+SHP-100514,2025-04-05,2025-04-09,2025-04-09,UPS,Berlin DC,Amsterdam,296.74,Delivered On Time
+SHP-100515,2025-02-20,2025-02-22,2025-02-22,DB Schenker,Berlin DC,Warsaw,81.6,Delivered On Time
+SHP-100516,2025-03-05,2025-03-07,2025-03-07,UPS,Berlin DC,Warsaw,358.38,Delivered On Time
+SHP-100517,2025-01-30,2025-02-04,2025-02-01,UPS,Munich Hub,Zurich,216.55,Delivered Late
+SHP-100518,2025-04-17,2025-04-24,2025-04-22,FedEx,Berlin DC,Paris,390.73,Delivered Late
+SHP-100519,2025-01-14,2025-01-18,2025-01-18,FedEx,Berlin DC,Madrid,225.46,Delivered On Time
+SHP-100013,2025-01-04,2025-01-11,2025-01-09,UPS,Munich Hub,Warsaw,173.93,Delivered Late
+SHP-100214,2025-02-05,2025-02-15,2025-02-10,DB Schenker,Hamburg Port,Paris,345.15,Delivered Late
+SHP-100388,2025-01-11,2025-01-16,2025-01-14,FedEx,Hamburg Port,Vienna,395.97,Delivered Late

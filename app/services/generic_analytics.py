@@ -21,6 +21,7 @@ class GenericAnalyticsResult:
     aggregated: pd.DataFrame
     insights: list[str]
     rows_used: int
+    measure_columns: list[str]
 
 
 def get_numeric_columns(df: pd.DataFrame) -> list[str]:
@@ -62,10 +63,17 @@ def _parse_dates(series: pd.Series) -> pd.Series:
         return pd.to_datetime(series, errors="coerce", infer_datetime_format=True)
 
 
+def _normalize_measures(numeric_columns: str | list[str]) -> list[str]:
+    if isinstance(numeric_columns, str):
+        return [numeric_columns]
+    return list(dict.fromkeys(numeric_columns))
+
+
 def build_generic_analytics(
     df: pd.DataFrame,
     *,
-    numeric_column: str,
+    numeric_column: str | None = None,
+    numeric_columns: list[str] | None = None,
     aggregation: str,
     category_column: str | None = None,
     date_column: str | None = None,
@@ -73,18 +81,23 @@ def build_generic_analytics(
     """Aggregate an arbitrary dataframe without assuming domain meaning."""
     if aggregation not in AGGREGATIONS:
         raise ValueError(f"Unsupported aggregation: {aggregation}")
-    if numeric_column not in df.columns:
-        raise ValueError(f"Numeric column not found: {numeric_column}")
+    measures = _normalize_measures(numeric_columns or numeric_column or [])
+    if not measures:
+        raise ValueError("Select at least one numeric measure.")
+    missing_measures = [column for column in measures if column not in df.columns]
+    if missing_measures:
+        raise ValueError(f"Numeric columns not found: {', '.join(missing_measures)}")
     if category_column and category_column not in df.columns:
         raise ValueError(f"Category column not found: {category_column}")
     if date_column and date_column not in df.columns:
         raise ValueError(f"Date column not found: {date_column}")
 
     working = df.copy()
-    working["_measure"] = pd.to_numeric(working[numeric_column], errors="coerce")
-    selected_columns = [numeric_column]
-    group_columns: list[str] = []
+    selected_columns = list(measures)
+    for measure in measures:
+        working[measure] = pd.to_numeric(working[measure], errors="coerce")
 
+    group_columns: list[str] = []
     if category_column:
         working["_category"] = working[category_column].astype("string").fillna("Missing")
         group_columns.append("_category")
@@ -97,51 +110,57 @@ def build_generic_analytics(
         group_columns.insert(0, "_period")
         selected_columns.append(date_column)
 
-    rows_before_measure_filter = len(working)
-    working = working[working["_measure"].notna()].copy()
+    rows_after_date_filter = len(working)
+    working = working[working[measures].notna().any(axis=1)].copy()
     rows_used = len(working)
-
     if working.empty:
         raise ValueError("No rows remain after parsing the selected numeric/date columns.")
 
     agg_method = AGGREGATIONS[aggregation]
     if group_columns:
-        aggregated = (
-            working.groupby(group_columns, dropna=False, as_index=False)
-            .agg(value=("_measure", agg_method), rows=("_measure", "count"))
+        aggregated = working.groupby(group_columns, dropna=False, as_index=False).agg(
+            **{measure: (measure, agg_method) for measure in measures},
+            rows=(measures[0], "size"),
         )
     else:
         aggregated = pd.DataFrame(
             {
-                "metric": [f"{aggregation}_{numeric_column}"],
-                "value": [getattr(working["_measure"], agg_method)()],
+                "metric": [aggregation],
+                **{measure: [getattr(working[measure], agg_method)()] for measure in measures},
                 "rows": [rows_used],
             }
         )
 
-    rename_map = {"_category": category_column or "category", "_period": "period"}
-    aggregated = aggregated.rename(columns=rename_map)
-    if "value" in aggregated.columns:
-        aggregated["value"] = aggregated["value"].round(2)
+    aggregated = aggregated.rename(columns={"_category": category_column or "category", "_period": "period"})
+    for measure in measures:
+        if measure in aggregated.columns:
+            aggregated[measure] = aggregated[measure].round(2)
+    if len(measures) == 1 and measures[0] in aggregated.columns:
+        aggregated["value"] = aggregated[measures[0]]
 
     insights = build_generic_insights(
-        df,
-        aggregated,
-        numeric_column=numeric_column,
+        source_df=df,
+        aggregated=aggregated,
+        measures=measures,
         aggregation=aggregation,
         selected_columns=selected_columns,
         rows_used=rows_used,
-        rows_after_date_filter=rows_before_measure_filter,
+        rows_after_date_filter=rows_after_date_filter,
         category_column=category_column,
     )
-    return GenericAnalyticsResult(aggregated=aggregated, insights=insights, rows_used=rows_used)
+    return GenericAnalyticsResult(
+        aggregated=aggregated,
+        insights=insights,
+        rows_used=rows_used,
+        measure_columns=measures,
+    )
 
 
 def build_generic_insights(
     source_df: pd.DataFrame,
     aggregated: pd.DataFrame,
     *,
-    numeric_column: str,
+    measures: list[str],
     aggregation: str,
     selected_columns: list[str],
     rows_used: int,
@@ -150,22 +169,27 @@ def build_generic_insights(
 ) -> list[str]:
     """Create transparent observations from the generic aggregation."""
     insights = [
-        f"Aggregation used: {aggregation} of {numeric_column}.",
         f"Rows used: {rows_used:,}.",
+        f"Measures selected: {', '.join(measures)}.",
+        f"Aggregation used: {aggregation}.",
     ]
     if rows_after_date_filter != len(source_df):
         insights.append(f"Rows after date parsing filter: {rows_after_date_filter:,}.")
 
-    missing_parts = []
-    for column in dict.fromkeys(selected_columns):
-        missing_parts.append(f"{column}: {int(source_df[column].isna().sum()):,}")
+    missing_parts = [
+        f"{column}: {int(source_df[column].isna().sum()):,}"
+        for column in dict.fromkeys(selected_columns)
+    ]
     insights.append("Missing values in selected columns: " + "; ".join(missing_parts) + ".")
 
     if category_column and category_column in aggregated.columns and not aggregated.empty:
-        ranked = aggregated.sort_values("value", ascending=False)
-        top = ranked.iloc[0]
-        bottom = ranked.iloc[-1]
-        insights.append(f"Highest {category_column}: {top[category_column]} ({top['value']:,.2f}).")
-        insights.append(f"Lowest {category_column}: {bottom[category_column]} ({bottom['value']:,.2f}).")
+        for measure in measures:
+            if measure not in aggregated.columns:
+                continue
+            ranked = aggregated.sort_values(measure, ascending=False)
+            top = ranked.iloc[0]
+            bottom = ranked.iloc[-1]
+            insights.append(f"Highest {category_column} for {measure}: {top[category_column]} ({top[measure]:,.2f}).")
+            insights.append(f"Lowest {category_column} for {measure}: {bottom[category_column]} ({bottom[measure]:,.2f}).")
 
     return insights

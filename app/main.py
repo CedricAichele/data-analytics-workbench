@@ -38,7 +38,7 @@ with layer_cols[1]:
     st.caption("Templates use mapped fields for KPI logic but do not remove extra columns.")
 
 st.subheader("Workflow")
-cols = st.columns(6)
+cols = st.columns(7)
 steps = [
     ("1", "Upload", "Load CSV, XLSX, JSON, or a sample dataset."),
     ("2", "Profile", "Inspect structure, missingness, types, and quality."),
@@ -46,6 +46,7 @@ steps = [
     ("4", "Explore", "Use Generic Analytics when no template fits."),
     ("5", "Map", "Map domain fields for KPI templates."),
     ("6", "Summarize", "Review KPI outputs and management narrative."),
+    ("7", "Export", "Download working data, logs, and result tables."),
 ]
 for col, (number, label, text) in zip(cols, steps):
     with col:
@@ -82,12 +83,20 @@ with st.expander("Current readiness"):
     has_working = "working_df" in st.session_state
     has_retail_mapping = "column_mapping" in st.session_state
     has_manufacturing_mapping = "manufacturing_mapping" in st.session_state
+    has_logistics_mapping = "logistics_mapping" in st.session_state
+    has_finance_mapping = "finance_mapping" in st.session_state
     has_retail_analytics = "retail_analytics_result" in st.session_state
     has_manufacturing_analytics = "manufacturing_analytics_result" in st.session_state
-    readiness_cols = st.columns(3)
+    has_logistics_analytics = "logistics_analytics_result" in st.session_state
+    has_finance_analytics = "finance_analytics_result" in st.session_state
+    readiness_cols = st.columns(4)
     readiness_cols[0].checkbox("Dataset loaded", value=has_data, disabled=True)
     readiness_cols[0].checkbox("Working copy ready", value=has_working, disabled=True)
     readiness_cols[1].checkbox("Sales mapping saved", value=has_retail_mapping, disabled=True)
     readiness_cols[1].checkbox("Manufacturing mapping saved", value=has_manufacturing_mapping, disabled=True)
-    readiness_cols[2].checkbox("Sales analytics calculated", value=has_retail_analytics, disabled=True)
-    readiness_cols[2].checkbox("Manufacturing analytics calculated", value=has_manufacturing_analytics, disabled=True)
+    readiness_cols[2].checkbox("Logistics mapping saved", value=has_logistics_mapping, disabled=True)
+    readiness_cols[2].checkbox("Finance mapping saved", value=has_finance_mapping, disabled=True)
+    readiness_cols[3].checkbox("Sales analytics calculated", value=has_retail_analytics, disabled=True)
+    readiness_cols[3].checkbox("Manufacturing analytics calculated", value=has_manufacturing_analytics, disabled=True)
+    readiness_cols[3].checkbox("Logistics analytics calculated", value=has_logistics_analytics, disabled=True)
+    readiness_cols[3].checkbox("Finance analytics calculated", value=has_finance_analytics, disabled=True)

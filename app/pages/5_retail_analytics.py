@@ -15,9 +15,12 @@ from app.components.charts import (
 from app.components.kpi_cards import format_currency, format_number, format_percent, render_kpi_grid
 from app.components.layout import configure_page, get_working_dataframe, page_title
 from app.config import RETAIL_REQUIRED_FIELDS
-from app.services.column_mapper import validate_retail_mapping
+from app.services.column_mapper import initialize_template_mapping, validate_retail_mapping
+from app.services.dataset_workspace import get_active_template_mapping, set_active_analytics_result
 from app.services.quality_score import calculate_quality_score
 from app.services.retail_analytics import build_retail_analytics, clean_retail_orders
+from app.services.schema_detector import detect_template_schema
+from app.services.template_registry import get_template
 
 
 configure_page("Retail Analytics")
@@ -27,15 +30,30 @@ df = get_working_dataframe()
 if df is None:
     st.stop()
 
-mapping = st.session_state.get("column_mapping") or st.session_state.get("template_mappings", {}).get("sales_retail")
+template = get_template("sales_retail")
+detection = detect_template_schema("sales_retail", list(df.columns))
+mapping = get_active_template_mapping("sales_retail") or st.session_state.get("column_mapping") or st.session_state.get("template_mappings", {}).get("sales_retail")
+if not mapping and not detection.requires_manual_mapping:
+    mapping = initialize_template_mapping("sales_retail", list(df.columns), detection)
 if not mapping:
-    st.warning("Save a valid retail mapping before running the retail analytics template.")
+    st.warning("The active dataset is not mapped to this analytics template.")
+    st.write("Required fields")
+    st.dataframe([{"field": field} for field in template.required_fields], use_container_width=True, hide_index=True)
+    st.write("Detected and missing fields")
+    st.dataframe(
+        [{"field": field, "matched_column": detection.matched_fields.get(field), "status": "matched" if field in detection.matched_fields else "missing"} for field in template.required_fields],
+        use_container_width=True,
+        hide_index=True,
+    )
+    st.info("Go to Column Mapping, use Generic Analytics, or load the retail sample dataset.")
     st.stop()
 
 validation = validate_retail_mapping(mapping, list(df.columns))
 if not validation.is_valid:
+    st.warning("The active dataset is not mapped to this analytics template.")
     for message in validation.messages:
-        st.warning(message)
+        st.write(f"- {message}")
+    st.info("Go to Column Mapping, use Generic Analytics, or load the retail sample dataset.")
     st.stop()
 
 quality = calculate_quality_score(
@@ -53,8 +71,8 @@ except Exception as exc:
     st.error(f"Retail analytics could not be calculated: {exc}")
     st.stop()
 
-st.session_state["retail_clean_result"] = clean_result
-st.session_state["retail_analytics_result"] = analytics
+set_active_analytics_result("retail_clean_result", clean_result)
+set_active_analytics_result("retail_analytics_result", analytics)
 
 st.subheader("Retail KPIs")
 metrics = analytics.metrics

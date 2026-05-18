@@ -1,4 +1,4 @@
-from app.services.column_mapper import initialize_retail_mapping, validate_retail_mapping
+from app.services.column_mapper import initialize_retail_mapping, validate_retail_mapping, validate_template_mapping
 from app.services.schema_detector import detect_retail_schema
 
 
@@ -31,3 +31,15 @@ def test_validate_mapping_rejects_missing_and_duplicate_columns():
     assert not validation.is_valid
     assert validation.duplicate_source_columns == ["quantity"]
 
+
+def test_validate_mapping_for_all_implemented_templates():
+    template_columns = {
+        "manufacturing": ["timestamp", "machine_id", "actual_output", "scrap_count", "downtime_minutes"],
+        "logistics": ["shipment_id", "order_date", "delivery_date", "planned_delivery_date"],
+        "finance": ["transaction_id", "date", "amount", "type"],
+    }
+
+    for template_id, columns in template_columns.items():
+        mapping = {column: column for column in columns}
+        validation = validate_template_mapping(template_id, mapping, columns)
+        assert validation.is_valid, template_id

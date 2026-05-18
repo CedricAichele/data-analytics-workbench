@@ -45,3 +45,35 @@ It includes intentional data quality issues:
 - occasional high downtime
 
 The data is synthetic and does not represent a real factory, production line, customer, or product.
+
+## Sample Logistics Shipments
+
+`sample/sample_logistics_shipments.csv` is a synthetic shipment dataset with more than 500 rows.
+
+The sample includes shipment IDs, order dates, delivery dates, planned delivery dates, carriers, origins, destinations, shipping costs, and delivery status.
+
+It includes intentional data quality issues:
+
+- missing carrier values
+- duplicated rows
+- missing delivery dates
+- delayed shipments
+- shipping cost outliers
+
+The data is synthetic and does not represent real shipments, carriers, or customers.
+
+## Sample Finance Transactions
+
+`sample/sample_finance_transactions.csv` is a synthetic finance transaction dataset with more than 500 rows.
+
+The sample includes transaction IDs, dates, amounts, revenue/cost type values, categories, accounts, cost centers, budget, and actual values.
+
+It includes intentional data quality issues:
+
+- missing category values
+- duplicated rows
+- zero amount rows
+- budget and actual variance
+- occasional cost outliers
+
+The data is synthetic and does not represent real accounts, budgets, or transactions.

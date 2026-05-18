@@ -1,0 +1,544 @@
+transaction_id,date,amount,type,category,account,cost_center,budget,actual
+TXN-2025000,2025-02-09,2462.22,cost,Marketing,AP Clearing,Sales,2279.29,2863.01
+TXN-2025001,2025-01-17,4946.91,cost,Software,Operating Account,Finance,4969.59,5789.36
+TXN-2025002,2025-05-25,2476.69,revenue,Product Sales,AP Clearing,Operations,2581.26,2145.79
+TXN-2025003,2025-03-08,3361.56,cost,Facilities,Revenue Clearing,Customer Success,2891.61,3803.52
+TXN-2025004,2025-03-16,6148.06,revenue,Implementation,Payroll Account,Engineering,7055.53,5582.4
+TXN-2025005,2025-02-03,4827.49,revenue,Service Revenue,Payroll Account,Finance,4643.24,5420.12
+TXN-2025006,2025-03-22,458.39,cost,Logistics,Revenue Clearing,Operations,403.12,385.55
+TXN-2025007,2025-02-14,2927.47,cost,Software,Payroll Account,Finance,2603.88,3038.49
+TXN-2025008,2025-05-16,1724.08,revenue,Product Sales,AP Clearing,Sales,1505.32,1700.67
+TXN-2025009,2025-03-06,1469.03,cost,Facilities,Payroll Account,Customer Success,1479.87,1654.58
+TXN-2025010,2025-04-25,5798.22,cost,Contractors,Payroll Account,Operations,5129.3,5890.78
+TXN-2025011,2025-01-10,904.03,cost,Facilities,Operating Account,Engineering,953.19,857.92
+TXN-2025012,2025-04-22,2514.68,cost,Software,Payroll Account,Operations,2937.05,2117.43
+TXN-2025013,2025-05-16,3549.26,revenue,Product Sales,AP Clearing,Operations,3975.58,3831.7
+TXN-2025014,2025-03-03,6958.77,revenue,Implementation,AP Clearing,Customer Success,6747.24,8372.65
+TXN-2025015,2025-01-30,4913.09,revenue,Implementation,Payroll Account,Finance,5726.75,5304.87
+TXN-2025016,2025-04-11,4907.35,cost,Contractors,Payroll Account,Operations,5653.85,5060.21
+TXN-2025017,2025-01-08,7883.06,revenue,Implementation,Payroll Account,Engineering,8509.41,9773.26
+TXN-2025018,2025-02-14,4270.31,cost,Logistics,Revenue Clearing,Customer Success,3709.22,3501.87
+TXN-2025019,2025-03-30,6076.78,revenue,,Payroll Account,Operations,6968.86,7470.6
+TXN-2025020,2025-03-23,5893.62,cost,Logistics,Payroll Account,Sales,6211.19,5832.31
+TXN-2025021,2025-02-28,7379.73,revenue,Implementation,Revenue Clearing,Sales,8147.31,7850.55
+TXN-2025022,2025-02-13,1659.56,cost,Logistics,Revenue Clearing,Operations,1619.1,1960.06
+TXN-2025023,2025-05-19,5109.31,cost,Contractors,Revenue Clearing,Customer Success,5765.73,6052.42
+TXN-2025024,2025-06-17,6073.43,cost,Facilities,Revenue Clearing,Engineering,6104.84,6186.22
+TXN-2025025,2025-04-03,1829.63,revenue,Product Sales,Operating Account,Operations,2090.5,2210.76
+TXN-2025026,2025-04-05,5131.47,revenue,Product Sales,AP Clearing,Engineering,4450.72,6105.22
+TXN-2025027,2025-05-03,4002.89,cost,Logistics,Payroll Account,Engineering,4164.28,3830.63
+TXN-2025028,2025-04-01,3767.29,cost,Payroll,AP Clearing,Finance,4316.12,3200.05
+TXN-2025029,2025-01-04,1500.72,cost,Contractors,Operating Account,Customer Success,1544.41,1829.18
+TXN-2025030,2025-01-09,2748.76,cost,Facilities,Payroll Account,Customer Success,2725.88,2363.12
+TXN-2025031,2025-04-02,2705.37,revenue,Product Sales,AP Clearing,Operations,3087.98,3372.92
+TXN-2025032,2025-04-08,5772.99,cost,Payroll,Revenue Clearing,Finance,5481.93,5550.65
+TXN-2025033,2025-05-20,4184.13,cost,Payroll,Revenue Clearing,Operations,4877.44,5230.09
+TXN-2025034,2025-01-05,5464.05,cost,Facilities,Operating Account,Operations,5670.61,4606.03
+TXN-2025035,2025-05-10,5243.94,revenue,Service Revenue,Revenue Clearing,Operations,6071.26,5562.69
+TXN-2025036,2025-06-11,4487.5,revenue,Product Sales,Payroll Account,Operations,4706.03,4179.8
+TXN-2025037,2025-04-18,1271.19,revenue,Implementation,Revenue Clearing,Operations,1405.12,1481.13
+TXN-2025038,2025-05-18,2819.76,revenue,Service Revenue,Operating Account,Finance,2559.53,3369.96
+TXN-2025039,2025-06-02,5203.12,cost,Logistics,Operating Account,Finance,5299.84,5359.28
+TXN-2025040,2025-01-23,4240.0,cost,Facilities,Payroll Account,Finance,4247.59,4641.29
+TXN-2025041,2025-03-04,1100.26,cost,Software,Revenue Clearing,Operations,1159.68,1045.66
+TXN-2025042,2025-04-25,5930.67,revenue,Service Revenue,AP Clearing,Finance,5284.66,5618.35
+TXN-2025043,2025-04-23,3076.39,cost,Facilities,Revenue Clearing,Customer Success,3093.53,2784.5
+TXN-2025044,2025-02-13,0.0,revenue,Subscription,Payroll Account,Finance,8068.79,6856.53
+TXN-2025045,2025-03-27,6415.83,revenue,Implementation,Operating Account,Sales,6438.58,7563.5
+TXN-2025046,2025-05-03,9083.01,revenue,Implementation,Operating Account,Operations,9578.2,8059.19
+TXN-2025047,2025-06-10,7681.84,revenue,Implementation,Payroll Account,Operations,8025.28,8536.19
+TXN-2025048,2025-05-21,1229.07,cost,Contractors,Operating Account,Customer Success,1408.74,1430.9
+TXN-2025049,2025-03-24,3133.85,cost,Marketing,Payroll Account,Finance,3589.51,3041.18
+TXN-2025050,2025-01-30,6104.54,revenue,Implementation,Operating Account,Engineering,6327.66,7255.57
+TXN-2025051,2025-04-10,3199.63,revenue,Product Sales,Revenue Clearing,Finance,3070.63,3753.88
+TXN-2025052,2025-01-06,1317.45,revenue,Service Revenue,Revenue Clearing,Operations,1470.06,1163.52
+TXN-2025053,2025-01-15,7180.75,revenue,Product Sales,Revenue Clearing,Customer Success,7810.11,8699.06
+TXN-2025054,2025-05-22,4819.21,cost,Payroll,AP Clearing,Finance,5428.28,4034.36
+TXN-2025055,2025-04-19,5993.83,revenue,Service Revenue,Operating Account,Operations,7026.81,5013.13
+TXN-2025056,2025-02-01,6962.1,revenue,Subscription,Revenue Clearing,Sales,7365.44,6045.22
+TXN-2025057,2025-02-16,6650.63,revenue,Subscription,AP Clearing,Engineering,7780.93,6484.87
+TXN-2025058,2025-04-11,2824.01,revenue,Implementation,Revenue Clearing,Operations,3308.67,3523.81
+TXN-2025059,2025-02-16,3926.28,cost,Logistics,Operating Account,Finance,3914.6,4270.02
+TXN-2025060,2025-05-21,203.92,cost,Facilities,AP Clearing,Customer Success,174.88,222.75
+TXN-2025061,2025-02-07,3260.56,cost,Facilities,Operating Account,Customer Success,3512.14,2893.25
+TXN-2025062,2025-06-29,5254.36,cost,Payroll,AP Clearing,Finance,5689.62,4735.72
+TXN-2025063,2025-03-27,5767.96,cost,Facilities,Payroll Account,Operations,5504.91,5663.78
+TXN-2025064,2025-06-20,6143.96,cost,Payroll,Payroll Account,Customer Success,5867.67,7039.43
+TXN-2025065,2025-03-28,9082.88,revenue,Implementation,AP Clearing,Sales,10293.55,11309.72
+TXN-2025066,2025-02-08,5787.95,revenue,Product Sales,AP Clearing,Sales,6652.56,6205.87
+TXN-2025067,2025-01-23,745.64,cost,Software,AP Clearing,Engineering,661.77,890.77
+TXN-2025068,2025-01-21,2359.59,cost,Contractors,Operating Account,Engineering,2655.31,2238.55
+TXN-2025069,2025-03-13,5713.26,cost,Software,Payroll Account,Finance,6737.69,5733.29
+TXN-2025070,2025-06-14,4275.24,cost,Marketing,Revenue Clearing,Engineering,4985.95,3590.87
+TXN-2025071,2025-01-14,4600.64,cost,Facilities,Revenue Clearing,Engineering,4444.38,5456.68
+TXN-2025072,2025-05-10,1022.43,revenue,Implementation,Operating Account,Operations,896.66,1186.19
+TXN-2025073,2025-04-29,609.45,cost,Contractors,Revenue Clearing,Sales,686.95,659.28
+TXN-2025074,2025-06-15,3726.18,revenue,Subscription,AP Clearing,Operations,3368.66,4545.43
+TXN-2025075,2025-03-06,2724.06,revenue,Product Sales,Operating Account,Finance,3130.28,2951.6
+TXN-2025076,2025-05-17,1410.43,cost,Marketing,Operating Account,Finance,1417.46,1346.23
+TXN-2025077,2025-03-01,5123.34,cost,Marketing,Operating Account,Customer Success,5915.75,4554.72
+TXN-2025078,2025-03-23,8759.92,revenue,Service Revenue,Payroll Account,Customer Success,10044.39,8951.88
+TXN-2025079,2025-04-05,7428.35,revenue,Implementation,Operating Account,Engineering,7758.88,6609.12
+TXN-2025080,2025-04-08,3151.92,cost,Software,Revenue Clearing,Engineering,3022.64,3367.62
+TXN-2025081,2025-01-08,1878.74,revenue,Implementation,Payroll Account,Finance,1773.15,2049.1
+TXN-2025082,2025-06-12,3935.01,revenue,Service Revenue,Revenue Clearing,Customer Success,4130.14,3734.8
+TXN-2025083,2025-01-17,5612.49,revenue,Service Revenue,Operating Account,Operations,5151.72,5826.94
+TXN-2025084,2025-06-21,8862.04,revenue,Subscription,Operating Account,Engineering,10434.16,9851.32
+TXN-2025085,2025-01-13,6011.92,cost,Payroll,AP Clearing,Engineering,6237.95,4952.63
+TXN-2025086,2025-05-31,199.46,cost,Software,Operating Account,Operations,181.34,234.94
+TXN-2025087,2025-02-01,6670.95,revenue,Subscription,Operating Account,Sales,6515.99,8317.62
+TXN-2025088,2025-06-02,791.85,cost,Marketing,Payroll Account,Sales,743.73,699.68
+TXN-2025089,2025-01-07,3909.6,cost,Marketing,Revenue Clearing,Engineering,3531.04,4426.48
+TXN-2025090,2025-04-05,2214.38,revenue,Service Revenue,Operating Account,Operations,1993.05,1920.91
+TXN-2025091,2025-03-21,704.1,cost,Facilities,Operating Account,Operations,706.14,804.45
+TXN-2025092,2025-04-19,2904.64,revenue,Product Sales,Operating Account,Finance,3258.75,2683.41
+TXN-2025093,2025-05-31,4944.41,revenue,Subscription,Operating Account,Finance,4270.58,6128.49
+TXN-2025094,2025-05-09,6055.11,revenue,Product Sales,Operating Account,Engineering,5508.34,5146.15
+TXN-2025095,2025-01-23,4485.24,revenue,Product Sales,AP Clearing,Operations,4269.1,4665.69
+TXN-2025096,2025-06-25,4557.98,revenue,Subscription,AP Clearing,Operations,5275.41,3945.62
+TXN-2025097,2025-05-31,9411.6,revenue,Product Sales,Operating Account,Engineering,10282.39,10721.21
+TXN-2025098,2025-05-10,1691.39,revenue,Product Sales,AP Clearing,Operations,1852.11,3241.1924999999997
+TXN-2025099,2025-02-28,1694.47,cost,Marketing,Revenue Clearing,Finance,1574.59,1729.79
+TXN-2025100,2025-01-26,5464.67,revenue,Product Sales,Revenue Clearing,Engineering,5163.76,5337.13
+TXN-2025101,2025-06-19,350.44,cost,Software,Operating Account,Sales,395.55,297.77
+TXN-2025102,2025-01-15,5713.29,cost,Logistics,Revenue Clearing,Sales,5803.33,5884.86
+TXN-2025103,2025-06-21,5037.34,cost,Facilities,AP Clearing,Operations,5834.17,5894.94
+TXN-2025104,2025-02-06,1905.37,revenue,Implementation,Operating Account,Sales,2050.72,2133.84
+TXN-2025105,2025-01-29,446.85,cost,Software,Payroll Account,Finance,486.44,433.28
+TXN-2025106,2025-03-12,4610.08,revenue,Implementation,AP Clearing,Operations,3924.04,3961.58
+TXN-2025107,2025-06-13,5422.09,cost,Contractors,Revenue Clearing,Sales,4814.91,5333.46
+TXN-2025108,2025-02-09,1532.61,revenue,Subscription,AP Clearing,Customer Success,1457.5,1645.67
+TXN-2025109,2025-05-17,5001.81,revenue,Service Revenue,Revenue Clearing,Customer Success,4808.43,4905.23
+TXN-2025110,2025-03-13,3183.65,cost,Software,Payroll Account,Engineering,3403.87,2864.45
+TXN-2025111,2025-01-31,2830.9,cost,Contractors,AP Clearing,Customer Success,2851.27,3178.76
+TXN-2025112,2025-03-16,7921.47,revenue,Product Sales,Revenue Clearing,Finance,7994.74,8985.95
+TXN-2025113,2025-04-02,2305.53,cost,Marketing,Revenue Clearing,Finance,2517.66,2096.12
+TXN-2025114,2025-06-17,3982.24,cost,Logistics,Payroll Account,Finance,3743.39,3369.67
+TXN-2025115,2025-01-09,7798.37,revenue,Subscription,Operating Account,Operations,7218.72,7524.44
+TXN-2025116,2025-05-05,3147.77,revenue,Service Revenue,Payroll Account,Finance,3181.69,3544.97
+TXN-2025117,2025-04-23,3532.2,revenue,Service Revenue,Revenue Clearing,Engineering,4137.92,3174.91
+TXN-2025118,2025-03-13,3684.03,revenue,Service Revenue,AP Clearing,Finance,4166.83,4431.94
+TXN-2025119,2025-02-19,5230.35,revenue,Subscription,AP Clearing,Customer Success,4638.02,4899.76
+TXN-2025120,2025-03-07,2491.54,cost,Marketing,Payroll Account,Engineering,2126.92,2441.36
+TXN-2025121,2025-02-02,4476.59,cost,Facilities,Revenue Clearing,Engineering,4661.05,4773.24
+TXN-2025122,2025-01-26,2830.06,revenue,Service Revenue,Payroll Account,Sales,2952.82,3019.95
+TXN-2025123,2025-01-10,4037.94,cost,Facilities,Revenue Clearing,Finance,4111.88,3523.53
+TXN-2025124,2025-03-21,213.57,cost,Logistics,AP Clearing,Operations,204.93,211.81
+TXN-2025125,2025-03-27,3972.77,cost,Marketing,AP Clearing,Finance,4098.08,3776.59
+TXN-2025126,2025-04-30,4153.39,cost,Payroll,AP Clearing,Customer Success,4351.41,3718.66
+TXN-2025127,2025-04-10,9316.64,revenue,Product Sales,Operating Account,Engineering,10251.93,10636.03
+TXN-2025128,2025-04-29,133.02,cost,Contractors,AP Clearing,Finance,117.06,130.18
+TXN-2025129,2025-05-10,2234.91,cost,Contractors,AP Clearing,Sales,2425.59,1928.93
+TXN-2025130,2025-04-06,2718.16,revenue,Service Revenue,Payroll Account,Engineering,2658.05,3219.92
+TXN-2025131,2025-01-22,2365.86,cost,Contractors,Payroll Account,Operations,2523.53,2481.22
+TXN-2025132,2025-03-26,2178.82,cost,Payroll,AP Clearing,Sales,2540.01,2124.71
+TXN-2025133,2025-02-11,4161.92,cost,Software,AP Clearing,Operations,4095.1,3829.26
+TXN-2025134,2025-04-06,294.86,cost,Payroll,Operating Account,Finance,344.1,328.3
+TXN-2025135,2025-05-20,3412.78,cost,Software,Revenue Clearing,Customer Success,3097.38,3071.78
+TXN-2025136,2025-02-13,1885.7,cost,Logistics,Operating Account,Operations,2048.73,2140.39
+TXN-2025137,2025-03-12,5551.83,revenue,Service Revenue,Revenue Clearing,Finance,5848.92,6414.41
+TXN-2025138,2025-03-23,3121.01,cost,Logistics,Operating Account,Sales,2821.92,2638.93
+TXN-2025139,2025-06-06,5798.18,cost,Facilities,Operating Account,Operations,6321.58,5421.63
+TXN-2025140,2025-05-14,4628.24,revenue,Service Revenue,Revenue Clearing,Operations,5201.98,5165.33
+TXN-2025141,2025-02-21,6048.51,revenue,Subscription,Operating Account,Sales,5404.1,5929.17
+TXN-2025142,2025-06-09,1090.87,cost,Payroll,Operating Account,Operations,1027.58,1326.11
+TXN-2025143,2025-04-23,14751.07,cost,Logistics,AP Clearing,Customer Success,13932.14,14048.86
+TXN-2025144,2025-06-03,2441.68,cost,Software,Revenue Clearing,Operations,2378.95,2848.8
+TXN-2025145,2025-03-13,1958.88,revenue,Service Revenue,Operating Account,Operations,1862.61,1644.7
+TXN-2025146,2025-04-23,2925.91,cost,Logistics,Payroll Account,Finance,2955.04,3184.56
+TXN-2025147,2025-02-23,7170.07,revenue,Implementation,Revenue Clearing,Finance,7651.44,7131.37
+TXN-2025148,2025-02-17,1394.47,cost,Facilities,Operating Account,Engineering,1486.11,1292.61
+TXN-2025149,2025-03-12,4996.87,revenue,Product Sales,Revenue Clearing,Engineering,4868.8,5340.74
+TXN-2025150,2025-04-22,1663.86,cost,Logistics,Revenue Clearing,Operations,1717.45,1794.72
+TXN-2025151,2025-03-16,4901.1,cost,Payroll,AP Clearing,Operations,5484.38,4939.19
+TXN-2025152,2025-01-26,5233.18,revenue,Service Revenue,AP Clearing,Finance,4705.7,4788.94
+TXN-2025153,2025-03-13,7080.67,revenue,Service Revenue,Revenue Clearing,Finance,7983.16,6297.11
+TXN-2025154,2025-06-15,221.67,cost,Payroll,Operating Account,Customer Success,202.99,185.42
+TXN-2025155,2025-04-22,6284.65,revenue,Subscription,Revenue Clearing,Engineering,6574.89,7692.32
+TXN-2025156,2025-04-06,9333.9,revenue,Product Sales,Payroll Account,Customer Success,8419.33,8886.0
+TXN-2025157,2025-01-26,2517.64,revenue,Product Sales,Operating Account,Engineering,2311.0,2341.23
+TXN-2025158,2025-05-06,3411.07,revenue,Product Sales,AP Clearing,Sales,3418.9,3342.05
+TXN-2025159,2025-02-27,2122.06,cost,Payroll,Revenue Clearing,Operations,2291.96,2452.13
+TXN-2025160,2025-03-31,4382.23,revenue,Implementation,Payroll Account,Finance,5071.37,4332.96
+TXN-2025161,2025-01-19,4668.24,cost,Facilities,AP Clearing,Engineering,4869.02,4893.56
+TXN-2025162,2025-02-15,1403.47,cost,Marketing,Revenue Clearing,Customer Success,1292.85,1725.85
+TXN-2025163,2025-05-11,4284.76,cost,Payroll,Payroll Account,Finance,4251.34,3529.9
+TXN-2025164,2025-06-11,4888.9,revenue,,Revenue Clearing,Operations,4366.86,4640.04
+TXN-2025165,2025-06-14,6522.86,revenue,Product Sales,Payroll Account,Customer Success,5591.57,6587.43
+TXN-2025166,2025-06-02,1915.08,revenue,Product Sales,Payroll Account,Engineering,2051.46,1806.65
+TXN-2025167,2025-05-20,822.69,cost,Software,Operating Account,Engineering,717.78,1005.82
+TXN-2025168,2025-06-30,6339.14,revenue,Implementation,Operating Account,Customer Success,6936.26,7638.09
+TXN-2025169,2025-04-29,4132.92,revenue,Implementation,Revenue Clearing,Engineering,4106.7,3794.28
+TXN-2025170,2025-05-03,2510.57,cost,Marketing,Operating Account,Finance,2364.95,2176.91
+TXN-2025171,2025-03-09,1052.81,cost,Software,Revenue Clearing,Finance,1106.66,1026.91
+TXN-2025172,2025-02-08,3749.85,cost,Software,Payroll Account,Customer Success,3947.03,4144.67
+TXN-2025173,2025-04-23,742.2,cost,Payroll,Operating Account,Finance,730.08,770.13
+TXN-2025174,2025-04-04,1571.85,revenue,Implementation,Operating Account,Sales,1350.13,1629.41
+TXN-2025175,2025-05-22,1991.46,revenue,Product Sales,Payroll Account,Customer Success,2232.37,1989.97
+TXN-2025176,2025-03-03,5700.58,revenue,Product Sales,AP Clearing,Engineering,6682.38,6005.83
+TXN-2025177,2025-06-02,1673.8,revenue,Product Sales,Payroll Account,Finance,1458.09,1871.7
+TXN-2025178,2025-03-16,986.08,revenue,Implementation,Payroll Account,Customer Success,986.68,946.53
+TXN-2025179,2025-01-22,3761.64,revenue,Implementation,Payroll Account,Engineering,3655.13,3596.66
+TXN-2025180,2025-04-06,5977.3,revenue,Subscription,AP Clearing,Finance,6260.88,5520.89
+TXN-2025181,2025-03-07,4993.69,cost,Facilities,Operating Account,Sales,5147.08,4369.67
+TXN-2025182,2025-03-07,2311.0,cost,Software,Revenue Clearing,Sales,2673.26,2291.72
+TXN-2025183,2025-03-18,1241.42,cost,Payroll,Revenue Clearing,Finance,1271.79,1241.96
+TXN-2025184,2025-04-11,2397.59,cost,Software,AP Clearing,Customer Success,2623.79,2636.37
+TXN-2025185,2025-04-13,2494.38,cost,Software,AP Clearing,Sales,2541.9,2407.54
+TXN-2025186,2025-01-21,7020.26,revenue,Product Sales,Payroll Account,Finance,8141.61,8272.36
+TXN-2025187,2025-05-02,9359.78,revenue,Subscription,Revenue Clearing,Operations,10705.61,8415.36
+TXN-2025188,2025-01-23,4962.18,revenue,Service Revenue,Revenue Clearing,Customer Success,5634.02,5188.38
+TXN-2025189,2025-02-27,6019.51,cost,Logistics,Operating Account,Finance,5279.75,5469.08
+TXN-2025190,2025-02-26,4632.99,revenue,Product Sales,Operating Account,Operations,4903.26,5365.63
+TXN-2025191,2025-04-14,5963.89,revenue,Product Sales,Operating Account,Operations,5978.58,5966.22
+TXN-2025192,2025-04-25,4038.46,revenue,Product Sales,Operating Account,Customer Success,4751.32,4851.31
+TXN-2025193,2025-01-06,5042.32,cost,Facilities,Revenue Clearing,Customer Success,5200.8,5897.14
+TXN-2025194,2025-04-29,2198.45,revenue,Implementation,Payroll Account,Customer Success,1933.97,2732.73
+TXN-2025195,2025-04-22,3565.87,cost,Logistics,Operating Account,Sales,4122.82,3493.04
+TXN-2025196,2025-03-27,6563.82,revenue,Subscription,AP Clearing,Finance,7609.54,7577.85
+TXN-2025197,2025-04-29,2051.65,cost,Facilities,Revenue Clearing,Operations,2163.44,2396.03
+TXN-2025198,2025-02-23,6606.85,revenue,Implementation,AP Clearing,Finance,6025.87,6364.53
+TXN-2025199,2025-01-12,5066.57,cost,Software,Operating Account,Sales,5052.32,4301.13
+TXN-2025200,2025-05-04,5922.34,cost,Facilities,AP Clearing,Operations,6694.75,6842.09
+TXN-2025201,2025-03-28,4416.95,revenue,Implementation,Operating Account,Engineering,3837.88,5297.43
+TXN-2025202,2025-01-10,1351.61,cost,Marketing,Operating Account,Finance,1154.24,1162.82
+TXN-2025203,2025-05-06,5208.67,cost,Logistics,AP Clearing,Engineering,5425.01,4299.18
+TXN-2025204,2025-04-15,3158.12,cost,Payroll,Operating Account,Finance,2792.44,2722.68
+TXN-2025205,2025-04-21,271.3,cost,Facilities,Payroll Account,Sales,272.65,311.92
+TXN-2025206,2025-06-05,3745.07,cost,Contractors,Revenue Clearing,Engineering,3186.77,3835.17
+TXN-2025207,2025-05-28,1919.48,cost,Payroll,Revenue Clearing,Customer Success,2022.08,1847.85
+TXN-2025208,2025-04-13,4977.75,cost,Facilities,Revenue Clearing,Customer Success,4938.17,5971.23
+TXN-2025209,2025-05-03,6933.07,revenue,Product Sales,Payroll Account,Sales,8059.64,5726.62
+TXN-2025210,2025-03-04,7762.78,revenue,Service Revenue,Revenue Clearing,Customer Success,7208.28,7637.98
+TXN-2025211,2025-06-05,3687.19,cost,Facilities,Revenue Clearing,Finance,4082.22,4532.49
+TXN-2025212,2025-05-13,1053.55,cost,Logistics,Payroll Account,Engineering,1189.02,1299.76
+TXN-2025213,2025-01-05,438.69,cost,Marketing,Operating Account,Engineering,494.25,359.9
+TXN-2025214,2025-03-26,1964.02,revenue,Implementation,Operating Account,Finance,1866.19,2202.3
+TXN-2025215,2025-05-10,5108.34,cost,Marketing,Payroll Account,Operations,4707.5,6252.69
+TXN-2025216,2025-01-01,1649.02,revenue,Subscription,Payroll Account,Operations,1818.74,1900.42
+TXN-2025217,2025-02-17,6753.98,revenue,Implementation,Payroll Account,Engineering,7632.78,7184.58
+TXN-2025218,2025-06-04,3857.09,cost,Software,Operating Account,Sales,3472.01,4314.97
+TXN-2025219,2025-02-21,1982.52,cost,Payroll,AP Clearing,Customer Success,1869.52,2283.46
+TXN-2025220,2025-02-10,3836.33,revenue,Product Sales,Operating Account,Sales,4374.78,3412.81
+TXN-2025221,2025-01-24,627.44,cost,Marketing,AP Clearing,Finance,670.72,750.19
+TXN-2025222,2025-01-30,2549.74,revenue,Subscription,Payroll Account,Finance,2661.79,2568.4
+TXN-2025223,2025-05-17,8426.86,revenue,Service Revenue,Payroll Account,Sales,7349.17,8426.82
+TXN-2025224,2025-02-24,3256.98,revenue,Implementation,AP Clearing,Engineering,3697.08,3564.93
+TXN-2025225,2025-04-08,5831.52,cost,Payroll,Payroll Account,Finance,6047.6,6944.64
+TXN-2025226,2025-03-08,5167.24,revenue,Service Revenue,AP Clearing,Operations,5702.52,4584.96
+TXN-2025227,2025-01-02,5201.83,cost,Marketing,Operating Account,Finance,5010.28,5699.97
+TXN-2025228,2025-06-18,5280.17,revenue,Implementation,AP Clearing,Engineering,4989.57,5342.38
+TXN-2025229,2025-05-31,964.74,cost,Facilities,AP Clearing,Sales,1023.87,1153.03
+TXN-2025230,2025-03-12,2395.26,cost,Marketing,AP Clearing,Finance,2204.84,2739.17
+TXN-2025231,2025-02-20,4564.11,cost,Contractors,AP Clearing,Operations,5352.55,4176.85
+TXN-2025232,2025-04-17,6308.99,revenue,Implementation,Operating Account,Engineering,6123.75,5464.82
+TXN-2025233,2025-05-13,7412.8,revenue,Implementation,AP Clearing,Operations,8590.87,8185.93
+TXN-2025234,2025-03-03,3204.06,cost,Facilities,AP Clearing,Finance,3071.85,3158.47
+TXN-2025235,2025-01-10,3227.26,cost,Facilities,Payroll Account,Sales,3609.24,2724.49
+TXN-2025236,2025-02-25,4642.2,revenue,Subscription,Operating Account,Sales,4769.29,4870.37
+TXN-2025237,2025-02-14,681.81,cost,Contractors,Payroll Account,Sales,698.25,778.16
+TXN-2025238,2025-02-06,2722.47,cost,Contractors,AP Clearing,Engineering,2384.91,2612.79
+TXN-2025239,2025-04-06,3122.85,revenue,Service Revenue,AP Clearing,Engineering,3136.44,2774.68
+TXN-2025240,2025-02-04,5055.44,cost,Contractors,Payroll Account,Engineering,4405.8,4805.6
+TXN-2025241,2025-05-17,5627.76,revenue,Product Sales,Payroll Account,Sales,5496.49,6113.8
+TXN-2025242,2025-01-03,7608.49,revenue,Implementation,Revenue Clearing,Customer Success,8272.03,7225.42
+TXN-2025243,2025-06-30,7090.9,revenue,Service Revenue,Payroll Account,Finance,6846.24,8133.72
+TXN-2025244,2025-01-22,3617.93,cost,Payroll,Payroll Account,Finance,3778.69,4044.05
+TXN-2025245,2025-02-23,5057.19,revenue,Service Revenue,Revenue Clearing,Engineering,4359.69,5823.92
+TXN-2025246,2025-05-01,1694.64,cost,Contractors,AP Clearing,Customer Success,1867.8,1853.38
+TXN-2025247,2025-06-21,3373.64,cost,Logistics,Payroll Account,Finance,3678.95,3053.24
+TXN-2025248,2025-03-29,3831.76,revenue,Subscription,Revenue Clearing,Finance,4179.5,4093.73
+TXN-2025249,2025-03-15,9181.92,revenue,Service Revenue,AP Clearing,Engineering,8723.93,10530.22
+TXN-2025250,2025-06-14,4770.44,cost,Logistics,Operating Account,Operations,5504.24,4616.6
+TXN-2025251,2025-03-26,7738.39,revenue,Service Revenue,Payroll Account,Engineering,7249.15,7484.18
+TXN-2025252,2025-01-04,955.04,cost,Logistics,Revenue Clearing,Finance,1012.84,923.7
+TXN-2025253,2025-03-06,5139.73,revenue,Implementation,Operating Account,Engineering,4989.71,5357.89
+TXN-2025254,2025-04-18,3535.53,cost,Logistics,Payroll Account,Customer Success,3389.72,3103.02
+TXN-2025255,2025-06-26,0.0,revenue,Service Revenue,Revenue Clearing,Operations,7334.45,9550.44
+TXN-2025256,2025-05-18,2251.32,cost,Marketing,Revenue Clearing,Finance,2407.88,2032.27
+TXN-2025257,2025-05-13,394.42,cost,Software,AP Clearing,Operations,346.39,382.66
+TXN-2025258,2025-05-12,5918.29,cost,Software,AP Clearing,Operations,6040.06,5231.19
+TXN-2025259,2025-03-19,4891.01,revenue,Subscription,AP Clearing,Operations,5661.89,4721.36
+TXN-2025260,2025-03-30,8551.81,revenue,Implementation,Operating Account,Finance,7834.27,9019.52
+TXN-2025261,2025-02-27,2169.06,cost,Payroll,Payroll Account,Engineering,1980.02,2299.74
+TXN-2025262,2025-06-25,7331.51,revenue,Product Sales,AP Clearing,Finance,6336.68,8954.54
+TXN-2025263,2025-05-01,3420.03,revenue,Subscription,AP Clearing,Operations,3522.25,2841.51
+TXN-2025264,2025-01-21,6692.55,revenue,Subscription,Operating Account,Sales,6627.46,8291.71
+TXN-2025265,2025-05-16,386.54,cost,Contractors,Payroll Account,Engineering,395.75,398.11
+TXN-2025266,2025-01-08,5395.36,revenue,Subscription,Revenue Clearing,Operations,5068.31,5494.43
+TXN-2025267,2025-03-04,1941.19,revenue,Subscription,Operating Account,Finance,1914.78,2381.84
+TXN-2025268,2025-04-18,6186.28,cost,Facilities,Operating Account,Finance,7205.33,7310.44
+TXN-2025269,2025-06-28,2322.06,revenue,Implementation,Revenue Clearing,Customer Success,2569.56,2307.44
+TXN-2025270,2025-04-18,2881.06,revenue,Product Sales,Operating Account,Customer Success,2886.03,3164.6
+TXN-2025271,2025-05-17,7590.52,cost,Facilities,AP Clearing,Operations,7236.4,6628.86
+TXN-2025272,2025-01-09,5013.91,revenue,Implementation,Revenue Clearing,Finance,5715.88,5615.2
+TXN-2025273,2025-03-19,1372.84,cost,Contractors,Revenue Clearing,Sales,1436.62,1583.56
+TXN-2025274,2025-03-30,5011.69,cost,Software,Operating Account,Sales,4455.61,4562.5
+TXN-2025275,2025-03-27,3638.53,cost,Facilities,Payroll Account,Customer Success,3914.1,3058.06
+TXN-2025276,2025-01-02,3601.3,cost,Marketing,AP Clearing,Operations,3567.21,3605.52
+TXN-2025277,2025-05-24,2498.08,cost,Facilities,Operating Account,Finance,2429.56,3092.4
+TXN-2025278,2025-01-05,4238.36,revenue,Product Sales,Payroll Account,Sales,4230.47,4554.03
+TXN-2025279,2025-03-03,5432.73,cost,Software,Payroll Account,Sales,5130.41,5541.64
+TXN-2025280,2025-03-02,2845.74,cost,Software,AP Clearing,Finance,3240.46,3438.72
+TXN-2025281,2025-01-30,1795.01,revenue,Subscription,AP Clearing,Operations,1877.46,2232.34
+TXN-2025282,2025-01-16,1396.83,revenue,Service Revenue,AP Clearing,Customer Success,1560.19,1545.22
+TXN-2025283,2025-02-03,4462.17,revenue,Product Sales,Operating Account,Customer Success,4160.35,5440.85
+TXN-2025284,2025-02-28,5784.46,revenue,Service Revenue,Revenue Clearing,Customer Success,5536.68,5836.68
+TXN-2025285,2025-03-26,5906.87,cost,Contractors,AP Clearing,Customer Success,6202.21,5125.03
+TXN-2025286,2025-02-14,5245.48,cost,Logistics,Payroll Account,Customer Success,5016.11,4764.31
+TXN-2025287,2025-06-08,3015.57,revenue,Subscription,Revenue Clearing,Engineering,3146.28,2830.19
+TXN-2025288,2025-03-09,5641.53,cost,Software,Revenue Clearing,Engineering,5153.43,4945.53
+TXN-2025289,2025-02-14,4313.01,revenue,Subscription,Payroll Account,Sales,4342.25,4271.89
+TXN-2025290,2025-04-19,1643.94,cost,Contractors,AP Clearing,Engineering,1682.35,1830.1
+TXN-2025291,2025-02-04,9487.33,revenue,Subscription,Revenue Clearing,Operations,10628.11,9871.77
+TXN-2025292,2025-02-15,4800.77,cost,Contractors,Revenue Clearing,Sales,5147.91,5479.85
+TXN-2025293,2025-03-08,7958.87,revenue,Product Sales,Revenue Clearing,Engineering,8209.62,7644.7
+TXN-2025294,2025-03-13,4927.39,cost,Contractors,Operating Account,Customer Success,5323.44,5915.42
+TXN-2025295,2025-01-12,8331.99,revenue,Subscription,AP Clearing,Operations,7297.02,9086.3
+TXN-2025296,2025-03-03,4700.4,cost,Facilities,Payroll Account,Sales,4066.66,5838.93
+TXN-2025297,2025-04-12,4876.79,cost,Logistics,Payroll Account,Engineering,5286.68,5564.27
+TXN-2025298,2025-03-12,2836.62,revenue,Product Sales,AP Clearing,Engineering,3140.18,2429.55
+TXN-2025299,2025-05-28,3755.45,revenue,Implementation,Payroll Account,Operations,3525.65,4089.33
+TXN-2025300,2025-05-28,3481.02,cost,Payroll,Revenue Clearing,Customer Success,3381.37,3623.97
+TXN-2025301,2025-04-18,1125.61,cost,,Revenue Clearing,Sales,988.76,1237.72
+TXN-2025302,2025-06-04,1920.77,revenue,Service Revenue,Operating Account,Customer Success,1819.23,2277.97
+TXN-2025303,2025-06-25,6444.52,revenue,Implementation,Revenue Clearing,Operations,6631.62,6102.63
+TXN-2025304,2025-04-25,2369.28,revenue,Implementation,Payroll Account,Customer Success,2250.81,2080.88
+TXN-2025305,2025-03-03,5404.81,revenue,Product Sales,Operating Account,Customer Success,5675.07,5493.8
+TXN-2025306,2025-05-22,5395.9,cost,Facilities,Payroll Account,Engineering,5671.81,4777.2
+TXN-2025307,2025-04-15,1677.78,revenue,Product Sales,Payroll Account,Engineering,1816.89,1949.74
+TXN-2025308,2025-01-15,6830.74,revenue,Subscription,Revenue Clearing,Finance,6643.68,6609.57
+TXN-2025309,2025-04-28,2185.51,cost,Payroll,Operating Account,Engineering,2227.85,2492.8
+TXN-2025310,2025-06-27,5357.74,cost,Contractors,Payroll Account,Operations,5535.84,5228.5
+TXN-2025311,2025-01-19,3940.75,cost,Logistics,Operating Account,Customer Success,4203.87,3961.04
+TXN-2025312,2025-03-14,1218.0,cost,Facilities,Revenue Clearing,Sales,1251.73,1068.59
+TXN-2025313,2025-06-24,6375.07,revenue,Implementation,Revenue Clearing,Sales,7115.93,7126.19
+TXN-2025314,2025-02-27,7360.5,revenue,Service Revenue,Revenue Clearing,Operations,8511.36,7230.13
+TXN-2025315,2025-05-16,3623.07,cost,Contractors,Revenue Clearing,Engineering,4046.73,2978.2
+TXN-2025316,2025-03-19,5739.2,cost,Marketing,AP Clearing,Operations,5704.41,5017.91
+TXN-2025317,2025-05-25,3337.16,cost,Contractors,AP Clearing,Customer Success,2844.53,4024.02
+TXN-2025318,2025-05-21,4959.33,revenue,Subscription,Operating Account,Finance,5570.77,4915.06
+TXN-2025319,2025-01-12,584.16,cost,Marketing,AP Clearing,Sales,558.59,544.6
+TXN-2025320,2025-04-24,5785.16,cost,Facilities,AP Clearing,Operations,5929.8,6085.63
+TXN-2025321,2025-04-21,5234.41,revenue,Product Sales,Revenue Clearing,Operations,5679.59,5512.73
+TXN-2025322,2025-02-26,1003.56,revenue,Subscription,AP Clearing,Engineering,943.66,847.3
+TXN-2025323,2025-06-22,3751.9,cost,Marketing,Revenue Clearing,Finance,4098.91,4188.43
+TXN-2025324,2025-04-27,2559.59,cost,Logistics,Operating Account,Finance,2975.79,2454.03
+TXN-2025325,2025-02-14,7217.29,revenue,Subscription,Operating Account,Customer Success,8479.76,6263.44
+TXN-2025326,2025-04-01,3753.84,cost,Marketing,Payroll Account,Engineering,4236.1,3623.81
+TXN-2025327,2025-02-06,5928.32,revenue,Product Sales,Payroll Account,Operations,6654.25,5021.94
+TXN-2025328,2025-05-09,2676.43,revenue,Subscription,Payroll Account,Engineering,2636.3,2491.56
+TXN-2025329,2025-05-17,6857.17,revenue,Subscription,AP Clearing,Customer Success,7278.76,5837.79
+TXN-2025330,2025-03-07,11530.73,cost,Payroll,Operating Account,Operations,9863.09,9699.84
+TXN-2025331,2025-05-22,2908.41,cost,Contractors,Payroll Account,Engineering,2796.84,3050.7
+TXN-2025332,2025-01-26,7256.55,revenue,Product Sales,AP Clearing,Operations,8045.01,8596.9
+TXN-2025333,2025-02-15,5038.63,cost,Facilities,AP Clearing,Engineering,4848.38,5907.56
+TXN-2025334,2025-04-15,5280.43,cost,Facilities,Operating Account,Operations,5985.04,4385.82
+TXN-2025335,2025-04-23,4380.75,revenue,Implementation,Operating Account,Sales,4578.58,4400.39
+TXN-2025336,2025-05-20,4653.08,revenue,Subscription,Revenue Clearing,Sales,4864.8,5174.81
+TXN-2025337,2025-01-07,2065.5,cost,Logistics,Operating Account,Finance,1935.26,1908.33
+TXN-2025338,2025-02-23,4342.72,cost,Contractors,Operating Account,Engineering,4010.83,4381.17
+TXN-2025339,2025-04-22,8930.22,revenue,Implementation,Revenue Clearing,Engineering,9934.19,9131.37
+TXN-2025340,2025-04-08,3374.55,cost,Software,AP Clearing,Sales,2976.09,3581.34
+TXN-2025341,2025-01-19,4958.79,cost,Contractors,AP Clearing,Finance,4352.36,5507.88
+TXN-2025342,2025-05-01,6101.62,revenue,Service Revenue,AP Clearing,Engineering,6038.75,5491.58
+TXN-2025343,2025-05-21,3658.44,revenue,Service Revenue,Revenue Clearing,Operations,3378.58,3991.72
+TXN-2025344,2025-04-25,3181.66,cost,Marketing,Revenue Clearing,Operations,3270.21,3687.02
+TXN-2025345,2025-02-28,1367.69,revenue,Subscription,AP Clearing,Finance,1300.73,1401.73
+TXN-2025346,2025-01-01,5335.43,revenue,Product Sales,Revenue Clearing,Operations,4865.99,6633.09
+TXN-2025347,2025-03-30,3912.91,revenue,Service Revenue,Payroll Account,Operations,4126.5,4120.32
+TXN-2025348,2025-01-02,4644.97,cost,Logistics,Operating Account,Customer Success,4037.01,5139.16
+TXN-2025349,2025-01-28,9273.73,revenue,Implementation,Payroll Account,Sales,10440.0,10579.71
+TXN-2025350,2025-06-12,2864.96,cost,Contractors,AP Clearing,Engineering,2584.3,3376.35
+TXN-2025351,2025-05-27,972.15,revenue,Implementation,Operating Account,Sales,935.56,943.01
+TXN-2025352,2025-04-24,3307.53,cost,Payroll,Operating Account,Sales,3672.58,3394.23
+TXN-2025353,2025-03-10,8434.85,revenue,Product Sales,Revenue Clearing,Finance,8648.7,9197.65
+TXN-2025354,2025-02-26,6086.28,revenue,Subscription,Revenue Clearing,Customer Success,6555.92,6349.14
+TXN-2025355,2025-06-12,619.1,cost,Payroll,Payroll Account,Finance,572.46,594.08
+TXN-2025356,2025-01-16,5153.19,revenue,Service Revenue,Payroll Account,Customer Success,5783.43,4666.99
+TXN-2025357,2025-01-02,6083.3,cost,Logistics,Revenue Clearing,Engineering,6075.07,7437.5
+TXN-2025358,2025-01-11,2477.82,cost,Contractors,Operating Account,Sales,2868.3,2441.9
+TXN-2025359,2025-01-28,5030.86,revenue,Product Sales,Operating Account,Operations,5710.48,4314.7
+TXN-2025360,2025-01-10,3337.91,cost,Facilities,Payroll Account,Operations,3300.77,3080.25
+TXN-2025361,2025-06-14,2900.13,cost,Contractors,AP Clearing,Sales,2894.48,3578.28
+TXN-2025362,2025-03-19,4991.53,revenue,Service Revenue,Payroll Account,Sales,5741.11,5332.36
+TXN-2025363,2025-05-19,566.97,cost,Software,Operating Account,Operations,619.36,621.0
+TXN-2025364,2025-05-07,3980.9,revenue,Subscription,Payroll Account,Operations,4460.01,4092.29
+TXN-2025365,2025-03-25,3930.84,revenue,Subscription,Payroll Account,Customer Success,3761.59,3255.66
+TXN-2025366,2025-05-07,1538.33,cost,Contractors,AP Clearing,Operations,1539.69,1397.25
+TXN-2025367,2025-02-01,3532.4,cost,Marketing,Revenue Clearing,Customer Success,3374.81,5905.9175
+TXN-2025368,2025-06-08,3957.89,cost,Facilities,Operating Account,Sales,4493.76,4785.83
+TXN-2025369,2025-02-13,2542.66,revenue,Product Sales,AP Clearing,Engineering,2882.84,2980.5
+TXN-2025370,2025-02-20,6658.2,revenue,Product Sales,Operating Account,Finance,6172.88,6552.61
+TXN-2025371,2025-05-16,8315.83,revenue,Service Revenue,Revenue Clearing,Customer Success,7480.26,9185.89
+TXN-2025372,2025-06-28,3121.15,cost,Software,AP Clearing,Sales,2865.99,2807.45
+TXN-2025373,2025-05-01,6508.4,revenue,Subscription,Operating Account,Sales,5720.54,5949.89
+TXN-2025374,2025-06-22,1713.74,revenue,Product Sales,AP Clearing,Customer Success,1665.89,2094.41
+TXN-2025375,2025-03-29,5717.64,revenue,Implementation,Revenue Clearing,Customer Success,5917.32,7140.83
+TXN-2025376,2025-06-13,6021.39,cost,Payroll,AP Clearing,Operations,5548.24,6409.49
+TXN-2025377,2025-04-21,4593.03,cost,Software,Payroll Account,Engineering,5095.76,4581.87
+TXN-2025378,2025-04-22,4437.75,cost,Logistics,AP Clearing,Engineering,4791.46,3721.14
+TXN-2025379,2025-05-09,2225.07,revenue,Implementation,AP Clearing,Finance,2503.75,2110.36
+TXN-2025380,2025-01-20,4622.27,revenue,Service Revenue,Payroll Account,Customer Success,5409.02,4740.41
+TXN-2025381,2025-03-28,4790.04,revenue,Service Revenue,Payroll Account,Engineering,5061.05,4105.05
+TXN-2025382,2025-02-08,3590.37,revenue,Subscription,Operating Account,Operations,3540.09,3878.01
+TXN-2025383,2025-02-03,1487.24,cost,Logistics,Operating Account,Customer Success,1328.3,1580.37
+TXN-2025384,2025-06-02,2153.19,cost,Software,Operating Account,Engineering,2510.65,2260.36
+TXN-2025385,2025-04-06,3267.61,revenue,Implementation,Payroll Account,Customer Success,3767.54,3197.67
+TXN-2025386,2025-03-01,2350.18,revenue,Subscription,Revenue Clearing,Finance,2573.67,2480.56
+TXN-2025387,2025-01-20,4881.0,cost,Facilities,Operating Account,Engineering,5426.38,4248.53
+TXN-2025388,2025-05-07,596.99,cost,Marketing,AP Clearing,Operations,580.03,708.23
+TXN-2025389,2025-01-13,5437.75,cost,Contractors,AP Clearing,Engineering,6170.97,4811.67
+TXN-2025390,2025-04-30,3091.97,revenue,Implementation,Payroll Account,Sales,3568.77,3497.42
+TXN-2025391,2025-03-16,1641.05,cost,Payroll,AP Clearing,Operations,1888.84,1800.42
+TXN-2025392,2025-05-01,7047.11,revenue,Service Revenue,Operating Account,Engineering,7240.03,6714.84
+TXN-2025393,2025-04-29,3013.13,revenue,Implementation,Operating Account,Operations,2716.42,3480.78
+TXN-2025394,2025-03-05,5523.59,cost,Software,AP Clearing,Operations,4885.89,5613.13
+TXN-2025395,2025-02-17,902.02,revenue,Implementation,Operating Account,Finance,948.59,776.5
+TXN-2025396,2025-02-11,2779.81,revenue,Product Sales,Operating Account,Finance,2406.58,2382.55
+TXN-2025397,2025-05-14,7933.25,revenue,Product Sales,AP Clearing,Customer Success,7070.6,8240.06
+TXN-2025398,2025-04-25,5168.94,cost,Payroll,Operating Account,Operations,4598.89,4474.41
+TXN-2025399,2025-03-09,6008.18,cost,Facilities,AP Clearing,Operations,6820.9,5248.07
+TXN-2025400,2025-06-03,1432.68,cost,Software,Operating Account,Sales,1506.4,1559.3
+TXN-2025401,2025-01-20,3608.68,cost,Logistics,Payroll Account,Operations,4159.45,3104.71
+TXN-2025402,2025-05-24,1222.89,cost,Payroll,Operating Account,Sales,1209.49,1269.41
+TXN-2025403,2025-01-26,1491.7,revenue,Product Sales,AP Clearing,Customer Success,1320.54,1384.11
+TXN-2025404,2025-04-13,5854.69,revenue,Product Sales,Operating Account,Engineering,5437.53,6224.41
+TXN-2025405,2025-06-23,9388.66,revenue,Implementation,Payroll Account,Customer Success,9958.76,8430.11
+TXN-2025406,2025-05-02,975.96,revenue,Service Revenue,AP Clearing,Finance,993.05,932.11
+TXN-2025407,2025-06-11,3027.08,revenue,Product Sales,Revenue Clearing,Finance,3082.53,3175.37
+TXN-2025408,2025-05-08,3006.67,revenue,Subscription,Payroll Account,Operations,3385.98,3631.7
+TXN-2025409,2025-03-21,1026.92,revenue,Product Sales,AP Clearing,Engineering,1172.28,974.5
+TXN-2025410,2025-06-24,3975.44,revenue,Implementation,Operating Account,Sales,4411.35,4423.5
+TXN-2025411,2025-02-25,1959.62,cost,Payroll,AP Clearing,Finance,1981.89,2015.43
+TXN-2025412,2025-01-05,0.0,cost,Logistics,Payroll Account,Engineering,363.25,309.1
+TXN-2025413,2025-02-20,5230.22,revenue,Product Sales,Revenue Clearing,Sales,5266.7,6373.87
+TXN-2025414,2025-04-11,5991.89,revenue,Implementation,Operating Account,Finance,6383.17,6202.67
+TXN-2025415,2025-04-26,3779.55,cost,Payroll,Revenue Clearing,Operations,3367.83,4569.58
+TXN-2025416,2025-06-30,5971.83,cost,Contractors,AP Clearing,Engineering,5605.5,7362.98
+TXN-2025417,2025-06-22,864.97,revenue,Subscription,AP Clearing,Sales,753.38,916.53
+TXN-2025418,2025-06-05,4698.97,cost,Software,Revenue Clearing,Operations,5388.35,5289.37
+TXN-2025419,2025-01-27,8944.77,revenue,Implementation,Revenue Clearing,Customer Success,9055.38,7647.32
+TXN-2025420,2025-02-06,1673.94,cost,Logistics,AP Clearing,Engineering,1545.5,1778.44
+TXN-2025421,2025-05-19,3378.65,revenue,Service Revenue,Payroll Account,Finance,3277.02,3320.98
+TXN-2025422,2025-01-16,1724.36,revenue,Subscription,Payroll Account,Sales,1519.74,1524.43
+TXN-2025423,2025-06-30,3052.52,cost,Marketing,AP Clearing,Operations,3120.28,2743.28
+TXN-2025424,2025-06-19,5743.38,revenue,Product Sales,AP Clearing,Operations,5850.63,6462.94
+TXN-2025425,2025-04-09,255.51,cost,Contractors,Operating Account,Engineering,220.51,318.92
+TXN-2025426,2025-02-10,1840.49,cost,Software,Payroll Account,Engineering,1959.86,1987.97
+TXN-2025427,2025-05-19,1667.6,cost,Software,Payroll Account,Finance,1616.45,1422.65
+TXN-2025428,2025-04-22,544.42,cost,Marketing,AP Clearing,Engineering,586.07,571.59
+TXN-2025429,2025-02-27,2193.14,cost,Payroll,Payroll Account,Customer Success,2516.91,2713.38
+TXN-2025430,2025-05-12,3925.58,revenue,Product Sales,AP Clearing,Operations,3433.31,4065.67
+TXN-2025431,2025-04-04,4498.1,cost,Payroll,Revenue Clearing,Finance,4186.68,5006.78
+TXN-2025432,2025-04-19,5384.09,revenue,Subscription,Payroll Account,Operations,6118.43,6487.5
+TXN-2025433,2025-01-03,4057.77,cost,Facilities,Payroll Account,Customer Success,3548.59,3459.69
+TXN-2025434,2025-05-02,1305.82,cost,Payroll,Revenue Clearing,Operations,1136.46,1385.87
+TXN-2025435,2025-04-05,5879.88,cost,Software,Revenue Clearing,Engineering,6060.3,6905.83
+TXN-2025436,2025-01-18,3328.91,revenue,Service Revenue,Operating Account,Finance,3921.4,2814.35
+TXN-2025437,2025-03-25,5895.98,cost,Facilities,Revenue Clearing,Finance,5767.0,7002.12
+TXN-2025438,2025-05-21,1806.02,cost,Facilities,Revenue Clearing,Customer Success,1820.33,1590.52
+TXN-2025439,2025-05-10,4559.19,revenue,Implementation,Revenue Clearing,Sales,3964.2,5571.6
+TXN-2025440,2025-06-16,3175.03,cost,Logistics,Payroll Account,Finance,3183.91,3576.37
+TXN-2025441,2025-05-14,5914.79,cost,Payroll,Payroll Account,Operations,5286.32,6245.33
+TXN-2025442,2025-03-30,2378.89,revenue,Subscription,Revenue Clearing,Engineering,2758.55,2890.3
+TXN-2025443,2025-05-18,5565.77,cost,Logistics,Revenue Clearing,Finance,5898.38,5354.33
+TXN-2025444,2025-05-30,3865.07,cost,Contractors,AP Clearing,Operations,3823.37,3660.96
+TXN-2025445,2025-03-31,8510.56,revenue,Service Revenue,Revenue Clearing,Operations,9351.0,7834.34
+TXN-2025446,2025-02-16,4267.35,cost,Contractors,AP Clearing,Finance,3981.14,4986.16
+TXN-2025447,2025-06-05,2800.8,cost,Facilities,Payroll Account,Sales,2717.6,3436.07
+TXN-2025448,2025-06-13,7533.78,revenue,Implementation,Payroll Account,Customer Success,8552.31,7386.43
+TXN-2025449,2025-03-06,1361.29,revenue,Service Revenue,Payroll Account,Finance,1554.13,1255.45
+TXN-2025450,2025-02-12,5326.04,cost,Payroll,Payroll Account,Customer Success,5185.8,5023.88
+TXN-2025451,2025-03-22,5855.51,revenue,Implementation,Revenue Clearing,Sales,6267.27,6043.53
+TXN-2025452,2025-03-13,3659.26,cost,Facilities,Operating Account,Sales,4109.45,4026.12
+TXN-2025453,2025-02-23,3493.86,cost,Software,Revenue Clearing,Finance,3062.04,3596.18
+TXN-2025454,2025-02-17,4999.15,cost,Software,Operating Account,Customer Success,5295.13,4168.28
+TXN-2025455,2025-05-08,3584.42,revenue,Implementation,Operating Account,Finance,4206.67,4023.76
+TXN-2025456,2025-06-27,2468.82,cost,Payroll,Revenue Clearing,Finance,2812.37,2072.05
+TXN-2025457,2025-06-04,5499.68,revenue,Service Revenue,Operating Account,Finance,4918.31,6536.07
+TXN-2025458,2025-01-06,4093.83,cost,Software,Revenue Clearing,Sales,4818.71,4518.94
+TXN-2025459,2025-04-15,5407.66,cost,Marketing,Operating Account,Operations,4978.34,6634.99
+TXN-2025460,2025-02-01,5901.02,revenue,Product Sales,AP Clearing,Operations,5919.11,4946.88
+TXN-2025461,2025-04-10,623.17,cost,Facilities,Operating Account,Finance,647.95,636.59
+TXN-2025462,2025-04-05,4762.9,cost,Facilities,Operating Account,Operations,4459.53,5764.97
+TXN-2025463,2025-03-28,4247.59,cost,Payroll,AP Clearing,Engineering,4734.78,4313.18
+TXN-2025464,2025-04-21,3896.75,cost,Facilities,Operating Account,Customer Success,4569.18,3598.7
+TXN-2025465,2025-02-02,1603.64,revenue,Service Revenue,AP Clearing,Customer Success,1561.05,1840.28
+TXN-2025466,2025-01-07,3205.96,cost,Contractors,Operating Account,Finance,3213.87,3196.6
+TXN-2025467,2025-06-10,3064.39,cost,Facilities,Revenue Clearing,Engineering,3221.91,3207.29
+TXN-2025468,2025-04-30,1000.0,cost,Marketing,Revenue Clearing,Finance,918.27,1082.6
+TXN-2025469,2025-04-17,4209.61,revenue,Implementation,AP Clearing,Finance,4161.1,3856.66
+TXN-2025470,2025-06-30,4675.09,cost,Contractors,Payroll Account,Operations,4303.84,4534.08
+TXN-2025471,2025-02-22,1368.85,cost,Payroll,Operating Account,Engineering,1548.04,1426.91
+TXN-2025472,2025-05-11,2436.55,revenue,Subscription,Operating Account,Sales,2873.83,2583.34
+TXN-2025473,2025-06-19,3761.18,cost,Contractors,Revenue Clearing,Customer Success,3749.77,3973.72
+TXN-2025474,2025-05-16,1541.23,revenue,Service Revenue,AP Clearing,Sales,1688.26,1363.67
+TXN-2025475,2025-03-14,3522.98,cost,Facilities,AP Clearing,Engineering,3883.75,3309.48
+TXN-2025476,2025-05-02,2265.0,revenue,Service Revenue,Payroll Account,Engineering,2551.87,2014.12
+TXN-2025477,2025-05-24,2548.53,revenue,Service Revenue,Revenue Clearing,Operations,2195.64,2924.84
+TXN-2025478,2025-03-09,2649.86,revenue,Product Sales,Revenue Clearing,Engineering,2526.81,2748.7
+TXN-2025479,2025-04-24,4862.91,cost,Marketing,Operating Account,Operations,4249.66,5021.64
+TXN-2025480,2025-05-25,1153.18,cost,Software,Operating Account,Engineering,1063.97,1042.83
+TXN-2025481,2025-01-18,5812.38,cost,Facilities,Payroll Account,Operations,5631.23,5481.58
+TXN-2025482,2025-06-28,4506.74,cost,Facilities,Operating Account,Operations,4039.15,4278.22
+TXN-2025483,2025-06-11,4465.63,cost,Logistics,Operating Account,Customer Success,4498.68,4577.46
+TXN-2025484,2025-02-09,5046.89,revenue,Subscription,Payroll Account,Sales,4558.83,5150.22
+TXN-2025485,2025-03-10,9245.29,revenue,Product Sales,AP Clearing,Finance,10086.44,10910.78
+TXN-2025486,2025-06-21,5651.49,cost,Facilities,Revenue Clearing,Engineering,4939.32,6623.89
+TXN-2025487,2025-03-09,5482.19,cost,Marketing,Revenue Clearing,Finance,6173.87,5080.75
+TXN-2025488,2025-04-11,3605.36,cost,Logistics,AP Clearing,Customer Success,3862.28,3576.87
+TXN-2025489,2025-05-11,3132.64,cost,Logistics,Operating Account,Customer Success,3013.95,5274.412499999999
+TXN-2025490,2025-06-13,3272.57,cost,Contractors,Payroll Account,Finance,3101.4,3298.28
+TXN-2025491,2025-01-16,4755.12,revenue,Subscription,AP Clearing,Operations,4277.24,4508.91
+TXN-2025492,2025-03-07,2380.16,cost,Marketing,Operating Account,Sales,2769.89,2509.04
+TXN-2025493,2025-01-23,4396.41,revenue,Subscription,Revenue Clearing,Engineering,3850.23,5132.94
+TXN-2025494,2025-05-15,5183.45,cost,Contractors,Payroll Account,Operations,5399.55,5789.8
+TXN-2025495,2025-02-02,2786.28,cost,Contractors,Operating Account,Sales,2453.07,3381.77
+TXN-2025496,2025-05-23,6604.31,revenue,Implementation,Payroll Account,Engineering,6193.73,7544.73
+TXN-2025497,2025-05-19,3872.08,cost,Payroll,Payroll Account,Finance,4538.27,3607.45
+TXN-2025498,2025-03-22,849.73,cost,Contractors,Operating Account,Engineering,981.89,911.99
+TXN-2025499,2025-06-03,6654.67,revenue,Subscription,Payroll Account,Customer Success,5793.89,6825.75
+TXN-2025500,2025-06-05,2891.67,cost,Logistics,Payroll Account,Engineering,3019.32,3478.22
+TXN-2025501,2025-03-12,804.11,cost,Contractors,Payroll Account,Sales,927.5,702.9
+TXN-2025502,2025-05-18,1966.47,cost,Logistics,Operating Account,Customer Success,1833.5,2037.33
+TXN-2025503,2025-03-06,4264.66,cost,Facilities,Operating Account,Operations,3798.3,4102.67
+TXN-2025504,2025-02-01,379.61,cost,Facilities,Payroll Account,Sales,428.34,417.53
+TXN-2025505,2025-04-13,1852.07,revenue,Product Sales,Operating Account,Customer Success,1797.04,1619.5
+TXN-2025506,2025-01-25,7330.92,revenue,Service Revenue,AP Clearing,Finance,6946.23,7538.96
+TXN-2025507,2025-02-24,1329.79,revenue,Service Revenue,Revenue Clearing,Customer Success,1519.17,1536.07
+TXN-2025508,2025-06-02,3361.27,cost,Facilities,Operating Account,Finance,3429.74,3065.07
+TXN-2025509,2025-05-14,1034.34,cost,Contractors,Operating Account,Finance,1119.45,1163.54
+TXN-2025510,2025-05-11,5477.41,cost,Marketing,Operating Account,Engineering,6073.14,6093.14
+TXN-2025511,2025-04-16,2671.4,revenue,Subscription,Revenue Clearing,Engineering,3117.29,2723.33
+TXN-2025512,2025-04-06,5741.59,cost,Facilities,AP Clearing,Customer Success,6072.49,7075.21
+TXN-2025513,2025-01-29,4342.14,cost,Logistics,Payroll Account,Finance,4551.14,4379.46
+TXN-2025514,2025-04-17,4779.52,cost,Facilities,Revenue Clearing,Engineering,4644.98,3933.4
+TXN-2025515,2025-03-29,3015.14,cost,Contractors,Revenue Clearing,Engineering,3212.63,3005.35
+TXN-2025516,2025-06-25,1007.65,revenue,Subscription,Payroll Account,Engineering,1135.28,1153.01
+TXN-2025517,2025-03-05,130.1,cost,Software,Operating Account,Engineering,111.45,119.53
+TXN-2025518,2025-04-19,1000.61,cost,Contractors,Revenue Clearing,Operations,876.21,1238.39
+TXN-2025519,2025-03-05,8188.83,revenue,Product Sales,Revenue Clearing,Sales,8916.82,7462.14
+TXN-2025520,2025-01-23,2187.12,revenue,Product Sales,Payroll Account,Sales,1960.47,2152.01
+TXN-2025521,2025-01-01,4672.85,cost,Logistics,Revenue Clearing,Finance,4820.19,4085.08
+TXN-2025522,2025-03-13,4395.22,cost,,AP Clearing,Engineering,4788.39,3677.32
+TXN-2025523,2025-02-10,28881.55,cost,Contractors,AP Clearing,Sales,29071.12,28176.78
+TXN-2025524,2025-02-11,2316.78,cost,Facilities,AP Clearing,Finance,2466.99,2822.01
+TXN-2025525,2025-01-09,4400.76,revenue,Implementation,Revenue Clearing,Engineering,4227.37,4354.52
+TXN-2025526,2025-02-25,1484.72,cost,Marketing,Operating Account,Finance,1304.05,1355.73
+TXN-2025527,2025-04-26,6482.4,revenue,Implementation,Revenue Clearing,Finance,6250.16,5630.8
+TXN-2025528,2025-03-19,3583.89,cost,Facilities,Revenue Clearing,Operations,3204.68,4474.11
+TXN-2025529,2025-01-24,8917.11,revenue,Subscription,AP Clearing,Sales,10520.71,8478.69
+TXN-2025530,2025-03-18,5948.0,cost,Payroll,Operating Account,Sales,6828.86,5598.57
+TXN-2025531,2025-05-11,3985.04,cost,Payroll,Revenue Clearing,Operations,4103.96,4170.56
+TXN-2025532,2025-02-26,4419.11,cost,Software,AP Clearing,Sales,4570.71,5434.89
+TXN-2025533,2025-01-21,1806.43,revenue,Product Sales,Payroll Account,Customer Success,2091.83,1626.33
+TXN-2025534,2025-05-15,1065.06,revenue,Service Revenue,AP Clearing,Sales,944.13,1183.24
+TXN-2025535,2025-01-24,2384.46,cost,Contractors,Operating Account,Customer Success,2064.5,2140.02
+TXN-2025536,2025-05-22,4848.06,cost,Payroll,Payroll Account,Sales,4984.1,4721.62
+TXN-2025537,2025-06-04,2774.84,cost,Contractors,Operating Account,Finance,2705.31,2948.56
+TXN-2025538,2025-02-03,5095.58,cost,Marketing,Operating Account,Finance,4801.79,5048.82
+TXN-2025539,2025-01-15,1602.66,cost,Software,Payroll Account,Engineering,1662.21,1977.15
+TXN-2025015,2025-01-30,4913.09,revenue,Implementation,Payroll Account,Finance,5726.75,5304.87
+TXN-2025207,2025-05-28,1919.48,cost,Payroll,Revenue Clearing,Customer Success,2022.08,1847.85
+TXN-2025390,2025-04-30,3091.97,revenue,Implementation,Payroll Account,Sales,3568.77,3497.42

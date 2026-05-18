@@ -4,6 +4,7 @@ import streamlit as st
 
 from app.components.layout import configure_page, get_working_dataframe, page_title
 from app.services.column_mapper import initialize_template_mapping, validate_template_mapping
+from app.services.dataset_workspace import get_active_template_mapping, set_active_template_mapping
 from app.services.schema_detector import detect_template_schema
 from app.services.template_registry import implemented_domain_templates
 
@@ -58,11 +59,15 @@ with st.expander("Template requirements and detected fields"):
         st.warning(f"Missing required fields: {', '.join(detection.missing_fields)}")
 
 template_mappings = st.session_state.setdefault("template_mappings", {})
-existing_mapping = template_mappings.get(selected_template_id)
+existing_mapping = get_active_template_mapping(selected_template_id) or template_mappings.get(selected_template_id)
 if selected_template_id == "sales_retail":
     existing_mapping = st.session_state.get("column_mapping") or existing_mapping
 elif selected_template_id == "manufacturing":
     existing_mapping = st.session_state.get("manufacturing_mapping") or existing_mapping
+elif selected_template_id == "logistics":
+    existing_mapping = st.session_state.get("logistics_mapping") or existing_mapping
+elif selected_template_id == "finance":
+    existing_mapping = st.session_state.get("finance_mapping") or existing_mapping
 
 base_mapping = existing_mapping or initialize_template_mapping(selected_template_id, columns, detection)
 
@@ -102,17 +107,20 @@ else:
         st.warning(message)
 
 if st.button("Save mapping", type="primary", disabled=not validation.is_valid):
-    template_mappings[selected_template_id] = mapping
-    st.session_state["template_mappings"] = template_mappings
+    set_active_template_mapping(selected_template_id, mapping)
     st.session_state["selected_template_id"] = selected_template_id
     if selected_template_id == "sales_retail":
-        st.session_state["column_mapping"] = mapping
         st.session_state.pop("retail_analytics_result", None)
         st.session_state.pop("retail_clean_result", None)
     elif selected_template_id == "manufacturing":
-        st.session_state["manufacturing_mapping"] = mapping
         st.session_state.pop("manufacturing_analytics_result", None)
         st.session_state.pop("manufacturing_clean_result", None)
+    elif selected_template_id == "logistics":
+        st.session_state.pop("logistics_analytics_result", None)
+        st.session_state.pop("logistics_clean_result", None)
+    elif selected_template_id == "finance":
+        st.session_state.pop("finance_analytics_result", None)
+        st.session_state.pop("finance_clean_result", None)
     st.success(f"{template.name} mapping saved.")
 
 with st.expander("Current mapping JSON"):

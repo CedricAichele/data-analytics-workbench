@@ -8,48 +8,53 @@ from app.services.data_loader import (
     LoadedDataset,
     get_excel_sheet_names,
     get_supported_file_types,
+    load_sample_finance_transactions,
+    load_sample_logistics_shipments,
     load_sample_manufacturing_operations,
     load_sample_retail_orders,
     load_uploaded_file,
 )
+from app.services.dataset_workspace import (
+    add_dataset,
+    get_active_dataset,
+    initialize_workspace,
+    list_datasets,
+    set_active_dataset,
+    sync_legacy_state,
+)
 from app.services.schema_detector import detect_retail_schema, detect_template_schema
+from app.services.template_registry import implemented_domain_templates
 
 
 configure_page("Data Upload")
 page_title("Data Upload", APP_DESCRIPTION)
-st.caption("Accepted formats: CSV, Excel .xlsx, JSON .json")
+st.caption("Accepted formats: CSV, Excel workbooks .xlsx, JSON .json. Legacy .xls files are not supported.")
+initialize_workspace()
 
 
 def _store_dataset(loaded: LoadedDataset) -> None:
     df = loaded.dataframe
-    st.session_state["raw_df"] = df
-    st.session_state["working_df"] = df.copy()
-    st.session_state["dataset_name"] = loaded.metadata.get("file_name", "Dataset")
-    st.session_state["dataset_metadata"] = loaded.metadata
-    detection = detect_retail_schema(list(df.columns))
-    manufacturing_detection = detect_template_schema("manufacturing", list(df.columns))
-    st.session_state["retail_schema_detection"] = detection
-    st.session_state["manufacturing_schema_detection"] = manufacturing_detection
-    st.session_state["sales_retail_schema_detection"] = detection
-    st.session_state["template_schema_detections"] = {
-        "sales_retail": detection,
-        "manufacturing": manufacturing_detection,
+    dataset_name = loaded.metadata.get("file_name", "Dataset")
+    add_dataset(dataset_name, df, loaded.metadata)
+    detections = {
+        template.template_id: detect_template_schema(template.template_id, list(df.columns))
+        for template in implemented_domain_templates()
     }
+    st.session_state["template_schema_detections"] = detections
+    st.session_state["retail_schema_detection"] = detections.get("sales_retail") or detect_retail_schema(list(df.columns))
+    for template_id, detection in detections.items():
+        st.session_state[f"{template_id}_schema_detection"] = detection
     suggested_template = loaded.metadata.get("suggested_template")
     if suggested_template:
         st.session_state["selected_template_id"] = suggested_template
-    elif detection.detected_template:
-        st.session_state["selected_template_id"] = "sales_retail"
-    elif manufacturing_detection.detected_template:
-        st.session_state["selected_template_id"] = "manufacturing"
-    st.session_state["transformation_log"] = []
-    st.session_state["template_mappings"] = {}
-    st.session_state.pop("column_mapping", None)
-    st.session_state.pop("manufacturing_mapping", None)
-    st.session_state.pop("retail_analytics_result", None)
-    st.session_state.pop("retail_clean_result", None)
-    st.session_state.pop("manufacturing_analytics_result", None)
-    st.session_state.pop("manufacturing_clean_result", None)
+    else:
+        detected_template = next(
+            (template_id for template_id, detection in detections.items() if detection.detected_template),
+            None,
+        )
+        if detected_template:
+            st.session_state["selected_template_id"] = detected_template
+    sync_legacy_state()
 
 
 left, right = st.columns([1, 1])
@@ -107,10 +112,51 @@ with right:
             )
         except Exception as exc:
             st.error(f"Could not load manufacturing sample: {exc}")
+    if st.button("Load sample logistics dataset"):
+        try:
+            loaded = load_sample_logistics_shipments()
+            _store_dataset(loaded)
+            st.success(
+                f"Loaded logistics sample with {loaded.metadata['rows']:,} rows "
+                f"and {loaded.metadata['columns']:,} columns."
+            )
+        except Exception as exc:
+            st.error(f"Could not load logistics sample: {exc}")
+    if st.button("Load sample finance dataset"):
+        try:
+            loaded = load_sample_finance_transactions()
+            _store_dataset(loaded)
+            st.success(
+                f"Loaded finance sample with {loaded.metadata['rows']:,} rows "
+                f"and {loaded.metadata['columns']:,} columns."
+            )
+        except Exception as exc:
+            st.error(f"Could not load finance sample: {exc}")
+
+workspace_datasets = list_datasets()
+if workspace_datasets:
+    st.divider()
+    st.subheader("Dataset Workspace")
+    active = get_active_dataset()
+    active_id = active["dataset_id"] if active else workspace_datasets[0]["dataset_id"]
+    selected_dataset_id = st.selectbox(
+        "Active dataset",
+        [dataset["dataset_id"] for dataset in workspace_datasets],
+        index=[dataset["dataset_id"] for dataset in workspace_datasets].index(active_id),
+        format_func=lambda dataset_id: next(dataset["name"] for dataset in workspace_datasets if dataset["dataset_id"] == dataset_id),
+    )
+    if selected_dataset_id != active_id:
+        set_active_dataset(selected_dataset_id)
+        st.rerun()
 
 if "raw_df" in st.session_state:
     df = st.session_state["working_df"]
-    st.divider()
+    active_detections = {
+        template.template_id: detect_template_schema(template.template_id, list(df.columns))
+        for template in implemented_domain_templates()
+    }
+    st.session_state["template_schema_detections"] = active_detections
+    st.session_state["retail_schema_detection"] = active_detections.get("sales_retail")
     metadata = st.session_state.get("dataset_metadata", {})
     if metadata:
         st.subheader("Loaded Dataset Metadata")
@@ -135,7 +181,7 @@ if "raw_df" in st.session_state:
         st.dataframe(
             [
                 {
-                    "template": "Sales / Retail" if template_id == "sales_retail" else "Manufacturing",
+                    "template": template_id.replace("_", " ").title(),
                     "confidence": f"{template_detection.confidence_score:.1f}%",
                     "matched_fields": len(template_detection.matched_fields),
                     "missing_required": ", ".join(template_detection.missing_fields) or "None",

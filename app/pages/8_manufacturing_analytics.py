@@ -6,9 +6,12 @@ import streamlit as st
 from app.components.kpi_cards import format_number, format_percent, render_kpi_grid
 from app.components.layout import configure_page, get_working_dataframe, page_title
 from app.config import MANUFACTURING_REQUIRED_FIELDS
-from app.services.column_mapper import validate_template_mapping
+from app.services.column_mapper import initialize_template_mapping, validate_template_mapping
+from app.services.dataset_workspace import get_active_template_mapping, set_active_analytics_result
 from app.services.manufacturing_analytics import build_manufacturing_analytics, clean_manufacturing_operations
 from app.services.quality_score import calculate_quality_score
+from app.services.schema_detector import detect_template_schema
+from app.services.template_registry import get_template
 
 
 configure_page("Manufacturing Analytics")
@@ -18,16 +21,31 @@ df = get_working_dataframe()
 if df is None:
     st.stop()
 
+template = get_template("manufacturing")
+detection = detect_template_schema("manufacturing", list(df.columns))
 template_mappings = st.session_state.get("template_mappings", {})
-mapping = st.session_state.get("manufacturing_mapping") or template_mappings.get("manufacturing")
+mapping = get_active_template_mapping("manufacturing") or st.session_state.get("manufacturing_mapping") or template_mappings.get("manufacturing")
+if not mapping and not detection.requires_manual_mapping:
+    mapping = initialize_template_mapping("manufacturing", list(df.columns), detection)
 if not mapping:
-    st.warning("Save a valid Manufacturing mapping before running this domain template.")
+    st.warning("The active dataset is not mapped to this analytics template.")
+    st.write("Required fields")
+    st.dataframe([{"field": field} for field in template.required_fields], use_container_width=True, hide_index=True)
+    st.write("Detected and missing fields")
+    st.dataframe(
+        [{"field": field, "matched_column": detection.matched_fields.get(field), "status": "matched" if field in detection.matched_fields else "missing"} for field in template.required_fields],
+        use_container_width=True,
+        hide_index=True,
+    )
+    st.info("Go to Column Mapping, use Generic Analytics, or load the manufacturing sample dataset.")
     st.stop()
 
 validation = validate_template_mapping("manufacturing", mapping, list(df.columns))
 if not validation.is_valid:
+    st.warning("The active dataset is not mapped to this analytics template.")
     for message in validation.messages:
-        st.warning(message)
+        st.write(f"- {message}")
+    st.info("Go to Column Mapping, use Generic Analytics, or load the manufacturing sample dataset.")
     st.stop()
 
 quality = calculate_quality_score(
@@ -45,8 +63,8 @@ except Exception as exc:
     st.error(f"Manufacturing analytics could not be calculated: {exc}")
     st.stop()
 
-st.session_state["manufacturing_clean_result"] = clean_result
-st.session_state["manufacturing_analytics_result"] = analytics
+set_active_analytics_result("manufacturing_clean_result", clean_result)
+set_active_analytics_result("manufacturing_analytics_result", analytics)
 
 metrics = analytics.metrics
 st.subheader("Manufacturing KPIs")

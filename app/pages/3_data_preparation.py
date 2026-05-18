@@ -6,6 +6,14 @@ import pandas as pd
 import streamlit as st
 
 from app.components.layout import configure_page, get_working_dataframe, page_title
+from app.services.dataset_workspace import (
+    append_active_transformation_log,
+    clear_active_template_state,
+    get_active_dataset,
+    reset_active_working_df,
+    sync_legacy_state,
+    update_active_working_df,
+)
 from app.services.transformations import (
     change_column_type,
     create_revenue_column,
@@ -73,20 +81,22 @@ def _save_working_df(
     level: str = "success",
     clear_mapping: bool = False,
 ) -> None:
-    st.session_state["working_df"] = transformed
-    st.session_state.setdefault("transformation_log", []).append(create_transformation_log_entry(action, details))
+    update_active_working_df(transformed)
+    append_active_transformation_log(create_transformation_log_entry(action, details))
     st.session_state.pop("retail_analytics_result", None)
     st.session_state.pop("retail_clean_result", None)
     st.session_state.pop("manufacturing_analytics_result", None)
     st.session_state.pop("manufacturing_clean_result", None)
+    st.session_state.pop("logistics_analytics_result", None)
+    st.session_state.pop("logistics_clean_result", None)
+    st.session_state.pop("finance_analytics_result", None)
+    st.session_state.pop("finance_clean_result", None)
     st.session_state.pop("retail_schema_detection", None)
     st.session_state.pop("sales_retail_schema_detection", None)
     st.session_state.pop("manufacturing_schema_detection", None)
     st.session_state.pop("template_schema_detections", None)
     if clear_mapping:
-        st.session_state.pop("column_mapping", None)
-        st.session_state.pop("manufacturing_mapping", None)
-        st.session_state["template_mappings"] = {}
+        clear_active_template_state()
     st.session_state["prep_feedback"] = {"level": level, "message": details}
     st.rerun()
 
@@ -108,6 +118,7 @@ def _run_transformation(
 
 _show_feedback()
 
+sync_legacy_state()
 raw_df = st.session_state["raw_df"]
 working_df = st.session_state["working_df"]
 log = st.session_state.setdefault("transformation_log", [])
@@ -260,19 +271,19 @@ st.subheader("Reset and Export")
 reset_col, export_col = st.columns(2)
 with reset_col:
     if st.button("Reset working data to original upload", key="prep_reset_button"):
-        st.session_state["working_df"] = st.session_state["raw_df"].copy()
-        st.session_state["transformation_log"] = []
+        reset_active_working_df()
         st.session_state.pop("retail_analytics_result", None)
         st.session_state.pop("retail_clean_result", None)
         st.session_state.pop("retail_schema_detection", None)
         st.session_state.pop("manufacturing_analytics_result", None)
         st.session_state.pop("manufacturing_clean_result", None)
+        st.session_state.pop("logistics_analytics_result", None)
+        st.session_state.pop("logistics_clean_result", None)
+        st.session_state.pop("finance_analytics_result", None)
+        st.session_state.pop("finance_clean_result", None)
         st.session_state.pop("sales_retail_schema_detection", None)
         st.session_state.pop("manufacturing_schema_detection", None)
         st.session_state.pop("template_schema_detections", None)
-        st.session_state.pop("column_mapping", None)
-        st.session_state.pop("manufacturing_mapping", None)
-        st.session_state["template_mappings"] = {}
         st.session_state["prep_feedback"] = {"level": "success", "message": "Working data reset to the original upload."}
         st.rerun()
 

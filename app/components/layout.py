@@ -6,7 +6,15 @@ from dataclasses import dataclass
 
 import streamlit as st
 
-from app.config import APP_SUBTITLE, APP_TITLE, LOGO_PATH
+from app.config import APP_SUBTITLE, APP_TITLE, LOGO_MARK_PATH
+from app.services.dataset_workspace import (
+    get_active_dataset,
+    get_active_working_df,
+    initialize_workspace,
+    list_datasets,
+    set_active_dataset,
+    sync_legacy_state,
+)
 
 
 @dataclass(frozen=True)
@@ -30,6 +38,7 @@ NAV_ITEMS = [
     NavItem("Logistics Analytics", "pages/9_logistics_analytics.py", ":material/local_shipping:"),
     NavItem("Finance Analytics", "pages/10_finance_analytics.py", ":material/account_balance_wallet:"),
     NavItem("Management Summary", "pages/6_management_summary.py", ":material/description:"),
+    NavItem("Export Center", "pages/export_center.py", ":material/download:"),
 ]
 
 
@@ -49,6 +58,20 @@ def configure_page(title: str) -> None:
             padding: 0.85rem 1rem;
         }
         .small-muted {color: #64748b; font-size: 0.9rem;}
+        .daw-brand-title {
+            color: #0f172a;
+            font-size: 1.25rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-top: 0.35rem;
+        }
+        .daw-brand-subtitle {
+            color: #475569;
+            font-size: 0.78rem;
+            font-weight: 500;
+            line-height: 1.35;
+            margin-bottom: 0.8rem;
+        }
         .daw-sidebar-nav-title {
             color: #64748b;
             font-size: 0.75rem;
@@ -77,17 +100,51 @@ def configure_page(title: str) -> None:
 
 def render_sidebar_branding() -> None:
     """Render consistent app branding in the sidebar."""
-    if LOGO_PATH.exists():
+    if LOGO_MARK_PATH.exists():
         try:
-            st.sidebar.image(str(LOGO_PATH), use_container_width=True)
+            st.sidebar.image(str(LOGO_MARK_PATH), width=104)
         except TypeError:
-            st.sidebar.image(str(LOGO_PATH), use_column_width=True)
+            st.sidebar.image(str(LOGO_MARK_PATH), width=104)
         except Exception:
             st.sidebar.title(APP_TITLE)
-    else:
-        st.sidebar.title(APP_TITLE)
-    st.sidebar.caption(APP_SUBTITLE)
+    st.sidebar.markdown(
+        f"""
+        <div class="daw-brand-title">{APP_TITLE}</div>
+        <div class="daw-brand-subtitle">{APP_SUBTITLE}</div>
+        """,
+        unsafe_allow_html=True,
+    )
+    render_dataset_workspace_selector()
     render_sidebar_navigation()
+
+
+def render_dataset_workspace_selector() -> None:
+    """Render active dataset selector in the sidebar."""
+    initialize_workspace()
+    datasets = list_datasets()
+    if not datasets:
+        st.sidebar.info("No active dataset.")
+        return
+    active = get_active_dataset()
+    dataset_ids = [dataset["dataset_id"] for dataset in datasets]
+    current_id = active["dataset_id"] if active else dataset_ids[0]
+    selected_id = st.sidebar.selectbox(
+        "Active dataset",
+        dataset_ids,
+        index=dataset_ids.index(current_id) if current_id in dataset_ids else 0,
+        format_func=lambda dataset_id: next(dataset["name"] for dataset in datasets if dataset["dataset_id"] == dataset_id),
+        key="sidebar_active_dataset_selector",
+    )
+    if selected_id != current_id:
+        set_active_dataset(selected_id)
+        st.rerun()
+    active = get_active_dataset()
+    if active:
+        metadata = active.get("metadata", {})
+        st.sidebar.caption(
+            f"{metadata.get('source', 'dataset')} | {metadata.get('file_type', 'data')} | "
+            f"{len(active['working_df']):,} rows x {len(active['working_df'].columns):,} cols"
+        )
 
 
 def render_sidebar_navigation() -> None:
@@ -108,13 +165,12 @@ def page_title(title: str, subtitle: str | None = None) -> None:
 
 def ensure_working_dataframe() -> bool:
     """Ensure working_df exists when raw_df is loaded."""
-    if "raw_df" not in st.session_state:
+    initialize_workspace()
+    active_dataset = get_active_dataset()
+    if active_dataset is None:
         st.warning("Load a CSV, XLSX, JSON, or the bundled sample dataset first from the Data Upload page.")
         return False
-    if "working_df" not in st.session_state:
-        st.session_state["working_df"] = st.session_state["raw_df"].copy()
-    if "transformation_log" not in st.session_state:
-        st.session_state["transformation_log"] = []
+    sync_legacy_state()
     return True
 
 
@@ -125,20 +181,19 @@ def require_dataframe() -> bool:
 def get_working_dataframe():
     if not ensure_working_dataframe():
         return None
-    return st.session_state["working_df"]
+    return get_active_working_df()
 
 
 def dataframe_status() -> None:
-    raw_df = st.session_state.get("raw_df")
-    working_df = st.session_state.get("working_df")
-    if raw_df is None:
+    initialize_workspace()
+    active = get_active_dataset()
+    if active is None:
         st.info("No dataset is loaded yet.")
         return
-    if working_df is None:
-        working_df = raw_df.copy()
-        st.session_state["working_df"] = working_df
+    raw_df = active["raw_df"]
+    working_df = active["working_df"]
     st.success(
-        f"Loaded dataset: {st.session_state.get('dataset_name', 'Unnamed dataset')} "
+        f"Active dataset: {active.get('name', 'Unnamed dataset')} "
         f"| raw: {len(raw_df):,} rows, {len(raw_df.columns):,} columns "
         f"| working: {len(working_df):,} rows, {len(working_df.columns):,} columns"
     )

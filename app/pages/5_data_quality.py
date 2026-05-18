@@ -3,7 +3,13 @@ from __future__ import annotations
 import streamlit as st
 
 from app.components.layout import configure_page, get_working_dataframe, page_title
-from app.config import MANUFACTURING_REQUIRED_FIELDS, RETAIL_REQUIRED_FIELDS
+from app.config import (
+    FINANCE_REQUIRED_FIELDS,
+    LOGISTICS_REQUIRED_FIELDS,
+    MANUFACTURING_REQUIRED_FIELDS,
+    RETAIL_REQUIRED_FIELDS,
+)
+from app.services.dataset_workspace import get_active_template_mapping
 from app.services.quality_score import calculate_quality_score
 from app.services.template_registry import implemented_domain_templates
 
@@ -53,15 +59,25 @@ selected_template_id = st.selectbox(
 template_mappings = st.session_state.get("template_mappings", {})
 mapping = template_mappings.get(selected_template_id)
 if selected_template_id == "sales_retail":
-    mapping = st.session_state.get("column_mapping") or mapping
+    mapping = get_active_template_mapping("sales_retail") or st.session_state.get("column_mapping") or mapping
     required_fields = RETAIL_REQUIRED_FIELDS
     date_fields = ["order_date"]
     numeric_fields = ["quantity", "unit_price"]
 elif selected_template_id == "manufacturing":
-    mapping = st.session_state.get("manufacturing_mapping") or mapping
+    mapping = get_active_template_mapping("manufacturing") or st.session_state.get("manufacturing_mapping") or mapping
     required_fields = MANUFACTURING_REQUIRED_FIELDS
     date_fields = ["timestamp"]
     numeric_fields = ["actual_output", "scrap_count", "downtime_minutes"]
+elif selected_template_id == "logistics":
+    mapping = get_active_template_mapping("logistics") or st.session_state.get("logistics_mapping") or mapping
+    required_fields = LOGISTICS_REQUIRED_FIELDS
+    date_fields = ["order_date", "delivery_date", "planned_delivery_date"]
+    numeric_fields = ["shipping_cost"]
+elif selected_template_id == "finance":
+    mapping = get_active_template_mapping("finance") or st.session_state.get("finance_mapping") or mapping
+    required_fields = FINANCE_REQUIRED_FIELDS
+    date_fields = ["date"]
+    numeric_fields = ["amount", "budget", "actual"]
 else:
     required_fields = []
     date_fields = []
