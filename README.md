@@ -261,29 +261,6 @@ Deployment steps:
 
 No Streamlit secrets are required for this MVP.
 
-## Upload to GitHub
-
-```bash
-git init
-git status
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/CedricAichele/data-analytics-workbench.git
-git push -u origin main
-```
-
-If `origin` already exists:
-
-```bash
-git remote set-url origin https://github.com/CedricAichele/data-analytics-workbench.git
-git push -u origin main
-```
-
-## Screenshots
-
-Screenshots will be added after the deployed Streamlit app is finalized.
-
 ## Development Approach
 
 This project was implemented using an AI-assisted coding workflow. The analytical concept, data quality rules, KPI definitions, validation logic, testing, and documentation were specified, reviewed, and refined manually.

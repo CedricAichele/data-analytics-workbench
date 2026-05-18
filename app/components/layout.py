@@ -45,7 +45,12 @@ NAV_ITEMS = [
 def configure_page(title: str) -> None:
     page_title_text = APP_TITLE if title == APP_TITLE else f"{title} | {APP_TITLE}"
     st.set_page_config(page_title=page_title_text, layout="wide")
+    inject_layout_css()
     render_sidebar_branding()
+
+
+def inject_layout_css() -> None:
+    """Load shared CSS before any custom sidebar or page content is rendered."""
     st.markdown(
         """
         <style>
@@ -106,7 +111,7 @@ def render_sidebar_branding() -> None:
         except TypeError:
             st.sidebar.image(str(LOGO_MARK_PATH), width=104)
         except Exception:
-            st.sidebar.title(APP_TITLE)
+            pass
     st.sidebar.markdown(
         f"""
         <div class="daw-brand-title">{APP_TITLE}</div>
