@@ -11,7 +11,10 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from app.components.layout import configure_page, dataframe_status, page_title
 from app.config import APP_DESCRIPTION, APP_SUBTITLE, APP_TITLE
+from app.services.dataset_workspace import get_active_analytics_result, get_active_dataset
+from app.services.project_state import get_project_summary, project_summary_rows
 from app.services.template_registry import list_templates
+from app.services.workflow import build_workflow_steps, get_recommended_next_action
 
 
 configure_page(APP_TITLE)
@@ -19,6 +22,19 @@ page_title(APP_TITLE, APP_SUBTITLE)
 st.write(APP_DESCRIPTION)
 
 dataframe_status()
+
+active_dataset = get_active_dataset()
+project_summary = get_project_summary(
+    active_dataset=active_dataset,
+    quality_report=get_active_analytics_result("generic_quality_report"),
+)
+
+st.subheader("Project Summary")
+if project_summary["Project name"] == "No project created":
+    st.info("Create a project to document your analysis workflow.")
+if project_summary["Active dataset"] == "No dataset loaded":
+    st.info("Load a dataset to start profiling, preparation and analytics.")
+st.dataframe(project_summary_rows(project_summary), use_container_width=True, hide_index=True)
 
 st.subheader("Two-Layer Analytics Architecture")
 layer_cols = st.columns(2)
@@ -37,21 +53,35 @@ with layer_cols[1]:
     )
     st.caption("Templates use mapped fields for KPI logic but do not remove extra columns.")
 
-st.subheader("Workflow")
-cols = st.columns(7)
-steps = [
-    ("1", "Upload", "Load CSV, XLSX, JSON, or a sample dataset."),
-    ("2", "Profile", "Inspect structure, missingness, types, and quality."),
-    ("3", "Prepare", "Apply logged transformations to working_df only."),
-    ("4", "Explore", "Use Generic Analytics when no template fits."),
-    ("5", "Map", "Map domain fields for KPI templates."),
-    ("6", "Summarize", "Review KPI outputs and management narrative."),
-    ("7", "Export", "Download working data, logs, and result tables."),
-]
-for col, (number, label, text) in zip(cols, steps):
+st.subheader("Usage Modes")
+mode_cols = st.columns(3)
+with mode_cols[0]:
+    st.write("Quick Data Check")
+    st.caption("Upload data, inspect structure and quality, and export documentation.")
+with mode_cols[1]:
+    st.write("BI-ready Data Preparation")
+    st.caption("Clean data, create a data dictionary, validate quality and export a BI-ready package.")
+with mode_cols[2]:
+    st.write("Domain KPI Analysis")
+    st.caption("Map fields to Sales, Manufacturing, Logistics or Finance templates and review KPI outputs.")
+
+st.subheader("Recommended Workflow")
+workflow_steps = build_workflow_steps(
+    st.session_state.get("project_metadata", {}),
+    active_dataset,
+    (active_dataset or {}).get("analytics_results", {}),
+)
+workflow_cols = st.columns(5)
+for col, step in zip(workflow_cols, workflow_steps[:5]):
     with col:
-        st.metric(number, label)
-        st.caption(text)
+        st.metric(step["status"], step["step"])
+        st.caption(step["recommended_next_action"])
+st.caption(f"Recommended next action: {get_recommended_next_action(workflow_steps)}")
+try:
+    st.page_link("pages/project_setup.py", label="Create or update project", icon=":material/arrow_forward:")
+    st.page_link("pages/workflow.py", label="Open guided workflow", icon=":material/checklist:")
+except Exception:
+    pass
 
 st.divider()
 

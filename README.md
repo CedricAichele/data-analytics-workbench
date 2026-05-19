@@ -2,7 +2,7 @@
 
 Profiling, Preparation, Data Quality & KPI Analytics.
 
-Data Analytics Workbench is a Streamlit portfolio project that demonstrates a practical analytics workflow: load raw data, inspect quality, prepare a controlled working copy, explore arbitrary tabular datasets, map business fields, and generate transparent KPI analytics.
+Data Analytics Workbench is a Streamlit portfolio project that demonstrates a practical project-based analytics workflow: define an analysis project, load raw data, inspect quality, prepare a controlled working copy, explore arbitrary tabular datasets, map business fields, generate transparent KPI analytics, and save a Project Backup.
 
 GitHub repository: `https://github.com/CedricAichele/data-analytics-workbench`  
 Live Demo: not deployed yet  
@@ -17,11 +17,14 @@ This app is built around that separation:
 - Generic workflow pages work with any supported tabular dataset.
 - Domain KPI templates require schema detection or manual column mapping.
 - Extra columns are preserved for profiling, preparation, generic analytics, and export.
+- Project Setup and Workflow pages help business users understand what to do next.
 
 ## Feature Overview
 
 - Upload CSV, Excel `.xlsx`, and tabular JSON `.json`
 - Load bundled Sales / Retail, Manufacturing, Logistics, and Finance sample datasets
+- Create lightweight analytics project metadata before or after loading data
+- Follow a guided workflow checklist without being locked into a wizard
 - Manage several datasets in one Streamlit session, prevent duplicate loads, and choose the active dataset
 - Profile any active working dataframe for types, missingness, duplicates, unique values, and summaries
 - Prepare data through logged transformations on `working_df`
@@ -32,6 +35,7 @@ This app is built around that separation:
 - Map source columns to implemented domain templates
 - Run Sales / Retail, Manufacturing, Logistics, and Finance KPI analytics with chart controls
 - Export the active working dataset, documentation, KPI summaries, chart/result data, and a BI-ready Excel package
+- Download or load a business-friendly Project Backup for continuing work later
 - Generate deterministic template-aware management summaries without API keys
 
 ## Architecture
@@ -49,6 +53,46 @@ tests/                    pytest coverage for core services
 ```
 
 Streamlit pages handle user interaction. Analytical logic lives in `app/services/` so it can be validated outside the UI.
+
+## Guided Project Workflow
+
+The app is organized around a simple project flow:
+
+1. Create a project
+2. Load data
+3. Review profile and quality
+4. Prepare data
+5. Generate a data dictionary
+6. Map columns if a domain KPI template is needed
+7. Analyze generic trends or domain KPIs
+8. Export a BI-ready package or download a Project Backup
+
+The Workflow page shows each step as Done, Open, or Optional with a recommended next action. It is guidance, not a rigid wizard; users can still open any page directly.
+
+## Project Setup
+
+Project Setup lets users document lightweight business context:
+
+- project name
+- project description
+- analysis goal
+- company or department
+- data owner or responsible person
+- reporting period
+- notes
+- selected workflow
+- suggested domain template
+- desired outputs
+
+Users can create a project before loading data, or load data first and document the project later.
+
+## Usage Modes
+
+The Workbench supports three common small-business workflows:
+
+- Quick Data Check: upload data, inspect structure and quality, and export documentation.
+- BI-ready Data Preparation: clean data, create a data dictionary, validate quality, and export a BI-ready package.
+- Domain KPI Analysis: map fields to Sales, Manufacturing, Logistics, or Finance templates and review KPI outputs.
 
 ## Two-Layer Analytics Model
 
@@ -195,6 +239,12 @@ Finance analytics requires interpretable transaction type values such as `revenu
 
 The Export Center makes output easy to find and keeps the standard export target on the active `working_df`.
 
+Project Export:
+
+- Download Project Backup
+- Load Project Backup
+- Review the current project summary
+
 Available exports:
 
 - active working dataset as CSV, Excel `.xlsx`, or JSON `.json`
@@ -212,6 +262,14 @@ Available exports:
 Exports use Streamlit download buttons and do not write files to disk.
 
 Chart image and dashboard PDF exports are intentionally deferred. The current priority is reliable export of the underlying data tables that support the charts and KPIs.
+
+## Project Backup vs BI-ready Export Package
+
+Project Backup is for continuing a Workbench project later. It stores project details, workflow choices, mappings, transformation log, available quality context, documentation, and the cleaned working dataset when available.
+
+BI-ready Export Package is for sharing analysis outputs. It is an Excel workbook designed for business review, documentation, and handoff.
+
+The backup may contain internal files, but users interact with it as a Project Backup ZIP. No backend database, user account, cloud storage, or authentication is required.
 
 ## Using SQL Server Data
 
@@ -345,6 +403,7 @@ This project was implemented using an AI-assisted coding workflow. The analytica
 - The app does not include authentication, user accounts, or a backend API.
 - The app does not connect directly to SQL Server or other production databases.
 - PDF dashboard export is not implemented.
+- Project Backups are local files, not cloud-synced saved projects.
 - The app is a portfolio-grade analytics prototype, not an enterprise governance or data catalog platform.
 
 ## Next Steps
@@ -354,6 +413,7 @@ This project was implemented using an AI-assisted coding workflow. The analytica
 - Add richer date parsing controls for regional formats.
 - Add deeper compatibility diagnostics for user-uploaded domain datasets.
 - Add optional governance-style metadata fields to the Data Dictionary.
+- Add optional project progress tracking for completed manual review steps.
 - Add a lightweight PDF summary report if it can be done without heavy rendering dependencies.
 
 ## Portfolio Positioning

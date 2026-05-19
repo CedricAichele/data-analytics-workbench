@@ -27,6 +27,8 @@ class NavItem:
 
 NAV_ITEMS = [
     NavItem("Overview", "main.py", ":material/home:"),
+    NavItem("Project Setup", "pages/project_setup.py", ":material/workspace_premium:"),
+    NavItem("Workflow", "pages/workflow.py", ":material/checklist:"),
     NavItem("Data Upload", "pages/1_data_upload.py", ":material/upload_file:"),
     NavItem("Data Profile", "pages/2_data_profile.py", ":material/table_view:"),
     NavItem("Data Dictionary", "pages/data_dictionary.py", ":material/menu_book:"),

@@ -5,6 +5,8 @@ This report lists features implemented in the current Data Analytics Workbench c
 ## Implemented Pages
 
 - Overview
+- Project Setup
+- Workflow
 - Data Upload
 - Data Profile
 - Data Dictionary
@@ -40,6 +42,18 @@ The app supports multiple datasets in the current Streamlit session. Each datase
 - analytics results
 
 One dataset is active at a time. All workflow pages operate on the active dataset. No joins, relationships, or cross-dataset analytics are implemented.
+
+## Project Setup and Guided Workflow
+
+Project Setup stores lightweight business context such as project name, analysis goal, owner, reporting period, selected workflow, suggested template, and desired outputs.
+
+Workflow shows a guided checklist with Done, Open, and Optional statuses. It recommends the next action but does not block users from opening pages freely.
+
+Implemented usage modes:
+
+- Quick Data Check
+- BI-ready Data Preparation
+- Domain KPI Analysis
 
 ## Upload and Sample Behavior
 
@@ -145,6 +159,7 @@ Management Summary is deterministic and template-aware. It summarizes Sales, Man
 
 Export Center supports:
 
+- Project Backup download and load
 - active working dataset as CSV, Excel `.xlsx`, and JSON `.json`
 - optional raw dataset export when explicitly selected
 - Data Dictionary as CSV, Excel `.xlsx`, and JSON `.json`
@@ -157,6 +172,8 @@ Export Center supports:
 - chart/control result tables as CSV, Excel `.xlsx`, and JSON `.json`
 - BI-ready Excel package with cleaned data, data dictionary, quality report, transformation log, quality rules, KPI summary, Generic Analytics result when available, result tables, and domain result sheets when available
 
+Project Backup is distinct from the BI-ready Export Package. The backup is for continuing a Workbench project later; the BI-ready package is for sharing analysis outputs.
+
 ## Known Limitations
 
 - Data is stored in Streamlit session state, not a database.
@@ -168,12 +185,14 @@ Export Center supports:
 - Finance interpretation requires meaningful type values such as `revenue` and `cost`.
 - The Data Dictionary is useful documentation, not a full enterprise data catalog.
 - Direct SQL Server connectivity and dashboard PDF export are not implemented.
+- Project Backups are local ZIP files, not cloud-synced saved projects.
 - Screenshots are not committed yet.
 
 ## Not-Yet-Implemented Ideas
 
 - Deployed screenshots.
 - Saved mapping profiles.
+- More detailed project progress tracking.
 - Richer locale-aware date parsing controls.
 - Deeper compatibility diagnostics for uploaded domain datasets.
 - Optional owner/steward fields for the Data Dictionary.

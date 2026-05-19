@@ -14,6 +14,9 @@
 - Keep Streamlit UI code in `app/main.py`, `app/pages/`, and `app/components/`.
 - Keep business logic in `app/services/` so it can be tested without Streamlit.
 - Keep dataframe transformation logic in `app/services/transformations.py`.
+- Keep project metadata helpers in `app/services/project_state.py`.
+- Keep Project Backup ZIP helpers in `app/services/project_backup.py`.
+- Keep guided workflow status logic in `app/services/workflow.py`.
 - Keep generic exploratory aggregation logic in `app/services/generic_analytics.py`.
 - Keep template definitions in `app/services/template_registry.py`.
 - Keep Data Dictionary logic in `app/services/data_dictionary.py`.

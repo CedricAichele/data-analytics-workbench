@@ -9,11 +9,13 @@ import streamlit as st
 from app.components.layout import configure_page, page_title
 from app.services.data_dictionary import generate_data_dictionary
 from app.services.dataset_workspace import (
+    add_or_activate_dataset,
     get_active_analytics_result,
     get_active_dataset,
     get_active_transformation_log,
     initialize_workspace,
     set_active_analytics_result,
+    sync_legacy_state,
 )
 from app.services.export_package import build_export_workbook, build_quality_report_sheet
 from app.services.export_service import (
@@ -23,6 +25,8 @@ from app.services.export_service import (
     dataframe_to_json_bytes,
     transformation_log_to_dataframe,
 )
+from app.services.project_backup import build_project_backup_zip, load_project_backup_zip, safe_project_filename
+from app.services.project_state import get_project_metadata, get_project_summary, project_summary_rows, set_project_metadata
 from app.services.quality_rules import run_template_quality_rules
 from app.services.quality_score import calculate_quality_score
 
@@ -187,6 +191,58 @@ st.caption(
     "The standard export target is the active working dataset. "
     "Use raw export only when you need the unchanged source copy."
 )
+
+st.subheader("Project Export")
+st.write(
+    "The Project Backup stores workflow details, mappings and available working context. "
+    "Use it to continue a previous project in the Workbench."
+)
+project_metadata = get_project_metadata()
+project_summary = get_project_summary(active_dataset=active, quality_report=quality_report)
+st.dataframe(project_summary_rows(project_summary), use_container_width=True, hide_index=True)
+project_cols = st.columns(2)
+with project_cols[0]:
+    if not project_metadata.get("project_name"):
+        st.info("Save a project name on Project Setup before downloading a Project Backup.")
+    else:
+        backup_bytes = build_project_backup_zip(
+            project_metadata=project_metadata,
+            active_dataset=active,
+            data_dictionary=data_dictionary_df,
+            quality_report=quality_report,
+            quality_rules=quality_rules_df,
+        )
+        st.download_button(
+            "Download Project Backup",
+            data=backup_bytes,
+            file_name=safe_project_filename(project_metadata.get("project_name", "analytics_project")),
+            mime="application/zip",
+            key="project-backup-download",
+        )
+with project_cols[1]:
+    backup_upload = st.file_uploader("Load Project Backup", type=["zip"], key="export-center-project-backup")
+    if backup_upload is not None:
+        try:
+            loaded = load_project_backup_zip(backup_upload)
+            set_project_metadata(loaded.project_metadata)
+            if loaded.cleaned_dataset is not None:
+                restored_metadata = dict(loaded.dataset_metadata or {})
+                restored_metadata.update({"source": "project backup", "file_type": "csv"})
+                add_or_activate_dataset(
+                    loaded.project_metadata.get("project_name", "Restored project dataset"),
+                    loaded.cleaned_dataset,
+                    restored_metadata,
+                )
+                restored_active = get_active_dataset()
+                if restored_active is not None:
+                    restored_active["transformation_log"] = list(loaded.transformation_log)
+                    restored_active["template_mappings"] = dict(loaded.column_mappings)
+                    sync_legacy_state()
+            for message in loaded.messages:
+                st.info(message)
+            st.success("Project Backup loaded.")
+        except Exception as exc:
+            st.error(f"Project Backup could not be loaded: {exc}")
 
 st.subheader("A. Export Active Working Dataset")
 export_raw = st.checkbox("Export raw dataset instead of working dataset", value=False)

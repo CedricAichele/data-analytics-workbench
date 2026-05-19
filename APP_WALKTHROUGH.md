@@ -16,6 +16,8 @@ The sidebar shows:
 Navigation items:
 
 - Overview
+- Project Setup
+- Workflow
 - Data Upload
 - Data Profile
 - Data Dictionary
@@ -38,9 +40,32 @@ The Overview page explains the two-layer architecture:
 - generic workflow for any supported tabular dataset
 - domain KPI templates that require schema detection or manual mapping
 
-It also explains that `raw_df` remains unchanged, `working_df` is the transformed copy, extra columns are preserved, and analytics pages do not permanently mutate data.
+It also explains the three usage modes: Quick Data Check, BI-ready Data Preparation, and Domain KPI Analysis.
+
+It shows a Project Summary and recommended workflow actions, and explains that `raw_df` remains unchanged, `working_df` is the transformed copy, extra columns are preserved, and analytics pages do not permanently mutate data.
 
 Before data is loaded, the page shows that no dataset is active. After loading data, it shows raw and working row/column counts.
+
+## Project Setup
+
+Project Setup lets users document the business context for an analytics project before or after loading data.
+
+It includes project name, description, analysis goal, company or department, data owner, reporting period, workflow, suggested template, desired outputs, and notes.
+
+The page also supports:
+
+- Save Project
+- Load Project Backup
+- Download Project Backup
+- Project Summary
+
+Business-facing labels avoid exposing internal JSON files as the main concept.
+
+## Workflow
+
+Workflow shows a guided checklist with Done, Open, and Optional statuses. Steps include project creation, dataset loading, profiling, quality check, preparation, dictionary generation, mapping, analytics, export package, and Project Backup.
+
+The checklist is guidance only. Users can still open any page directly from the sidebar.
 
 ## Data Upload
 
@@ -167,6 +192,7 @@ Export Center shows the active dataset name, source, file type, and working shap
 
 It can export:
 
+- Project Backup for continuing a project later
 - active working dataset as CSV, Excel `.xlsx`, or JSON `.json`
 - raw dataset only when explicitly selected
 - Data Dictionary as CSV, Excel `.xlsx`, or JSON `.json`
@@ -178,5 +204,7 @@ It can export:
 - available domain result tables as CSV, Excel `.xlsx`, or JSON `.json`
 - chart/control result tables as CSV, Excel `.xlsx`, or JSON `.json`
 - BI-ready Excel package containing cleaned data, data dictionary, quality report, transformation log, quality rules, KPI summary, and available analytics result tables
+
+Project Backup is separate from the BI-ready Export Package. The backup is for continuing work in the Workbench; the BI-ready package is for sharing analysis outputs.
 
 Exports use Streamlit download buttons and do not overwrite local files.
