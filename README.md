@@ -31,6 +31,7 @@ This app is built around that separation:
 - Generate a Data Dictionary from the active `working_df`
 - Score data quality with transparent sub-scores, explanations, and recommended fixes
 - Run template-specific quality rules that report issues without mutating data
+- Choose Generic or domain-specific analytics from a single Analytics Hub
 - Run robust Generic Analytics with one or multiple numeric measures
 - Map source columns to implemented domain templates
 - Run Sales / Retail, Manufacturing, Logistics, and Finance KPI analytics with chart controls
@@ -68,6 +69,17 @@ The app is organized around a simple project flow:
 8. Export a BI-ready package or download a Project Backup
 
 The Workflow page shows each step as Done, Open, or Optional with a recommended next action. It is guidance, not a rigid wizard; users can still open any page directly.
+
+## Primary Navigation
+
+The sidebar is grouped to keep the app easier to scan:
+
+- Core: Overview, Project Setup, Workflow
+- Data: Data Upload, Data Profile, Data Preparation, Data Dictionary, Data Quality
+- Analytics: Analytics Hub
+- Results: Management Summary, Export Center
+
+Analytics Hub is the main entry point for Generic Analytics, Sales / Retail, Manufacturing, Logistics, and Finance analytics. The individual analytics pages remain available internally for routing, but they are not shown as separate primary sidebar links.
 
 ## Project Setup
 
@@ -187,6 +199,8 @@ Template-specific quality rules add explainable checks for mapped Sales / Retail
 ## Generic Analytics
 
 Generic Analytics works with any active `working_df` and does not assign business meaning.
+
+Users open it from Analytics Hub.
 
 Users can select:
 

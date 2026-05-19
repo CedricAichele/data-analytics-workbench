@@ -10,10 +10,10 @@ from app.services.project_state import (
     OUTPUT_OPTIONS,
     TEMPLATE_OPTIONS,
     WORKFLOW_OPTIONS,
+    compact_project_summary_rows,
     get_project_metadata,
     get_project_summary,
     initialize_project_state,
-    project_summary_rows,
     set_project_metadata,
     update_project_metadata,
 )
@@ -85,7 +85,7 @@ summary = get_project_summary(
     active_dataset=active,
     quality_report=get_active_analytics_result("generic_quality_report") or (calculate_quality_score(active["working_df"]) if active else None),
 )
-st.dataframe(project_summary_rows(summary), use_container_width=True, hide_index=True)
+st.dataframe(compact_project_summary_rows(summary), use_container_width=True, hide_index=True)
 
 st.subheader("Continue Previous Project")
 backup_upload = st.file_uploader("Load Project Backup", type=["zip"], help="Upload a Project Backup ZIP created by Data Analytics Workbench.")

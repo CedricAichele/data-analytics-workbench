@@ -11,38 +11,27 @@ The sidebar shows:
 - subtitle: Profiling, Preparation, Data Quality & KPI Analytics
 - active dataset selector when datasets are loaded
 - active dataset source, file type, and working shape
-- navigation links for the full workflow
+- grouped navigation links for the main workflow
 
-Navigation items:
+Navigation groups:
 
-- Overview
-- Project Setup
-- Workflow
-- Data Upload
-- Data Profile
-- Data Dictionary
-- Data Preparation
-- Data Quality
-- Generic Analytics
-- Template Selection
-- Column Mapping
-- Sales Analytics
-- Manufacturing Analytics
-- Logistics Analytics
-- Finance Analytics
-- Management Summary
-- Export Center
+- Core: Overview, Project Setup, Workflow
+- Data: Data Upload, Data Profile, Data Preparation, Data Dictionary, Data Quality
+- Analytics: Analytics Hub
+- Results: Management Summary, Export Center
+
+Generic Analytics, Sales / Retail, Manufacturing, Logistics and Finance analytics are selected from Analytics Hub instead of shown as separate primary sidebar links.
 
 ## Overview
 
-The Overview page explains the two-layer architecture:
+The Overview page opens with a business-friendly explanation of what the app does: turn raw CSV, Excel and JSON datasets into checked, prepared and exportable analytics results.
+
+It explains what users can do, shows a compact Project Summary, and presents the recommended workflow in a readable process layout without truncated card text.
+
+Lower on the page it explains the three usage modes and the two-layer analytics model:
 
 - generic workflow for any supported tabular dataset
 - domain KPI templates that require schema detection or manual mapping
-
-It also explains the three usage modes: Quick Data Check, BI-ready Data Preparation, and Domain KPI Analysis.
-
-It shows a Project Summary and recommended workflow actions, and explains that `raw_df` remains unchanged, `working_df` is the transformed copy, extra columns are preserved, and analytics pages do not permanently mutate data.
 
 Before data is loaded, the page shows that no dataset is active. After loading data, it shows raw and working row/column counts.
 
@@ -63,7 +52,7 @@ Business-facing labels avoid exposing internal JSON files as the main concept.
 
 ## Workflow
 
-Workflow shows a guided checklist with Done, Open, and Optional statuses. Steps include project creation, dataset loading, profiling, quality check, preparation, dictionary generation, mapping, analytics, export package, and Project Backup.
+Workflow shows a guided process layout with Done, Open, and Optional statuses. Steps include Project Setup, Upload Data, Profile Data, Prepare Data, Check Quality, Generate Data Dictionary, Column Mapping, Run Analytics, Export Results, and Save Project Backup.
 
 The checklist is guidance only. Users can still open any page directly from the sidebar.
 
@@ -120,17 +109,9 @@ When a template mapping exists, the page can calculate template-aware schema and
 
 Template-specific Quality Rules report mapped-domain issues for Sales / Retail, Manufacturing, Logistics, and Finance datasets. The rules show severity, affected rows, explanations, and recommended fixes. They report issues only and do not mutate data.
 
-## Generic Analytics
+## Analytics Hub
 
-Generic Analytics works with arbitrary active datasets and does not assume sales, manufacturing, logistics, or finance meaning.
-
-Users can choose one or multiple numeric measures, optional category grouping, optional date grouping, aggregation, and chart type. The page validates stale selections and incompatible chart configurations so column changes do not produce user-facing tracebacks.
-
-The page shows basic insights, an aggregated table, Plotly chart, and CSV download of the aggregated result.
-
-## Template Selection
-
-Template Selection shows cards for:
+Analytics Hub is the primary analytics navigation page. Users choose an analysis mode:
 
 - Generic Analytics
 - Sales / Retail Analytics
@@ -138,7 +119,15 @@ Template Selection shows cards for:
 - Logistics Analytics
 - Finance Analytics
 
-Cards show purpose, implementation status, required fields, optional fields, mapping requirements, sample availability, and limitations.
+The hub shows a short description, whether mapping is required, current active dataset compatibility, detected/missing fields where relevant, and links to the selected analytics page or Column Mapping.
+
+## Generic Analytics
+
+Generic Analytics works with arbitrary active datasets and does not assume sales, manufacturing, logistics, or finance meaning.
+
+Users can choose one or multiple numeric measures, optional category grouping, optional date grouping, aggregation, and chart type. The page validates stale selections and incompatible chart configurations so column changes do not produce user-facing tracebacks.
+
+The page shows basic insights, an aggregated table, Plotly chart, and CSV download of the aggregated result.
 
 ## Column Mapping
 

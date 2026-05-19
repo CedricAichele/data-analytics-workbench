@@ -25,25 +25,27 @@ class NavItem:
     icon: str
 
 
-NAV_ITEMS = [
-    NavItem("Overview", "main.py", ":material/home:"),
-    NavItem("Project Setup", "pages/project_setup.py", ":material/workspace_premium:"),
-    NavItem("Workflow", "pages/workflow.py", ":material/checklist:"),
-    NavItem("Data Upload", "pages/1_data_upload.py", ":material/upload_file:"),
-    NavItem("Data Profile", "pages/2_data_profile.py", ":material/table_view:"),
-    NavItem("Data Dictionary", "pages/data_dictionary.py", ":material/menu_book:"),
-    NavItem("Data Preparation", "pages/3_data_preparation.py", ":material/tune:"),
-    NavItem("Data Quality", "pages/5_data_quality.py", ":material/verified_user:"),
-    NavItem("Generic Analytics", "pages/6_generic_analytics.py", ":material/query_stats:"),
-    NavItem("Template Selection", "pages/7_template_selection.py", ":material/layers:"),
-    NavItem("Column Mapping", "pages/4_column_mapping.py", ":material/link:"),
-    NavItem("Sales Analytics", "pages/5_retail_analytics.py", ":material/bar_chart:"),
-    NavItem("Manufacturing Analytics", "pages/8_manufacturing_analytics.py", ":material/factory:"),
-    NavItem("Logistics Analytics", "pages/9_logistics_analytics.py", ":material/local_shipping:"),
-    NavItem("Finance Analytics", "pages/10_finance_analytics.py", ":material/account_balance_wallet:"),
-    NavItem("Management Summary", "pages/6_management_summary.py", ":material/description:"),
-    NavItem("Export Center", "pages/export_center.py", ":material/download:"),
-]
+NAV_GROUPS = {
+    "Core": [
+        NavItem("Overview", "main.py", ":material/home:"),
+        NavItem("Project Setup", "pages/project_setup.py", ":material/workspace_premium:"),
+        NavItem("Workflow", "pages/workflow.py", ":material/checklist:"),
+    ],
+    "Data": [
+        NavItem("Data Upload", "pages/1_data_upload.py", ":material/upload_file:"),
+        NavItem("Data Profile", "pages/2_data_profile.py", ":material/table_view:"),
+        NavItem("Data Preparation", "pages/3_data_preparation.py", ":material/tune:"),
+        NavItem("Data Dictionary", "pages/data_dictionary.py", ":material/menu_book:"),
+        NavItem("Data Quality", "pages/5_data_quality.py", ":material/verified_user:"),
+    ],
+    "Analytics": [
+        NavItem("Analytics Hub", "pages/analytics_hub.py", ":material/query_stats:"),
+    ],
+    "Results": [
+        NavItem("Management Summary", "pages/6_management_summary.py", ":material/description:"),
+        NavItem("Export Center", "pages/export_center.py", ":material/download:"),
+    ],
+}
 
 
 def configure_page(title: str) -> None:
@@ -63,14 +65,14 @@ def inject_layout_css() -> None:
         .daw-logo-wrap {
             display: flex;
             justify-content: center;
-            padding: 0.45rem 0 0.25rem;
+            padding: 0.15rem 0 0.15rem;
             width: 100%;
         }
         .daw-logo-wrap img {
             display: block;
             height: auto;
-            max-width: 92px;
-            width: 92px;
+            max-width: 74px;
+            width: 74px;
         }
         div[data-testid="stMetric"] {
             background: #f8fafc;
@@ -84,21 +86,21 @@ def inject_layout_css() -> None:
             font-size: 1.25rem;
             font-weight: 800;
             line-height: 1.15;
-            margin-top: 0.35rem;
+            margin-top: 0.15rem;
         }
         .daw-brand-subtitle {
             color: #475569;
             font-size: 0.78rem;
             font-weight: 500;
             line-height: 1.35;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.45rem;
         }
         .daw-sidebar-nav-title {
             color: #64748b;
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: 0.08em;
-            margin: 1rem 0 0.35rem;
+            margin: 0.8rem 0 0.3rem;
             text-transform: uppercase;
         }
         section[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"] {
@@ -172,12 +174,30 @@ def render_dataset_workspace_selector() -> None:
 
 def render_sidebar_navigation() -> None:
     """Render a stable custom navigation menu with professional icons."""
-    st.sidebar.markdown('<div class="daw-sidebar-nav-title">Navigation</div>', unsafe_allow_html=True)
-    for item in NAV_ITEMS:
-        try:
-            st.sidebar.page_link(item.page, label=item.label, icon=item.icon)
-        except Exception:
-            st.sidebar.page_link(item.page, label=item.label)
+    for group, items in NAV_GROUPS.items():
+        st.sidebar.markdown(f'<div class="daw-sidebar-nav-title">{group}</div>', unsafe_allow_html=True)
+        for item in items:
+            try:
+                st.sidebar.page_link(item.page, label=item.label, icon=item.icon)
+            except Exception:
+                st.sidebar.page_link(item.page, label=item.label)
+
+
+def render_process_steps(steps: list[dict[str, str]]) -> None:
+    """Render workflow steps in a readable two-column process layout."""
+    for index, step in enumerate(steps, start=1):
+        with st.container(border=True):
+            cols = st.columns([0.12, 0.28, 0.18, 0.42])
+            cols[0].metric("Step", str(index))
+            cols[1].markdown(f"**{step['step']}**")
+            cols[1].caption(step["status"])
+            cols[2].write(step["explanation"])
+            with cols[3]:
+                st.caption(step["recommended_next_action"])
+                try:
+                    st.page_link(step["page"], label="Open page", icon=":material/arrow_forward:")
+                except Exception:
+                    st.caption("Use the sidebar to open this page.")
 
 
 def page_title(title: str, subtitle: str | None = None) -> None:

@@ -26,7 +26,7 @@ from app.services.export_service import (
     transformation_log_to_dataframe,
 )
 from app.services.project_backup import build_project_backup_zip, load_project_backup_zip, safe_project_filename
-from app.services.project_state import get_project_metadata, get_project_summary, project_summary_rows, set_project_metadata
+from app.services.project_state import compact_project_summary_rows, get_project_metadata, get_project_summary, set_project_metadata
 from app.services.quality_rules import run_template_quality_rules
 from app.services.quality_score import calculate_quality_score
 
@@ -199,7 +199,7 @@ st.write(
 )
 project_metadata = get_project_metadata()
 project_summary = get_project_summary(active_dataset=active, quality_report=quality_report)
-st.dataframe(project_summary_rows(project_summary), use_container_width=True, hide_index=True)
+st.dataframe(compact_project_summary_rows(project_summary), use_container_width=True, hide_index=True)
 project_cols = st.columns(2)
 with project_cols[0]:
     if not project_metadata.get("project_name"):

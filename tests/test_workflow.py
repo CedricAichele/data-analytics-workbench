@@ -6,7 +6,7 @@ from app.services.workflow import build_workflow_steps, calculate_workflow_statu
 def test_workflow_with_no_project_starts_with_project_creation():
     steps = build_workflow_steps({}, None, {})
 
-    assert steps[0]["step"] == "Project created"
+    assert steps[0]["step"] == "Project Setup"
     assert steps[0]["status"] == "Open"
     assert get_recommended_next_action(steps) == "Open Project Setup and save the project details."
 
@@ -35,10 +35,10 @@ def test_workflow_with_dataset_and_outputs_marks_available_steps_done():
     steps = build_workflow_steps(metadata, active_dataset)
     statuses = {step["step"]: step["status"] for step in steps}
 
-    assert statuses["Project created"] == "Done"
-    assert statuses["Dataset loaded"] == "Done"
-    assert statuses["Data Quality checked"] == "Done"
-    assert statuses["Data Preparation completed"] == "Done"
-    assert statuses["Data Dictionary generated"] == "Done"
-    assert statuses["Column Mapping completed"] == "Done"
-    assert statuses["Analytics reviewed"] == "Done"
+    assert statuses["Project Setup"] == "Done"
+    assert statuses["Upload Data"] == "Done"
+    assert statuses["Check Quality"] == "Done"
+    assert statuses["Prepare Data"] == "Done"
+    assert statuses["Generate Data Dictionary"] == "Done"
+    assert statuses["Column Mapping"] == "Done"
+    assert statuses["Run Analytics"] == "Done"

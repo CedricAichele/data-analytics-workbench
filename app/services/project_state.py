@@ -143,6 +143,24 @@ def project_summary_rows(summary: dict[str, Any]) -> list[dict[str, Any]]:
     return [{"item": key, "status": value} for key, value in summary.items()]
 
 
+def compact_project_summary_rows(summary: dict[str, Any]) -> list[dict[str, Any]]:
+    """Return the compact project summary rows used by user-facing pages."""
+    keys = [
+        "Project name",
+        "Selected workflow",
+        "Selected template",
+        "Active dataset",
+        "Active dataset rows",
+        "Active dataset columns",
+        "Data quality score",
+        "Transformations",
+        "Data Dictionary",
+        "Available exports",
+        "Recommended next action",
+    ]
+    return [{"item": key, "status": summary.get(key, "")} for key in keys]
+
+
 def _template_label_to_id(label: str) -> str:
     return {
         "Sales / Retail": "sales_retail",

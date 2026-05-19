@@ -12,6 +12,7 @@ This report lists features implemented in the current Data Analytics Workbench c
 - Data Dictionary
 - Data Preparation
 - Data Quality
+- Analytics Hub
 - Generic Analytics
 - Template Selection
 - Column Mapping
@@ -47,7 +48,7 @@ One dataset is active at a time. All workflow pages operate on the active datase
 
 Project Setup stores lightweight business context such as project name, analysis goal, owner, reporting period, selected workflow, suggested template, and desired outputs.
 
-Workflow shows a guided checklist with Done, Open, and Optional statuses. It recommends the next action but does not block users from opening pages freely.
+Workflow shows a readable process layout with Done, Open, and Optional statuses. It recommends the next action but does not block users from opening pages freely.
 
 Implemented usage modes:
 
@@ -103,6 +104,8 @@ The quality score is deterministic and explainable. It evaluates missing values,
 Template-specific quality rules are implemented for Sales / Retail, Manufacturing, Logistics, and Finance mappings. Rules report severity, affected rows, explanations, and recommended fixes without mutating the source dataframe.
 
 ## Generic Analytics
+
+Analytics Hub is the primary sidebar entry for analytics. It lets users choose Generic, Sales / Retail, Manufacturing, Logistics or Finance analytics, shows whether mapping is required, and displays compatibility guidance for the active dataset.
 
 Generic Analytics works with any active tabular `working_df`. It supports one or multiple numeric measures, optional category grouping, optional date grouping, sum/average/count/min/max aggregation, bar/line/area/scatter/histogram/box charts, insight text, aggregated table, and CSV export of the aggregated result.
 
