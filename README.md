@@ -5,7 +5,7 @@ Profiling, Preparation, Data Quality & KPI Analytics.
 Data Analytics Workbench is a Streamlit portfolio project that demonstrates a practical project-based analytics workflow: define an analysis project, load raw data, inspect quality, prepare a controlled working copy, explore arbitrary tabular datasets, map business fields, generate transparent KPI analytics, and save a Project Backup.
 
 GitHub repository: `https://github.com/CedricAichele/data-analytics-workbench`  
-Live Demo: 'https://data-analytics-workbench.streamlit.app'
+Live Demo: `https://data-analytics-workbench.streamlit.app`
 License: MIT
 
 ## Business Problem
