@@ -15,7 +15,7 @@ from app.services.dataset_workspace import (
     initialize_workspace,
     set_active_analytics_result,
 )
-from app.services.export_package import build_export_workbook
+from app.services.export_package import build_export_workbook, build_quality_report_sheet
 from app.services.export_service import (
     build_export_filename,
     dataframe_to_csv_bytes,
@@ -101,6 +101,35 @@ def _pack_named_tables(tables: list[tuple[str, pd.DataFrame]]) -> pd.DataFrame:
     return pd.concat(packed, ignore_index=True, sort=False)
 
 
+def _kpi_summary_table(generic_result: Any, result_sources: list[tuple[str, str, Any, list[str]]]) -> pd.DataFrame:
+    rows: list[dict[str, Any]] = []
+    if generic_result is not None:
+        rows.append(
+            {
+                "source": "Generic Analytics",
+                "metric": "rows_used",
+                "value": getattr(generic_result, "rows_used", None),
+            }
+        )
+        rows.append(
+            {
+                "source": "Generic Analytics",
+                "metric": "measures",
+                "value": ", ".join(getattr(generic_result, "measure_columns", []) or []),
+            }
+        )
+        aggregated = getattr(generic_result, "aggregated", None)
+        if isinstance(aggregated, pd.DataFrame):
+            rows.append({"source": "Generic Analytics", "metric": "result_rows", "value": len(aggregated)})
+
+    for label, _, result, _ in result_sources:
+        metrics = getattr(result, "metrics", None)
+        if isinstance(metrics, dict):
+            rows.extend({"source": label, "metric": key, "value": value} for key, value in metrics.items())
+
+    return pd.DataFrame(rows, columns=["source", "metric", "value"])
+
+
 def _quality_rules_for_mappings(df: pd.DataFrame, template_mappings: dict[str, dict[str, str | None]]) -> pd.DataFrame:
     frames: list[pd.DataFrame] = []
     for template_id, mapping in template_mappings.items():
@@ -142,6 +171,7 @@ template_mappings = active.get("template_mappings", {})
 data_dictionary_df = generate_data_dictionary(working_df, template_mappings=template_mappings)
 quality_report = get_active_analytics_result("generic_quality_report") or calculate_quality_score(working_df)
 quality_rules_df = _quality_rules_for_mappings(working_df, template_mappings)
+quality_report_df = build_quality_report_sheet(quality_report, quality_rules_df)
 set_active_analytics_result("data_dictionary_result", data_dictionary_df)
 set_active_analytics_result("generic_quality_report", quality_report)
 set_active_analytics_result("quality_rules_result", quality_rules_df)
@@ -166,7 +196,7 @@ st.dataframe(dataset_to_export.head(20), use_container_width=True, hide_index=Tr
 _download_buttons(dataset_to_export, dataset_suffix, "Download dataset as", "dataset-export", dataset_name)
 
 st.subheader("B. Export Documentation")
-doc_tabs = st.tabs(["Data Dictionary", "Transformation Log", "Quality Rules"])
+doc_tabs = st.tabs(["Data Dictionary", "Transformation Log", "Data Quality Report", "Quality Rules"])
 
 with doc_tabs[0]:
     st.caption("Generated from the active working dataset.")
@@ -196,6 +226,24 @@ with doc_tabs[1]:
     )
 
 with doc_tabs[2]:
+    st.dataframe(quality_report_df, use_container_width=True, hide_index=True)
+    quality_cols = st.columns(2)
+    quality_cols[0].download_button(
+        "Download quality report as CSV",
+        data=dataframe_to_csv_bytes(quality_report_df),
+        file_name=build_export_filename(dataset_name, "data_quality_report", "csv"),
+        mime="text/csv",
+        key="quality-report-csv",
+    )
+    quality_cols[1].download_button(
+        "Download quality report as Excel",
+        data=dataframe_to_excel_bytes(quality_report_df, sheet_name="Data_Quality"),
+        file_name=build_export_filename(dataset_name, "data_quality_report", "xlsx"),
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        key="quality-report-xlsx",
+    )
+
+with doc_tabs[3]:
     if quality_rules_df.empty:
         st.info("No template-specific quality rules are available until a compatible template mapping is saved.")
     else:
@@ -245,6 +293,7 @@ result_sources = [
     ),
 ]
 controlled_result_sources = [
+    ("Generic Analytics Chart / Result Data", get_active_analytics_result("generic_controlled_chart_result")),
     ("Sales / Retail Controlled Charts", get_active_analytics_result("retail_controlled_chart_result")),
     ("Manufacturing Controlled Charts", get_active_analytics_result("manufacturing_controlled_chart_result")),
     ("Logistics Controlled Charts", get_active_analytics_result("logistics_controlled_chart_result")),
@@ -253,11 +302,28 @@ controlled_result_sources = [
 
 package_tables: dict[str, pd.DataFrame] = {}
 display_sections = _build_display_sections(result_sources, controlled_result_sources)
+kpi_summary_df = _kpi_summary_table(generic_result, result_sources)
 for section in display_sections:
     if section["package_sheet"] and section["tables"]:
         package_tables[section["package_sheet"]] = _pack_named_tables(section["tables"])
+result_table_pack = _pack_named_tables(
+    [
+        (f"{section['label']} - {table_name}", table_df)
+        for section in display_sections
+        for table_name, table_df in section["tables"]
+    ]
+)
+if not result_table_pack.empty:
+    package_tables["Result_Tables"] = result_table_pack
 
-st.subheader("C. BI-ready Export Package")
+st.subheader("C. KPI Summary Export")
+if kpi_summary_df.empty:
+    st.info("No KPI summaries are available yet. Run Generic Analytics or a compatible domain analytics page first.")
+else:
+    st.dataframe(kpi_summary_df, use_container_width=True, hide_index=True)
+    _download_buttons(kpi_summary_df, "kpi_summary", "Download KPI summary as", "kpi-summary-export", dataset_name)
+
+st.subheader("D. BI-ready Export Package")
 st.caption(
     "Creates one Excel workbook with the active working dataset, data dictionary, quality report, "
     "transformation log, and available result tables."
@@ -269,6 +335,7 @@ package_bytes = build_export_workbook(
     quality_rules=quality_rules_df,
     transformation_log=get_active_transformation_log(),
     generic_analytics_result=generic_table if isinstance(generic_table, pd.DataFrame) else None,
+    kpi_summary=kpi_summary_df,
     result_tables=package_tables,
 )
 st.download_button(
@@ -279,7 +346,7 @@ st.download_button(
     key="bi-ready-export-package",
 )
 
-st.subheader("D. Export Analytics Results")
+st.subheader("E. Export Chart / Result Data")
 available_results = False
 if isinstance(generic_table, pd.DataFrame) and not generic_table.empty:
     available_results = True

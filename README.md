@@ -28,10 +28,10 @@ This app is built around that separation:
 - Generate a Data Dictionary from the active `working_df`
 - Score data quality with transparent sub-scores, explanations, and recommended fixes
 - Run template-specific quality rules that report issues without mutating data
-- Run Generic Analytics with one or multiple numeric measures
+- Run robust Generic Analytics with one or multiple numeric measures
 - Map source columns to implemented domain templates
 - Run Sales / Retail, Manufacturing, Logistics, and Finance KPI analytics with chart controls
-- Export the active working dataset, documentation, analytics result tables, and a BI-ready Excel package
+- Export the active working dataset, documentation, KPI summaries, chart/result data, and a BI-ready Excel package
 - Generate deterministic template-aware management summaries without API keys
 
 ## Architecture
@@ -150,9 +150,12 @@ Users can select:
 - optional categorical grouping
 - optional date grouping
 - aggregation: sum, average, count, min, max
-- chart type: bar, line, scatter, histogram, box plot
+- chart type: bar, line, area, scatter, histogram, box plot
+- validation that prevents stale column selections or incompatible chart settings from crashing the app
 
 The page returns an aggregated table, Plotly chart, insight bullets, missing values for selected measures, rows used, and CSV export of the aggregated result. Multi-measure results show one result column per selected measure.
+
+If a dataset switch, column rename, or column drop makes a previous selection invalid, the page resets or warns instead of showing a traceback.
 
 ## Domain Templates
 
@@ -198,12 +201,45 @@ Available exports:
 - optional raw dataset export when explicitly selected
 - Data Dictionary as CSV, Excel `.xlsx`, or JSON `.json`
 - transformation log as CSV or JSON
+- Data Quality Report as CSV or Excel `.xlsx`
 - template quality rules as CSV or Excel `.xlsx`
+- KPI summaries as CSV, Excel `.xlsx`, or JSON `.json`
 - Generic Analytics aggregated result as CSV, Excel `.xlsx`, or JSON `.json`
+- chart/control result tables as CSV, Excel `.xlsx`, or JSON `.json`
 - calculated domain result tables as CSV, Excel `.xlsx`, or JSON `.json`
-- BI-ready Excel package with sheets for cleaned data, data dictionary, quality report, transformation log, KPI summary, Generic Analytics result, and available domain result tables
+- BI-ready Excel package with sheets for cleaned data, data dictionary, quality report, transformation log, quality rules, KPI summary, Generic Analytics result, result tables, and available domain result tables
 
 Exports use Streamlit download buttons and do not write files to disk.
+
+Chart image and dashboard PDF exports are intentionally deferred. The current priority is reliable export of the underlying data tables that support the charts and KPIs.
+
+## Using SQL Server Data
+
+The public Streamlit demo does not connect directly to SQL Server. For security and deployment simplicity, SQL Server data should be exported as CSV or Excel and uploaded to the app.
+
+Supported workflow:
+
+```text
+SQL Server query result -> CSV/XLSX export -> upload to Data Analytics Workbench
+```
+
+This avoids exposing database credentials in a public portfolio app.
+
+Practical export options include:
+
+- SQL Server Management Studio: run a query and save results as CSV
+- SSMS Import/Export Wizard
+- `bcp` command-line export
+- `sqlcmd` export
+- Excel or Power BI export where appropriate
+
+Example `bcp` command:
+
+```powershell
+bcp "SELECT * FROM dbo.YourTable" queryout "C:\Temp\export.csv" -c -t, -T -S YOUR_SERVER -d YOUR_DATABASE
+```
+
+Replace the server, database, table, and output path for your environment. Use trusted authentication or a SQL login depending on your setup. Avoid uploading sensitive company data to the public demo.
 
 ## Sample Datasets
 
@@ -307,6 +343,8 @@ This project was implemented using an AI-assisted coding workflow. The analytica
 - Finance analytics requires interpretable revenue/cost type values.
 - The management summary is deterministic and does not call an external LLM.
 - The app does not include authentication, user accounts, or a backend API.
+- The app does not connect directly to SQL Server or other production databases.
+- PDF dashboard export is not implemented.
 - The app is a portfolio-grade analytics prototype, not an enterprise governance or data catalog platform.
 
 ## Next Steps
@@ -316,6 +354,7 @@ This project was implemented using an AI-assisted coding workflow. The analytica
 - Add richer date parsing controls for regional formats.
 - Add deeper compatibility diagnostics for user-uploaded domain datasets.
 - Add optional governance-style metadata fields to the Data Dictionary.
+- Add a lightweight PDF summary report if it can be done without heavy rendering dependencies.
 
 ## Portfolio Positioning
 

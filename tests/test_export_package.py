@@ -37,7 +37,11 @@ def test_build_export_workbook_creates_expected_sheets():
         quality_rules=quality_rules,
         transformation_log=["Rename column: old -> new"],
         generic_analytics_result=pd.DataFrame({"metric": ["sum"], "a": [3]}),
-        result_tables={"Sales_Results": pd.DataFrame({"metric": ["gross_revenue"], "value": [100.0]})},
+        kpi_summary=pd.DataFrame({"source": ["Sales"], "metric": ["gross_revenue"], "value": [100.0]}),
+        result_tables={
+            "Sales_Results": pd.DataFrame({"metric": ["gross_revenue"], "value": [100.0]}),
+            "Result_Tables": pd.DataFrame({"source_table": ["Sales chart"], "value": [100.0]}),
+        },
     )
 
     assert len(workbook_bytes) > 0
@@ -51,5 +55,8 @@ def test_build_export_workbook_creates_expected_sheets():
         "Quality_Rules",
         "Generic_Analytics_Result",
         "Sales_Results",
+        "Result_Tables",
     }.issubset(set(workbook.sheetnames))
 
+    kpi_header = [cell.value for cell in next(workbook["KPI_Summary"].iter_rows(max_row=1))]
+    assert kpi_header == ["source", "metric", "value"]

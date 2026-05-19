@@ -99,7 +99,9 @@ Template-specific Quality Rules report mapped-domain issues for Sales / Retail, 
 
 Generic Analytics works with arbitrary active datasets and does not assume sales, manufacturing, logistics, or finance meaning.
 
-Users can choose one or multiple numeric measures, optional category grouping, optional date grouping, aggregation, and chart type. The page shows basic insights, an aggregated table, Plotly chart, and CSV download of the aggregated result.
+Users can choose one or multiple numeric measures, optional category grouping, optional date grouping, aggregation, and chart type. The page validates stale selections and incompatible chart configurations so column changes do not produce user-facing tracebacks.
+
+The page shows basic insights, an aggregated table, Plotly chart, and CSV download of the aggregated result.
 
 ## Template Selection
 
@@ -169,9 +171,12 @@ It can export:
 - raw dataset only when explicitly selected
 - Data Dictionary as CSV, Excel `.xlsx`, or JSON `.json`
 - transformation log as CSV or JSON
+- Data Quality Report as CSV or Excel `.xlsx`
 - template quality rules as CSV or Excel `.xlsx`
 - Generic Analytics aggregated result as CSV, Excel `.xlsx`, or JSON `.json`
+- KPI summaries as CSV, Excel `.xlsx`, or JSON `.json`
 - available domain result tables as CSV, Excel `.xlsx`, or JSON `.json`
-- BI-ready Excel package containing cleaned data, data dictionary, quality report, transformation log, KPI summary, and available analytics result tables
+- chart/control result tables as CSV, Excel `.xlsx`, or JSON `.json`
+- BI-ready Excel package containing cleaned data, data dictionary, quality report, transformation log, quality rules, KPI summary, and available analytics result tables
 
 Exports use Streamlit download buttons and do not overwrite local files.

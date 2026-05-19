@@ -24,6 +24,24 @@ class GenericAnalyticsResult:
     measure_columns: list[str]
 
 
+@dataclass(frozen=True)
+class GenericSelectionValidation:
+    valid: bool
+    measures: list[str]
+    category_column: str | None
+    date_column: str | None
+    messages: list[str]
+
+
+@dataclass(frozen=True)
+class LongChartData:
+    data: pd.DataFrame
+    id_vars: list[str]
+    measure_columns: list[str]
+    value_column: str
+    messages: list[str]
+
+
 def get_numeric_columns(df: pd.DataFrame) -> list[str]:
     """Return columns that can reasonably be used as numeric measures."""
     columns: list[str] = []
@@ -67,6 +85,147 @@ def _normalize_measures(numeric_columns: str | list[str]) -> list[str]:
     if isinstance(numeric_columns, str):
         return [numeric_columns]
     return list(dict.fromkeys(numeric_columns))
+
+
+def validate_generic_selection(
+    df: pd.DataFrame,
+    selected_measures: list[str] | str | None,
+    group_col: str | None = None,
+    date_col: str | None = None,
+) -> GenericSelectionValidation:
+    """Validate user selections against the current working dataframe."""
+    messages: list[str] = []
+    requested_measures = _normalize_measures(selected_measures or [])
+    missing_measures = [measure for measure in requested_measures if measure not in df.columns]
+    if missing_measures:
+        messages.append(f"Missing measure column(s): {', '.join(missing_measures)}.")
+    valid_measures = [measure for measure in requested_measures if measure in df.columns]
+
+    numeric_measures = []
+    for measure in valid_measures:
+        parsed = pd.to_numeric(df[measure], errors="coerce")
+        if parsed.notna().any():
+            numeric_measures.append(measure)
+        else:
+            messages.append(f"Measure has no numeric values: {measure}.")
+
+    valid_group = group_col if group_col in df.columns else None
+    if group_col and valid_group is None:
+        messages.append(f"Missing grouping column: {group_col}.")
+
+    valid_date = date_col if date_col in df.columns else None
+    if date_col and valid_date is None:
+        messages.append(f"Missing date column: {date_col}.")
+
+    if not numeric_measures:
+        messages.append("Select at least one numeric measure available in the current dataset.")
+
+    return GenericSelectionValidation(
+        valid=bool(numeric_measures),
+        measures=numeric_measures,
+        category_column=valid_group,
+        date_column=valid_date,
+        messages=messages,
+    )
+
+
+def aggregate_generic_data(
+    df: pd.DataFrame,
+    measures: list[str],
+    group_col: str | None,
+    date_col: str | None,
+    aggregation: str,
+) -> GenericAnalyticsResult:
+    """Compatibility wrapper for generic aggregation."""
+    return build_generic_analytics(
+        df,
+        numeric_columns=measures,
+        category_column=group_col,
+        date_column=date_col,
+        aggregation=aggregation,
+    )
+
+
+def create_long_chart_data(
+    chart_data: pd.DataFrame,
+    id_vars: list[str] | tuple[str, ...] | str | None,
+    measure_cols: list[str] | tuple[str, ...] | str | None,
+) -> LongChartData:
+    """Safely reshape aggregated chart data without surfacing pandas melt errors."""
+    messages: list[str] = []
+    if chart_data is None or chart_data.empty:
+        return LongChartData(pd.DataFrame(), [], [], "metric_value", ["No chart data is available."])
+
+    id_var_list = _as_list(id_vars)
+    measure_list = _as_list(measure_cols)
+    valid_id_vars = [column for column in dict.fromkeys(id_var_list) if column in chart_data.columns]
+    missing_id_vars = [column for column in id_var_list if column not in chart_data.columns]
+    if missing_id_vars:
+        messages.append(f"Missing chart grouping column(s): {', '.join(dict.fromkeys(missing_id_vars))}.")
+
+    id_var_set = set(valid_id_vars)
+    valid_measures = [
+        column
+        for column in dict.fromkeys(measure_list)
+        if column in chart_data.columns and column not in id_var_set
+    ]
+    missing_measures = [column for column in measure_list if column not in chart_data.columns]
+    overlap = [column for column in measure_list if column in id_var_set]
+    if missing_measures:
+        messages.append(f"Missing chart measure column(s): {', '.join(dict.fromkeys(missing_measures))}.")
+    if overlap:
+        messages.append(f"Skipped overlapping grouping/measure column(s): {', '.join(dict.fromkeys(overlap))}.")
+    if not valid_measures:
+        messages.append("No valid measure columns are available for charting.")
+        return LongChartData(pd.DataFrame(), valid_id_vars, [], "metric_value", messages)
+
+    value_name = _unique_column_name(chart_data.columns, "metric_value")
+    try:
+        long_data = chart_data.melt(
+            id_vars=valid_id_vars,
+            value_vars=valid_measures,
+            var_name="measure",
+            value_name=value_name,
+        )
+    except ValueError as exc:
+        messages.append(f"The selected chart configuration is not valid for the current dataset: {exc}")
+        return LongChartData(pd.DataFrame(), valid_id_vars, valid_measures, value_name, messages)
+
+    return LongChartData(long_data, valid_id_vars, valid_measures, value_name, messages)
+
+
+def is_chart_config_supported(
+    chart_type: str,
+    measures: list[str],
+    group_col: str | None = None,
+    date_col: str | None = None,
+) -> tuple[bool, list[str]]:
+    """Return whether a generic chart configuration is supported."""
+    messages: list[str] = []
+    if not measures:
+        return False, ["Select at least one numeric measure."]
+    if chart_type == "scatter plot" and len(measures) < 2:
+        messages.append("Scatter plot requires at least two numeric measures.")
+    if chart_type in {"line chart", "area chart"} and not (group_col or date_col):
+        messages.append("Line and area charts are most useful with a date or category grouping.")
+    return not messages, messages
+
+
+def _as_list(value: list[str] | tuple[str, ...] | str | None) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        return [value]
+    return list(value)
+
+
+def _unique_column_name(existing_columns: pd.Index, preferred: str) -> str:
+    if preferred not in existing_columns:
+        return preferred
+    suffix = 2
+    while f"{preferred}_{suffix}" in existing_columns:
+        suffix += 1
+    return f"{preferred}_{suffix}"
 
 
 def build_generic_analytics(

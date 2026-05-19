@@ -56,16 +56,21 @@ def test_workspace_keeps_analytics_results_per_active_dataset():
     state = {}
     first_id = add_dataset("First", pd.DataFrame({"a": [1]}), {}, state=state)
     set_active_analytics_result("generic_analytics_result", "first-result", state)
+    set_active_analytics_result("generic_controlled_chart_result", {"chart_data": "first-chart"}, state)
     second_id = add_dataset("Second", pd.DataFrame({"b": [2]}), {}, state=state)
     set_active_analytics_result("generic_analytics_result", "second-result", state)
+    set_active_analytics_result("generic_controlled_chart_result", {"chart_data": "second-chart"}, state)
 
     set_active_dataset(first_id, state)
     assert get_active_analytics_result("generic_analytics_result", state) == "first-result"
     assert state["generic_analytics_result"] == "first-result"
+    assert get_active_analytics_result("generic_controlled_chart_result", state) == {"chart_data": "first-chart"}
+    assert state["generic_controlled_chart_result"] == {"chart_data": "first-chart"}
 
     set_active_dataset(second_id, state)
     assert get_active_analytics_result("generic_analytics_result", state) == "second-result"
     assert state["generic_analytics_result"] == "second-result"
+    assert get_active_analytics_result("generic_controlled_chart_result", state) == {"chart_data": "second-chart"}
 
 
 def test_sample_dataset_duplicate_activates_existing_dataset():

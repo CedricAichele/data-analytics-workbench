@@ -90,7 +90,9 @@ Template-specific quality rules are implemented for Sales / Retail, Manufacturin
 
 ## Generic Analytics
 
-Generic Analytics works with any active tabular `working_df`. It supports one or multiple numeric measures, optional category grouping, optional date grouping, sum/average/count/min/max aggregation, bar/line/scatter/histogram/box charts, insight text, aggregated table, and CSV export of the aggregated result.
+Generic Analytics works with any active tabular `working_df`. It supports one or multiple numeric measures, optional category grouping, optional date grouping, sum/average/count/min/max aggregation, bar/line/area/scatter/histogram/box charts, insight text, aggregated table, and CSV export of the aggregated result.
+
+Generic Analytics validates stale selections after dataset switches or preparation changes. Invalid chart configurations show guidance instead of user-facing tracebacks.
 
 ## Template Registry
 
@@ -147,10 +149,13 @@ Export Center supports:
 - optional raw dataset export when explicitly selected
 - Data Dictionary as CSV, Excel `.xlsx`, and JSON `.json`
 - transformation log as CSV and JSON
+- Data Quality Report as CSV and Excel `.xlsx`
 - template quality rules as CSV and Excel `.xlsx`
+- KPI summaries as CSV, Excel `.xlsx`, and JSON `.json`
 - Generic Analytics aggregated result as CSV, Excel `.xlsx`, and JSON `.json`
 - domain analytics result tables as CSV, Excel `.xlsx`, and JSON `.json`
-- BI-ready Excel package with cleaned data, data dictionary, quality report, transformation log, KPI summary, Generic Analytics result when available, and domain result sheets when available
+- chart/control result tables as CSV, Excel `.xlsx`, and JSON `.json`
+- BI-ready Excel package with cleaned data, data dictionary, quality report, transformation log, quality rules, KPI summary, Generic Analytics result when available, result tables, and domain result sheets when available
 
 ## Known Limitations
 
@@ -162,6 +167,7 @@ Export Center supports:
 - Domain KPIs require valid field mappings.
 - Finance interpretation requires meaningful type values such as `revenue` and `cost`.
 - The Data Dictionary is useful documentation, not a full enterprise data catalog.
+- Direct SQL Server connectivity and dashboard PDF export are not implemented.
 - Screenshots are not committed yet.
 
 ## Not-Yet-Implemented Ideas

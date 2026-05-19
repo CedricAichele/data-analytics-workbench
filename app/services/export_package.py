@@ -43,8 +43,13 @@ def build_transformation_log_sheet(log: list[str] | tuple[str, ...] | None) -> p
     return log_df
 
 
-def build_kpi_summary_sheet(result_tables: dict[str, pd.DataFrame] | None = None) -> pd.DataFrame:
+def build_kpi_summary_sheet(
+    result_tables: dict[str, pd.DataFrame] | None = None,
+    kpi_summary: pd.DataFrame | None = None,
+) -> pd.DataFrame:
     """Summarize available result table row counts for workbook readers."""
+    if kpi_summary is not None and not kpi_summary.empty:
+        return kpi_summary
     rows = [
         {"result_table": name, "rows": len(table), "columns": len(table.columns)}
         for name, table in (result_tables or {}).items()
@@ -61,6 +66,7 @@ def build_export_workbook(
     quality_rules: pd.DataFrame | None = None,
     transformation_log: list[str] | tuple[str, ...] | None = None,
     generic_analytics_result: pd.DataFrame | None = None,
+    kpi_summary: pd.DataFrame | None = None,
     result_tables: dict[str, pd.DataFrame] | None = None,
 ) -> bytes:
     """Build a BI-ready multi-sheet Excel workbook as bytes."""
@@ -70,7 +76,7 @@ def build_export_workbook(
         "Data_Dictionary": data_dictionary,
         "Data_Quality": build_quality_report_sheet(quality_report, quality_rules),
         "Transformation_Log": build_transformation_log_sheet(transformation_log),
-        "KPI_Summary": build_kpi_summary_sheet(result_tables),
+        "KPI_Summary": build_kpi_summary_sheet(result_tables, kpi_summary),
     }
     if quality_rules is not None and not quality_rules.empty:
         base_sheets["Quality_Rules"] = quality_rules

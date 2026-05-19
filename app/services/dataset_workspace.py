@@ -361,6 +361,7 @@ def sync_legacy_state(state: MutableMapping[str, Any] | None = None) -> None:
     current = _state(state)
     analytics_result_keys = [
         "generic_analytics_result",
+        "generic_controlled_chart_result",
         "retail_clean_result",
         "retail_analytics_result",
         "manufacturing_clean_result",
