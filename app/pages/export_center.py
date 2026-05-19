@@ -31,6 +31,7 @@ from app.services.project_state import (
     add_or_activate_project,
     associate_dataset_with_active_project,
     compact_project_summary_rows,
+    get_active_project,
     get_project_metadata,
     get_project_summary,
 )
@@ -204,16 +205,25 @@ st.caption(
 
 st.subheader("Project Export")
 st.write(
-    "The Project Backup stores workflow details, mappings and available working context. "
-    "Use it to continue a previous project in the Workbench."
+    "Project Backup is for continuing or restoring project state. "
+    "The BI-ready Export Package is the analysis/reporting output for business review."
 )
 project_metadata = get_project_metadata()
 project_summary = get_project_summary(active_dataset=active, quality_report=quality_report)
-st.dataframe(compact_project_summary_rows(project_summary), use_container_width=True, hide_index=True)
+active_project = get_active_project()
+if active_project is None or not project_metadata.get("project_name"):
+    st.info("No active project. Create or load a project to download a Project Backup.")
+else:
+    project_cols_status = st.columns(4)
+    project_cols_status[0].metric("Active project", project_metadata.get("project_name", "Untitled project"))
+    project_cols_status[1].metric("Workflow", project_metadata.get("selected_workflow", "Quick Data Check"))
+    project_cols_status[2].metric("Template", project_metadata.get("suggested_template", "Generic"))
+    project_cols_status[3].metric("Associated dataset", active.get("name", "No active dataset"))
+    st.dataframe(compact_project_summary_rows(project_summary), use_container_width=True, hide_index=True)
 project_cols = st.columns(2)
 with project_cols[0]:
     if not project_metadata.get("project_name"):
-        st.info("Save a project name on Project Setup before downloading a Project Backup.")
+        st.info("Create or load a project before downloading a Project Backup.")
     else:
         backup_bytes = build_project_backup_zip(
             project_metadata=project_metadata,

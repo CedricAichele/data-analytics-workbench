@@ -3,6 +3,7 @@ import pandas as pd
 from app.services.project_state import (
     add_or_activate_project,
     associate_dataset_with_active_project,
+    create_project,
     get_active_project,
     get_project_metadata,
     get_project_summary,
@@ -11,6 +12,7 @@ from app.services.project_state import (
     list_projects,
     set_active_project,
     start_new_project_draft,
+    update_active_project,
     update_project_metadata,
 )
 
@@ -94,6 +96,80 @@ def test_project_workspace_supports_multiple_projects_and_active_switching():
     assert get_project_metadata(state)["project_name"] == "Sales Review"
 
 
+def test_create_two_projects_preserves_both_and_sets_second_active():
+    state = {}
+
+    project_a, created_a = create_project(
+        {
+            "project_name": "Project A",
+            "project_description": "First project",
+            "analysis_goal": "Analyze sales",
+        },
+        state=state,
+    )
+    project_b, created_b = create_project(
+        {
+            "project_name": "Project B",
+            "project_description": "Second project",
+            "analysis_goal": "Analyze operations",
+        },
+        state=state,
+    )
+
+    assert created_a is True
+    assert created_b is True
+    assert set(state["projects"]) == {project_a, project_b}
+    assert state["active_project_id"] == project_b
+    assert len(list_projects(state)) == 2
+
+
+def test_switching_back_to_first_project_preserves_second_project():
+    state = {}
+    project_a, _ = create_project({"project_name": "Project A", "project_description": "A", "analysis_goal": "A"}, state=state)
+    project_b, _ = create_project({"project_name": "Project B", "project_description": "B", "analysis_goal": "B"}, state=state)
+
+    set_active_project(project_a, state)
+
+    assert state["active_project_id"] == project_a
+    assert project_b in state["projects"]
+    assert get_project_metadata(state)["project_name"] == "Project A"
+
+
+def test_updating_active_project_does_not_change_other_projects():
+    state = {}
+    project_a, _ = create_project(
+        {"project_name": "Project A", "project_description": "A", "analysis_goal": "Original A"},
+        state=state,
+    )
+    project_b, _ = create_project(
+        {"project_name": "Project B", "project_description": "B", "analysis_goal": "Original B"},
+        state=state,
+    )
+
+    updated = update_active_project(
+        state=state,
+        project_name="Project B Updated",
+        project_description="B updated",
+        analysis_goal="Updated B",
+    )
+
+    assert state["active_project_id"] == project_b
+    assert updated["project_name"] == "Project B Updated"
+    assert state["projects"][project_a]["metadata"]["project_name"] == "Project A"
+    assert state["projects"][project_a]["metadata"]["analysis_goal"] == "Original A"
+
+
+def test_initialize_project_state_does_not_wipe_existing_projects():
+    state = {}
+    project_a, _ = create_project({"project_name": "Project A", "project_description": "A", "analysis_goal": "A"}, state=state)
+    project_b, _ = create_project({"project_name": "Project B", "project_description": "B", "analysis_goal": "B"}, state=state)
+
+    initialize_project_state(state)
+
+    assert set(state["projects"]) == {project_a, project_b}
+    assert state["active_project_id"] == project_b
+
+
 def test_duplicate_project_metadata_activates_existing_project():
     state = {}
     metadata = {
@@ -133,6 +209,7 @@ def test_same_project_name_with_different_metadata_creates_separate_project():
     assert created is True
     assert first_id != second_id
     assert len(list_projects(state)) == 2
+    assert state["projects"][second_id]["metadata"]["project_name"] == "Monthly Review (2)"
 
 
 def test_project_can_remember_available_dataset():

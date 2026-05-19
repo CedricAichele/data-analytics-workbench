@@ -5,7 +5,7 @@ Profiling, Preparation, Data Quality & KPI Analytics.
 Data Analytics Workbench is a Streamlit portfolio project that demonstrates a practical project-based analytics workflow: define an analysis project, load raw data, inspect quality, prepare a controlled working copy, explore arbitrary tabular datasets, map business fields, generate transparent KPI analytics, and save a Project Backup.
 
 GitHub repository: `https://github.com/CedricAichele/data-analytics-workbench`  
-Live Demo: `https://data-analytics-workbench.streamlit.app`
+Live Demo: `https://data-analytics-workbench.streamlit.app/`  
 License: MIT
 
 ## Business Problem
@@ -398,25 +398,11 @@ pytest
 
 ## Deployment
 
-Streamlit Community Cloud settings:
+The app is deployed on Streamlit Community Cloud.
 
-| Setting | Value |
-| --- | --- |
-| Repository | `CedricAichele/data-analytics-workbench` |
-| Branch | `main` |
-| Main file path | `app/main.py` |
-
-Deployment steps:
-
-1. Push this repository to GitHub.
-2. Go to Streamlit Community Cloud.
-3. Create a new app.
-4. Select repository `CedricAichele/data-analytics-workbench`.
-5. Select branch `main`.
-6. Set main file path to `app/main.py`.
-7. Deploy.
-
-No Streamlit secrets are required for this MVP.
+- Live app: `https://data-analytics-workbench.streamlit.app/`
+- Entry point: `app/main.py`
+- Streamlit secrets: none required
 
 ## Development Approach
 
@@ -442,13 +428,12 @@ This project was implemented using an AI-assisted coding workflow. The analytica
 
 ## Next Steps
 
-- Deploy the Streamlit app and add real screenshots.
-- Add saved mapping profiles for recurring datasets.
-- Add richer date parsing controls for regional formats.
+- Improve guided onboarding based on tester feedback.
+- Add saved mapping profiles for recurring source files if Project Backup does not fully cover the recurring workflow.
+- Add stronger validation for large uploaded datasets.
 - Add deeper compatibility diagnostics for user-uploaded domain datasets.
-- Add optional governance-style metadata fields to the Data Dictionary.
-- Add optional project progress tracking for completed manual review steps.
-- Add a lightweight PDF summary report if it can be done without heavy rendering dependencies.
+- Add an optional PDF summary report if it can be implemented without heavy rendering dependencies.
+- Explore private deployment options for real company data.
 
 ## Portfolio Positioning
 

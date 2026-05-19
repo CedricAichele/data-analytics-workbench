@@ -92,11 +92,32 @@ def add_or_activate_project(
     backup_hash: str | None = None,
     associated_dataset_ids: list[str] | None = None,
 ) -> tuple[str, bool]:
-    """Add a project to the workspace or activate an existing duplicate."""
+    """Compatibility helper that creates or activates an existing duplicate project."""
+    return create_project(
+        metadata,
+        state=state,
+        backup_hash=backup_hash,
+        associated_dataset_ids=associated_dataset_ids,
+    )
+
+
+def create_project(
+    metadata: dict[str, Any],
+    *,
+    state: MutableMapping[str, Any] | None = None,
+    backup_hash: str | None = None,
+    associated_dataset_ids: list[str] | None = None,
+) -> tuple[str, bool]:
+    """Create and activate a project while preserving the existing workspace.
+
+    Returns `(project_id, created)`. If the same project metadata or backup is
+    already loaded, the existing project is activated and `created` is False.
+    """
     current = _state(state)
     current.setdefault(PROJECT_METADATA_KEY, default_project_metadata())
     current.setdefault(PROJECTS_KEY, {})
     current.setdefault(ACTIVE_PROJECT_ID_KEY, None)
+    current.setdefault("project_draft_active", False)
 
     merged = default_project_metadata()
     merged.update({key: value for key, value in dict(metadata or {}).items() if key in merged})
@@ -120,6 +141,7 @@ def add_or_activate_project(
             _activate_project_dataset_if_available(project, current)
             return project_id, False
 
+    merged["project_name"] = _safe_unique_project_name(merged.get("project_name") or "Analytics Project", current[PROJECTS_KEY])
     requested_id = str(merged.get("project_id") or "").strip()
     project_id = requested_id if requested_id and requested_id not in current[PROJECTS_KEY] else _new_project_id(merged.get("project_name", "Analytics Project"), current[PROJECTS_KEY])
     merged["project_id"] = project_id
@@ -136,6 +158,38 @@ def add_or_activate_project(
     current["project_draft_active"] = False
     sync_active_project_metadata(current)
     return project_id, True
+
+
+def update_active_project(
+    metadata: dict[str, Any] | None = None,
+    *,
+    state: MutableMapping[str, Any] | None = None,
+    **fields: Any,
+) -> dict[str, Any]:
+    """Update only the active project and preserve every other project."""
+    current = _state(state)
+    initialize_project_state(current)
+    active_id = current.get(ACTIVE_PROJECT_ID_KEY)
+    if not active_id or active_id not in current[PROJECTS_KEY]:
+        raise ValueError("No active project is available to update.")
+
+    project = current[PROJECTS_KEY][active_id]
+    existing = dict(project["metadata"])
+    updates = dict(metadata or {})
+    updates.update(fields)
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    existing.update({key: value for key, value in updates.items() if key in existing})
+    existing["project_id"] = active_id
+    existing["updated_at"] = now
+    if not existing.get("created_at"):
+        existing["created_at"] = project.get("created_at") or now
+
+    project["metadata"] = dict(existing)
+    project["project_signature"] = compute_project_signature(existing)
+    project["updated_at"] = now
+    current[PROJECT_METADATA_KEY] = dict(existing)
+    current["project_draft_active"] = False
+    return dict(existing)
 
 
 def list_projects(state: MutableMapping[str, Any] | None = None) -> list[dict[str, Any]]:
@@ -217,28 +271,20 @@ def update_project_metadata(
     state: MutableMapping[str, Any] | None = None,
     **fields: Any,
 ) -> dict[str, Any]:
-    """Update project metadata with provided fields and return the saved state."""
+    """Compatibility wrapper for legacy callers.
+
+    New UI code should use `create_project` or `update_active_project` so create
+    and update intent remains explicit.
+    """
     current = _state(state)
     initialize_project_state(current)
-    existing = dict(current[PROJECT_METADATA_KEY])
     updates = dict(metadata or {})
     updates.update(fields)
-    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    if not existing.get("created_at") and (updates.get("project_name") or existing.get("project_name")):
-        existing["created_at"] = now
-    existing.update({key: value for key, value in updates.items() if key in existing})
-    existing["updated_at"] = now
     active_id = current.get(ACTIVE_PROJECT_ID_KEY)
     if active_id and active_id in current[PROJECTS_KEY]:
-        existing["project_id"] = active_id
-        project = current[PROJECTS_KEY][active_id]
-        project["metadata"] = dict(existing)
-        project["project_signature"] = compute_project_signature(existing)
-        project["updated_at"] = now
-        current[PROJECT_METADATA_KEY] = dict(existing)
-    else:
-        add_or_activate_project(existing, state=current)
-    return dict(existing)
+        return update_active_project(updates, state=current)
+    project_id, _ = create_project(updates, state=current)
+    return dict(current[PROJECTS_KEY][project_id]["metadata"])
 
 
 def get_project_metadata(state: MutableMapping[str, Any] | None = None) -> dict[str, Any]:
@@ -372,6 +418,22 @@ def _new_project_id(project_name: str, projects: dict[str, Any]) -> str:
     while candidate in projects:
         candidate = f"{base}-{suffix}"
         suffix += 1
+    return candidate
+
+
+def _safe_unique_project_name(project_name: str, projects: dict[str, Any]) -> str:
+    existing_names = {
+        str(project.get("metadata", {}).get("project_name", "")).strip()
+        for project in projects.values()
+    }
+    base = project_name.strip() or "Analytics Project"
+    if base not in existing_names:
+        return base
+    suffix = 2
+    candidate = f"{base} ({suffix})"
+    while candidate in existing_names:
+        suffix += 1
+        candidate = f"{base} ({suffix})"
     return candidate
 
 

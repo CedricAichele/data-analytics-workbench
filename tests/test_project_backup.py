@@ -9,7 +9,7 @@ from app.services.project_backup import (
     load_project_backup_zip,
     safe_project_filename,
 )
-from app.services.project_state import add_or_activate_project, list_projects
+from app.services.project_state import add_or_activate_project, create_project, list_projects
 from app.services.quality_score import calculate_quality_score
 
 
@@ -108,3 +108,36 @@ def test_loading_same_project_backup_twice_activates_existing_project():
     assert second_created is False
     assert first_id == second_id
     assert len(list_projects(state)) == 1
+
+
+def test_loading_same_project_backup_twice_preserves_other_projects():
+    backup_bytes = build_project_backup_zip(
+        project_metadata={
+            "project_name": "Backup Project",
+            "project_description": "Backup",
+            "analysis_goal": "Restore later",
+        },
+        active_dataset=None,
+        include_cleaned_dataset=False,
+    )
+    state = {}
+    existing_id, _ = create_project(
+        {
+            "project_name": "Existing Project",
+            "project_description": "Already loaded",
+            "analysis_goal": "Keep this project",
+        },
+        state=state,
+    )
+
+    first = load_project_backup_zip(backup_bytes)
+    backup_id, first_created = add_or_activate_project(first.project_metadata, backup_hash=first.backup_hash, state=state)
+    second = load_project_backup_zip(backup_bytes)
+    second_backup_id, second_created = add_or_activate_project(second.project_metadata, backup_hash=second.backup_hash, state=state)
+
+    assert first_created is True
+    assert second_created is False
+    assert backup_id == second_backup_id
+    assert existing_id in state["projects"]
+    assert backup_id in state["projects"]
+    assert len(list_projects(state)) == 2

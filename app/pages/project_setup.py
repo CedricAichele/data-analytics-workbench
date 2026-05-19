@@ -13,14 +13,14 @@ from app.services.project_state import (
     add_or_activate_project,
     associate_dataset_with_active_project,
     compact_project_summary_rows,
+    create_project,
     get_active_project,
     get_project_metadata,
     get_project_summary,
     initialize_project_state,
     list_projects,
     set_active_project,
-    start_new_project_draft,
-    update_project_metadata,
+    update_active_project,
 )
 from app.services.quality_score import calculate_quality_score
 
@@ -41,6 +41,7 @@ if project_feedback:
 
 metadata = get_project_metadata()
 active = get_active_dataset()
+active_project = get_active_project()
 
 st.info(
     "Create a lightweight project first, or load data first and document the project later. "
@@ -48,82 +49,151 @@ st.info(
 )
 
 projects = list_projects()
+st.subheader("Current Active Project")
+if active_project:
+    active_metadata = active_project.get("metadata", {})
+    st.success(f"Active project: {active_metadata.get('project_name', 'Untitled project')}")
+    project_status_cols = st.columns(3)
+    project_status_cols[0].metric("Workflow", active_metadata.get("selected_workflow", "Quick Data Check"))
+    project_status_cols[1].metric("Template", active_metadata.get("suggested_template", "Generic"))
+    project_status_cols[2].metric("Loaded projects", len(projects))
+else:
+    st.info("No active project. Create or load a project to document your workflow.")
+
 if projects:
-    st.subheader("Project Workspace")
+    st.subheader("Switch Project")
     st.caption(f"{len(projects)} project{'s' if len(projects) != 1 else ''} loaded in this session. The app uses one active project at a time.")
-    active_project = get_active_project()
-    draft_option = "__new_project_draft__"
     project_options = [project["project_id"] for project in projects]
-    options = project_options if active_project else [draft_option, *project_options]
-    active_project_id = active_project["project_id"] if active_project else draft_option
+    active_project_id = active_project["project_id"] if active_project else project_options[0]
     selected_project_id = st.selectbox(
-        "Active project",
-        options,
-        index=options.index(active_project_id),
-        format_func=lambda project_id: "New project draft"
-        if project_id == draft_option
-        else next(project["project_name"] for project in projects if project["project_id"] == project_id),
+        "Choose active project",
+        project_options,
+        index=project_options.index(active_project_id) if active_project_id in project_options else 0,
+        format_func=lambda project_id: next(project["project_name"] for project in projects if project["project_id"] == project_id),
     )
-    if selected_project_id != active_project_id and selected_project_id != draft_option:
+    if selected_project_id != active_project_id:
+        selected_name = next(project["project_name"] for project in projects if project["project_id"] == selected_project_id)
         set_active_project(selected_project_id)
-        st.rerun()
-    if st.button("Start new project"):
-        start_new_project_draft()
-        st.session_state["project_action_feedback"] = ("info", "New project form ready.")
+        st.session_state["project_action_feedback"] = ("success", f"Switched to project: {selected_name}")
         st.rerun()
 
-st.subheader("Project Details")
-with st.form("project_setup_form"):
-    project_name = st.text_input("Project name", value=metadata.get("project_name", ""))
-    project_description = st.text_area("Project description", value=metadata.get("project_description", ""), height=90)
-    analysis_goal = st.text_area("Analysis goal", value=metadata.get("analysis_goal", ""), height=90)
+st.subheader("Create New Project")
+with st.form("create_project_form"):
+    project_name = st.text_input("Project name", value="", key="create_project_name")
+    project_description = st.text_area("Project description", value="", height=90, key="create_project_description")
+    analysis_goal = st.text_area("Analysis goal", value="", height=90, key="create_analysis_goal")
     optional_cols = st.columns(3)
-    company_department = optional_cols[0].text_input("Company / department", value=metadata.get("company_department", ""))
-    data_owner = optional_cols[1].text_input("Data owner or responsible person", value=metadata.get("data_owner", ""))
-    reporting_period = optional_cols[2].text_input("Reporting period", value=metadata.get("reporting_period", ""))
+    company_department = optional_cols[0].text_input("Company / department", value="", key="create_company_department")
+    data_owner = optional_cols[1].text_input("Data owner or responsible person", value="", key="create_data_owner")
+    reporting_period = optional_cols[2].text_input("Reporting period", value="", key="create_reporting_period")
     workflow_cols = st.columns(3)
     selected_workflow = workflow_cols[0].selectbox(
         "Workflow",
         WORKFLOW_OPTIONS,
-        index=WORKFLOW_OPTIONS.index(metadata.get("selected_workflow", "Quick Data Check"))
-        if metadata.get("selected_workflow") in WORKFLOW_OPTIONS
-        else 0,
+        index=0,
+        key="create_selected_workflow",
     )
     suggested_template = workflow_cols[1].selectbox(
         "Suggested domain template",
         TEMPLATE_OPTIONS,
-        index=TEMPLATE_OPTIONS.index(metadata.get("suggested_template", "Generic"))
-        if metadata.get("suggested_template") in TEMPLATE_OPTIONS
-        else 0,
+        index=0,
+        key="create_suggested_template",
     )
     desired_outputs = workflow_cols[2].multiselect(
         "Desired output",
         OUTPUT_OPTIONS,
-        default=[output for output in metadata.get("desired_outputs", []) if output in OUTPUT_OPTIONS] or ["Data Quality Report"],
+        default=["Data Quality Report", "Data Dictionary"],
+        key="create_desired_outputs",
     )
-    notes = st.text_area("Notes", value=metadata.get("notes", ""), height=90)
-    submitted = st.form_submit_button("Save Project")
+    notes = st.text_area("Notes", value="", height=90, key="create_notes")
+    create_submitted = st.form_submit_button("Create New Project")
 
-if submitted:
+if create_submitted:
     if not project_name.strip() or not project_description.strip() or not analysis_goal.strip():
-        st.warning("Project name, project description, and analysis goal are required to save a project.")
+        st.warning("Project name, project description, and analysis goal are required to create a project.")
         st.stop()
-    saved_metadata = update_project_metadata(
-        project_name=project_name.strip(),
-        project_description=project_description.strip(),
-        analysis_goal=analysis_goal.strip(),
-        company_department=company_department.strip(),
-        data_owner=data_owner.strip(),
-        reporting_period=reporting_period.strip(),
-        selected_workflow=selected_workflow,
-        suggested_template=suggested_template,
-        desired_outputs=desired_outputs,
-        notes=notes.strip(),
+    project_id, created = create_project(
+        {
+            "project_name": project_name.strip(),
+            "project_description": project_description.strip(),
+            "analysis_goal": analysis_goal.strip(),
+            "company_department": company_department.strip(),
+            "data_owner": data_owner.strip(),
+            "reporting_period": reporting_period.strip(),
+            "selected_workflow": selected_workflow,
+            "suggested_template": suggested_template,
+            "desired_outputs": desired_outputs,
+            "notes": notes.strip(),
+        }
     )
     if active is not None:
         associate_dataset_with_active_project(active["dataset_id"])
-    st.session_state["project_action_feedback"] = ("success", f"Project saved: {saved_metadata.get('project_name', 'Analytics Project')}")
+    created_metadata = get_project_metadata()
+    if created:
+        st.session_state["project_action_feedback"] = ("success", f"Project created and activated: {created_metadata.get('project_name', project_name.strip())}")
+    else:
+        st.session_state["project_action_feedback"] = ("info", "Project already loaded. Activated existing project.")
     st.rerun()
+
+st.subheader("Update Active Project")
+if not active_project:
+    st.info("Create or switch to a project before updating project details.")
+else:
+    active_metadata = get_project_metadata()
+    with st.form("update_active_project_form"):
+        update_project_name = st.text_input("Project name", value=active_metadata.get("project_name", ""), key="update_project_name")
+        update_project_description = st.text_area("Project description", value=active_metadata.get("project_description", ""), height=90, key="update_project_description")
+        update_analysis_goal = st.text_area("Analysis goal", value=active_metadata.get("analysis_goal", ""), height=90, key="update_analysis_goal")
+        update_optional_cols = st.columns(3)
+        update_company_department = update_optional_cols[0].text_input("Company / department", value=active_metadata.get("company_department", ""), key="update_company_department")
+        update_data_owner = update_optional_cols[1].text_input("Data owner or responsible person", value=active_metadata.get("data_owner", ""), key="update_data_owner")
+        update_reporting_period = update_optional_cols[2].text_input("Reporting period", value=active_metadata.get("reporting_period", ""), key="update_reporting_period")
+        update_workflow_cols = st.columns(3)
+        update_selected_workflow = update_workflow_cols[0].selectbox(
+            "Workflow",
+            WORKFLOW_OPTIONS,
+            index=WORKFLOW_OPTIONS.index(active_metadata.get("selected_workflow", "Quick Data Check"))
+            if active_metadata.get("selected_workflow") in WORKFLOW_OPTIONS
+            else 0,
+            key="update_selected_workflow",
+        )
+        update_suggested_template = update_workflow_cols[1].selectbox(
+            "Suggested domain template",
+            TEMPLATE_OPTIONS,
+            index=TEMPLATE_OPTIONS.index(active_metadata.get("suggested_template", "Generic"))
+            if active_metadata.get("suggested_template") in TEMPLATE_OPTIONS
+            else 0,
+            key="update_suggested_template",
+        )
+        update_desired_outputs = update_workflow_cols[2].multiselect(
+            "Desired output",
+            OUTPUT_OPTIONS,
+            default=[output for output in active_metadata.get("desired_outputs", []) if output in OUTPUT_OPTIONS] or ["Data Quality Report"],
+            key="update_desired_outputs",
+        )
+        update_notes = st.text_area("Notes", value=active_metadata.get("notes", ""), height=90, key="update_notes")
+        update_submitted = st.form_submit_button("Update Active Project")
+
+    if update_submitted:
+        if not update_project_name.strip() or not update_project_description.strip() or not update_analysis_goal.strip():
+            st.warning("Project name, project description, and analysis goal are required to update a project.")
+            st.stop()
+        updated_metadata = update_active_project(
+            project_name=update_project_name.strip(),
+            project_description=update_project_description.strip(),
+            analysis_goal=update_analysis_goal.strip(),
+            company_department=update_company_department.strip(),
+            data_owner=update_data_owner.strip(),
+            reporting_period=update_reporting_period.strip(),
+            selected_workflow=update_selected_workflow,
+            suggested_template=update_suggested_template,
+            desired_outputs=update_desired_outputs,
+            notes=update_notes.strip(),
+        )
+        if active is not None:
+            associate_dataset_with_active_project(active["dataset_id"])
+        st.session_state["project_action_feedback"] = ("success", f"Active project updated: {updated_metadata.get('project_name', 'Analytics Project')}")
+        st.rerun()
 
 st.subheader("Project Summary")
 summary = get_project_summary(
