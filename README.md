@@ -24,8 +24,11 @@ This app is built around that separation:
 - Upload CSV, Excel `.xlsx`, and tabular JSON `.json`
 - Load bundled Sales / Retail, Manufacturing, Logistics, and Finance sample datasets
 - Create lightweight analytics project metadata before or after loading data
+- Manage multiple projects in one Streamlit session with one clearly active project
 - Follow a guided workflow checklist without being locked into a wizard
 - Manage several datasets in one Streamlit session, prevent duplicate loads, and choose the active dataset
+- Remove the active dataset, clear all datasets, or reset the active working dataset from visible controls
+- Show lightweight warnings when larger datasets may make profiling, charting, or exports slower
 - Profile any active working dataframe for types, missingness, duplicates, unique values, and summaries
 - Prepare data through logged transformations on `working_df`
 - Generate a Data Dictionary from the active `working_df`
@@ -98,6 +101,17 @@ Project Setup lets users document lightweight business context:
 
 Users can create a project before loading data, or load data first and document the project later.
 
+## Project Workspace
+
+The app supports a lightweight in-session Project Workspace.
+
+- Multiple projects can be loaded or created in the current Streamlit session.
+- One project is active at a time and is shown in the sidebar as Active Project.
+- Saving or loading a project gives visible feedback such as `Project saved` or `Project already loaded`.
+- Loading the same Project Backup again activates the existing project instead of creating a duplicate.
+- Projects can remember associated dataset IDs for the current session. If the dataset is still loaded, switching projects can reactivate it.
+- Project state is session-based. There is no backend database, user account, cloud persistence, sharing, or cross-project analytics.
+
 ## Usage Modes
 
 The Workbench supports three common small-business workflows:
@@ -144,6 +158,10 @@ The app supports a lightweight in-session dataset workspace.
 - One dataset is active at a time.
 - Profiling, preparation, quality, mapping, analytics, and export operate on the active dataset.
 - Switching datasets switches the active `raw_df`, `working_df`, transformation log, mappings, and analytics results.
+- Dataset actions are visible from the sidebar and Data Upload page.
+- Users can reset the active working dataset to raw data, remove the active dataset, or clear all loaded datasets.
+- Removing, clearing, resetting, or switching datasets clears stale analytics and export result state for the affected dataset.
+- Larger datasets trigger an informational warning that profiling, charting, or exports may take longer.
 - The workspace does not implement joins, relationships, or cross-dataset modeling.
 
 ## Supported Input Formats
@@ -283,7 +301,7 @@ Project Backup is for continuing a Workbench project later. It stores project de
 
 BI-ready Export Package is for sharing analysis outputs. It is an Excel workbook designed for business review, documentation, and handoff.
 
-The backup may contain internal files, but users interact with it as a Project Backup ZIP. No backend database, user account, cloud storage, or authentication is required.
+The backup may contain internal files, but users interact with it as a Project Backup ZIP. Loading the same backup twice activates the existing project instead of duplicating it. No backend database, user account, cloud storage, or authentication is required.
 
 ## Using SQL Server Data
 
@@ -407,7 +425,9 @@ This project was implemented using an AI-assisted coding workflow. The analytica
 ## Limitations
 
 - Uploaded data is held in Streamlit session state and is not persisted to a database.
+- Project Workspace and Dataset Workspace are session-based and reset when the Streamlit session ends.
 - Dataset workspace supports active dataset switching, not joins or semantic relationships.
+- Large datasets may make profiling, chart rendering, and browser downloads slower; the app provides warnings but does not implement a big-data backend.
 - JSON support is limited to tabular or normalizable records.
 - Legacy `.xls` Excel files are not supported.
 - Schema detection is rule-based and may require manual mapping correction.

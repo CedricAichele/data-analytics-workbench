@@ -5,7 +5,7 @@ import plotly.express as px
 import streamlit as st
 
 from app.components.layout import configure_page, get_working_dataframe, page_title
-from app.services.dataset_workspace import set_active_analytics_result
+from app.services.dataset_workspace import get_active_dataset_summary, set_active_analytics_result
 from app.services.generic_analytics import (
     build_generic_analytics,
     create_long_chart_data,
@@ -23,6 +23,10 @@ page_title("Generic Analytics", "Exploratory multi-measure aggregation for any s
 df = get_working_dataframe()
 if df is None:
     st.stop()
+
+size_summary = get_active_dataset_summary()
+if size_summary.get("is_large_dataset"):
+    st.warning(size_summary.get("large_dataset_message"))
 
 st.info(
     "This page does not assume sales, finance, logistics, or manufacturing meaning. "
@@ -121,6 +125,11 @@ st.download_button(
 
 st.subheader("Chart")
 chart_data = result.aggregated.copy()
+if len(chart_data) > 5_000:
+    st.info(
+        "This chart is based on more than 5,000 aggregated rows. "
+        "Consider adding a category or date grouping/filter before visual review."
+    )
 measure_cols = [column for column in result.measure_columns if column in chart_data.columns]
 fig = None
 chart_export_tables = {"aggregated_result": result.aggregated}

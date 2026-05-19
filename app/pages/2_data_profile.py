@@ -10,6 +10,7 @@ from app.components.charts import (
 )
 from app.components.layout import configure_page, get_working_dataframe, page_title
 from app.components.kpi_cards import render_kpi_grid
+from app.services.dataset_workspace import get_active_dataset_summary
 from app.services.profiler import profile_dataframe
 from app.services.quality_score import calculate_quality_score
 
@@ -20,6 +21,11 @@ page_title("Generic Data Profiler", "Inspect the current working dataset before 
 df = get_working_dataframe()
 if df is None:
     st.stop()
+
+size_summary = get_active_dataset_summary()
+if size_summary.get("is_large_dataset"):
+    st.warning(size_summary.get("large_dataset_message"))
+
 profile = profile_dataframe(df)
 quality = calculate_quality_score(df)
 

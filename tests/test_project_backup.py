@@ -9,6 +9,7 @@ from app.services.project_backup import (
     load_project_backup_zip,
     safe_project_filename,
 )
+from app.services.project_state import add_or_activate_project, list_projects
 from app.services.quality_score import calculate_quality_score
 
 
@@ -86,3 +87,24 @@ def test_project_backup_load_without_dataset_has_clear_message():
 def test_safe_project_filename_is_business_friendly():
     assert safe_project_filename("Monthly Sales Review!") == "monthly_sales_review_project_backup.zip"
 
+
+def test_loading_same_project_backup_twice_activates_existing_project():
+    backup_bytes = build_project_backup_zip(
+        project_metadata={
+            "project_name": "Duplicate Backup",
+            "project_description": "Same backup",
+            "analysis_goal": "Avoid duplicates",
+        },
+        active_dataset=None,
+        include_cleaned_dataset=False,
+    )
+    state = {}
+    first = load_project_backup_zip(backup_bytes)
+    first_id, first_created = add_or_activate_project(first.project_metadata, backup_hash=first.backup_hash, state=state)
+    second = load_project_backup_zip(backup_bytes)
+    second_id, second_created = add_or_activate_project(second.project_metadata, backup_hash=second.backup_hash, state=state)
+
+    assert first_created is True
+    assert second_created is False
+    assert first_id == second_id
+    assert len(list_projects(state)) == 1

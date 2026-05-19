@@ -9,12 +9,22 @@ import streamlit as st
 
 from app.config import APP_SUBTITLE, APP_TITLE, LOGO_MARK_PATH
 from app.services.dataset_workspace import (
+    clear_all_datasets,
     get_active_dataset,
+    get_active_dataset_summary,
     get_active_working_df,
     initialize_workspace,
     list_datasets,
+    remove_dataset,
+    reset_active_working_dataset,
     set_active_dataset,
     sync_legacy_state,
+)
+from app.services.project_state import (
+    get_active_project,
+    initialize_project_state,
+    list_projects,
+    set_active_project,
 )
 
 
@@ -103,6 +113,12 @@ def inject_layout_css() -> None:
             margin: 0.8rem 0 0.3rem;
             text-transform: uppercase;
         }
+        .daw-sidebar-panel-title {
+            color: #0f172a;
+            font-size: 0.9rem;
+            font-weight: 750;
+            margin-top: 0.75rem;
+        }
         section[data-testid="stSidebar"] a[data-testid="stPageLink-NavLink"] {
             border: 1px solid #e2e8f0;
             border-radius: 8px;
@@ -139,14 +155,61 @@ def render_sidebar_branding() -> None:
         """,
         unsafe_allow_html=True,
     )
+    render_project_workspace_selector()
     render_dataset_workspace_selector()
     render_sidebar_navigation()
+
+
+def render_project_workspace_selector() -> None:
+    """Render compact active project status in the sidebar."""
+    initialize_project_state()
+    projects = list_projects()
+    st.sidebar.markdown('<div class="daw-sidebar-panel-title">Active Project</div>', unsafe_allow_html=True)
+    if not projects:
+        st.sidebar.info("No active project. Create or load a project to document your workflow.")
+        return
+
+    active_project = get_active_project()
+    project_ids = [project["project_id"] for project in projects]
+    draft_option = "__new_project_draft__"
+    options = project_ids if active_project else [draft_option, *project_ids]
+    current_id = active_project["project_id"] if active_project else draft_option
+    selected_id = st.sidebar.selectbox(
+        "Active project",
+        options,
+        index=options.index(current_id) if current_id in options else 0,
+        format_func=lambda project_id: "New project draft"
+        if project_id == draft_option
+        else next(project["project_name"] for project in projects if project["project_id"] == project_id),
+        key="sidebar_active_project_selector",
+    )
+    if selected_id != current_id and selected_id != draft_option:
+        set_active_project(selected_id)
+        st.rerun()
+
+    active_project = get_active_project()
+    if active_project:
+        metadata = active_project.get("metadata", {})
+        st.sidebar.caption(
+            f"Workflow: {metadata.get('selected_workflow', 'Quick Data Check')}  \n"
+            f"Template: {metadata.get('suggested_template', 'Generic')}"
+        )
+    else:
+        st.sidebar.caption("Create or save the draft on Project Setup.")
 
 
 def render_dataset_workspace_selector() -> None:
     """Render active dataset selector in the sidebar."""
     initialize_workspace()
+    feedback = st.session_state.pop("dataset_action_feedback", None)
+    if feedback:
+        feedback_type, feedback_message = feedback
+        if feedback_type == "success":
+            st.sidebar.success(feedback_message)
+        else:
+            st.sidebar.info(feedback_message)
     datasets = list_datasets()
+    st.sidebar.markdown('<div class="daw-sidebar-panel-title">Active Dataset</div>', unsafe_allow_html=True)
     if not datasets:
         st.sidebar.info("No active dataset.")
         return
@@ -170,6 +233,23 @@ def render_dataset_workspace_selector() -> None:
             f"{metadata.get('source', 'dataset')} | {metadata.get('file_type', 'data')} | "
             f"{len(active['working_df']):,} rows x {len(active['working_df'].columns):,} cols"
         )
+        summary = get_active_dataset_summary()
+        if summary.get("is_large_dataset"):
+            st.sidebar.warning("Large dataset: some operations may take longer.")
+        with st.sidebar.expander("Dataset actions", expanded=False):
+            if st.button("Reset working dataset", key="sidebar-reset-active-dataset"):
+                reset_active_working_dataset()
+                st.session_state["dataset_action_feedback"] = ("success", "Working dataset reset to raw data.")
+                st.rerun()
+            if st.button("Remove active dataset", key="sidebar-remove-active-dataset"):
+                remove_dataset(active["dataset_id"])
+                st.session_state["dataset_action_feedback"] = ("success", "Active dataset removed.")
+                st.rerun()
+            confirm_clear_all = st.checkbox("Confirm clear all datasets", key="sidebar-confirm-clear-all-datasets")
+            if st.button("Clear all datasets", key="sidebar-clear-all-datasets", disabled=not confirm_clear_all):
+                clear_all_datasets()
+                st.session_state["dataset_action_feedback"] = ("success", "All datasets cleared. Active project was kept.")
+                st.rerun()
 
 
 def render_sidebar_navigation() -> None:

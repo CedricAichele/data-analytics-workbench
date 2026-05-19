@@ -10,6 +10,7 @@ from app.components.layout import configure_page, page_title
 from app.services.data_dictionary import generate_data_dictionary
 from app.services.dataset_workspace import (
     add_or_activate_dataset,
+    get_active_dataset_summary,
     get_active_analytics_result,
     get_active_dataset,
     get_active_transformation_log,
@@ -26,7 +27,13 @@ from app.services.export_service import (
     transformation_log_to_dataframe,
 )
 from app.services.project_backup import build_project_backup_zip, load_project_backup_zip, safe_project_filename
-from app.services.project_state import compact_project_summary_rows, get_project_metadata, get_project_summary, set_project_metadata
+from app.services.project_state import (
+    add_or_activate_project,
+    associate_dataset_with_active_project,
+    compact_project_summary_rows,
+    get_project_metadata,
+    get_project_summary,
+)
 from app.services.quality_rules import run_template_quality_rules
 from app.services.quality_score import calculate_quality_score
 
@@ -186,6 +193,9 @@ status_cols[0].metric("Dataset", dataset_name)
 status_cols[1].metric("Source", str(metadata.get("source", "dataset")))
 status_cols[2].metric("File type", str(metadata.get("file_type", "data")))
 status_cols[3].metric("Working shape", f"{len(working_df):,} x {len(working_df.columns):,}")
+size_summary = get_active_dataset_summary()
+if size_summary.get("is_large_dataset"):
+    st.warning(size_summary.get("large_dataset_message"))
 
 st.caption(
     "The standard export target is the active working dataset. "
@@ -224,15 +234,16 @@ with project_cols[1]:
     if backup_upload is not None:
         try:
             loaded = load_project_backup_zip(backup_upload)
-            set_project_metadata(loaded.project_metadata)
+            _, created_project = add_or_activate_project(loaded.project_metadata, backup_hash=loaded.backup_hash)
             if loaded.cleaned_dataset is not None:
                 restored_metadata = dict(loaded.dataset_metadata or {})
                 restored_metadata.update({"source": "project backup", "file_type": "csv"})
-                add_or_activate_dataset(
+                dataset_id, _ = add_or_activate_dataset(
                     loaded.project_metadata.get("project_name", "Restored project dataset"),
                     loaded.cleaned_dataset,
                     restored_metadata,
                 )
+                associate_dataset_with_active_project(dataset_id)
                 restored_active = get_active_dataset()
                 if restored_active is not None:
                     restored_active["transformation_log"] = list(loaded.transformation_log)
@@ -240,11 +251,16 @@ with project_cols[1]:
                     sync_legacy_state()
             for message in loaded.messages:
                 st.info(message)
-            st.success("Project Backup loaded.")
+            if created_project:
+                st.success(f"Project Backup loaded: {loaded.project_metadata.get('project_name', 'Analytics Project')}")
+            else:
+                st.info("Project already loaded. Activated existing project.")
         except Exception as exc:
             st.error(f"Project Backup could not be loaded: {exc}")
 
 st.subheader("A. Export Active Working Dataset")
+if size_summary.get("is_large_dataset"):
+    st.info("Large export: downloads may take longer depending on browser and network speed.")
 export_raw = st.checkbox("Export raw dataset instead of working dataset", value=False)
 dataset_to_export = raw_df if export_raw else working_df
 dataset_suffix = "raw_dataset" if export_raw else "working_dataset"

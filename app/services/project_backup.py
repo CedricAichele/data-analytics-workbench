@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 from io import BytesIO
 import json
 import re
@@ -25,6 +26,7 @@ class ProjectBackupLoadResult:
     quality_summary: dict[str, Any]
     cleaned_dataset: pd.DataFrame | None
     messages: list[str]
+    backup_hash: str = ""
 
 
 def safe_project_filename(project_name: str, suffix: str = "project_backup", extension: str = "zip") -> str:
@@ -119,6 +121,7 @@ def build_project_backup_zip(
 def load_project_backup_zip(file_or_bytes: Any) -> ProjectBackupLoadResult:
     """Load a Project Backup ZIP and return restorable parts."""
     raw_bytes = file_or_bytes.getvalue() if hasattr(file_or_bytes, "getvalue") else bytes(file_or_bytes)
+    backup_hash = hashlib.sha256(raw_bytes).hexdigest()
     messages: list[str] = []
     with ZipFile(BytesIO(raw_bytes), mode="r") as backup:
         names = set(backup.namelist())
@@ -144,6 +147,7 @@ def load_project_backup_zip(file_or_bytes: Any) -> ProjectBackupLoadResult:
         quality_summary=dict(quality_summary or {}),
         cleaned_dataset=cleaned_dataset,
         messages=messages,
+        backup_hash=backup_hash,
     )
 
 

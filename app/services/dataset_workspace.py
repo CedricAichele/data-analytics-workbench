@@ -11,6 +11,10 @@ import re
 import pandas as pd
 import streamlit as st
 
+LARGE_DATASET_ROW_THRESHOLD = 100_000
+LARGE_DATASET_COLUMN_THRESHOLD = 75
+LARGE_DATASET_MEMORY_MB_THRESHOLD = 50.0
+
 
 @dataclass(frozen=True)
 class WorkspaceDataset:
@@ -79,6 +83,38 @@ def compute_dataset_hash(file_bytes_or_df: bytes | bytearray | pd.DataFrame) -> 
     raise TypeError("compute_dataset_hash expects bytes or a pandas DataFrame.")
 
 
+def analyze_dataset_size(
+    df: pd.DataFrame,
+    *,
+    row_threshold: int = LARGE_DATASET_ROW_THRESHOLD,
+    column_threshold: int = LARGE_DATASET_COLUMN_THRESHOLD,
+    memory_mb_threshold: float = LARGE_DATASET_MEMORY_MB_THRESHOLD,
+) -> dict[str, Any]:
+    """Return lightweight size metadata for large-dataset guardrails."""
+    memory_mb = float(df.memory_usage(deep=True).sum() / (1024 * 1024))
+    reasons: list[str] = []
+    if len(df) >= row_threshold:
+        reasons.append(f"{len(df):,} rows")
+    if len(df.columns) >= column_threshold:
+        reasons.append(f"{len(df.columns):,} columns")
+    if memory_mb >= memory_mb_threshold:
+        reasons.append(f"{memory_mb:.1f} MB estimated memory")
+    is_large = bool(reasons)
+    return {
+        "rows": int(len(df)),
+        "columns": int(len(df.columns)),
+        "memory_usage_mb": round(memory_mb, 2),
+        "is_large_dataset": is_large,
+        "large_dataset_reasons": reasons,
+        "large_dataset_message": (
+            "Large dataset detected. Some profiling and charting operations may take longer. "
+            "Consider filtering or using aggregated views."
+            if is_large
+            else ""
+        ),
+    }
+
+
 def dataset_exists(
     dataset_id_or_hash: str,
     state: MutableMapping[str, Any] | None = None,
@@ -111,12 +147,14 @@ def add_dataset(
     dataset_id = _new_dataset_id(name, current["datasets"])
     raw_copy = raw_df.copy()
     working_copy = working_df.copy() if working_df is not None else raw_copy.copy()
+    metadata_copy = dict(metadata or {})
+    metadata_copy.update(analyze_dataset_size(raw_copy))
     dataset = {
         "dataset_id": dataset_id,
         "name": name,
         "raw_df": raw_copy,
         "working_df": working_copy,
-        "metadata": dict(metadata or {}),
+        "metadata": metadata_copy,
         "transformation_log": list(transformation_log or []),
         "template_mappings": dict(template_mappings or {}),
         "analytics_results": {},
@@ -148,6 +186,7 @@ def add_or_activate_dataset(
     metadata_copy = dict(metadata or {})
     stable_id = dataset_id or metadata_copy.get("dataset_id")
     content_hash = dataset_hash or metadata_copy.get("dataset_hash") or compute_dataset_hash(raw_df)
+    metadata_copy.update(analyze_dataset_size(raw_df))
 
     if stable_id and stable_id in current["datasets"]:
         current["active_dataset_id"] = stable_id
@@ -213,9 +252,36 @@ def get_loaded_dataset_summary(state: MutableMapping[str, Any] | None = None) ->
                 "file_type": metadata.get("file_type", "data"),
                 "raw_shape": f"{dataset['raw_rows']:,} x {dataset['raw_columns']:,}",
                 "working_shape": f"{dataset['working_rows']:,} x {dataset['working_columns']:,}",
+                "large_dataset": "Yes" if metadata.get("is_large_dataset") else "No",
             }
         )
     return pd.DataFrame(rows)
+
+
+def get_active_dataset_summary(state: MutableMapping[str, Any] | None = None) -> dict[str, Any]:
+    """Return a compact display summary for the active dataset."""
+    dataset = get_active_dataset(state)
+    if dataset is None:
+        return {
+            "dataset_name": "No dataset loaded",
+            "source": "",
+            "file_type": "",
+            "raw_shape": "0 x 0",
+            "working_shape": "0 x 0",
+            "is_large_dataset": False,
+            "large_dataset_message": "",
+        }
+    metadata = dataset.get("metadata", {})
+    return {
+        "dataset_name": dataset.get("name", "Dataset"),
+        "source": metadata.get("source", "dataset"),
+        "file_type": metadata.get("file_type", "data"),
+        "raw_shape": f"{len(dataset['raw_df']):,} x {len(dataset['raw_df'].columns):,}",
+        "working_shape": f"{len(dataset['working_df']):,} x {len(dataset['working_df'].columns):,}",
+        "is_large_dataset": bool(metadata.get("is_large_dataset")),
+        "large_dataset_message": metadata.get("large_dataset_message", ""),
+        "memory_usage_mb": metadata.get("memory_usage_mb", 0),
+    }
 
 
 def set_active_dataset(dataset_id: str, state: MutableMapping[str, Any] | None = None) -> None:
@@ -255,7 +321,7 @@ def update_active_working_df(df: pd.DataFrame, state: MutableMapping[str, Any] |
     if dataset is None:
         raise ValueError("No active dataset is available.")
     dataset["working_df"] = df.copy()
-    dataset["analytics_results"] = {}
+    clear_dataset_results(dataset["dataset_id"], current)
     sync_legacy_state(current)
 
 
@@ -284,8 +350,21 @@ def reset_active_working_df(state: MutableMapping[str, Any] | None = None) -> No
     dataset["working_df"] = dataset["raw_df"].copy()
     dataset["transformation_log"] = []
     dataset["template_mappings"] = {}
-    dataset["analytics_results"] = {}
+    clear_dataset_results(dataset["dataset_id"], _state(state))
     sync_legacy_state(_state(state))
+
+
+def reset_active_working_dataset(state: MutableMapping[str, Any] | None = None) -> None:
+    """Business-friendly alias for resetting active working data."""
+    reset_active_working_df(state)
+
+
+def clear_dataset_results(dataset_id: str, state: MutableMapping[str, Any] | None = None) -> None:
+    """Clear stale analytics/export results for one dataset."""
+    current = _state(state)
+    dataset = current.get("datasets", {}).get(dataset_id)
+    if dataset is not None:
+        dataset["analytics_results"] = {}
 
 
 def remove_dataset(dataset_id: str, state: MutableMapping[str, Any] | None = None) -> None:
@@ -293,9 +372,21 @@ def remove_dataset(dataset_id: str, state: MutableMapping[str, Any] | None = Non
     initialize_workspace(current)
     if dataset_id not in current["datasets"]:
         return
+    clear_dataset_results(dataset_id, current)
     del current["datasets"][dataset_id]
     if current.get("active_dataset_id") == dataset_id:
         current["active_dataset_id"] = next(iter(current["datasets"]), None)
+    sync_legacy_state(current)
+
+
+def clear_all_datasets(state: MutableMapping[str, Any] | None = None) -> None:
+    """Remove every dataset while leaving project metadata intact."""
+    current = _state(state)
+    initialize_workspace(current)
+    for dataset_id in list(current["datasets"]):
+        clear_dataset_results(dataset_id, current)
+    current["datasets"] = {}
+    current["active_dataset_id"] = None
     sync_legacy_state(current)
 
 

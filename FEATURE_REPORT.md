@@ -44,9 +44,15 @@ The app supports multiple datasets in the current Streamlit session. Each datase
 
 One dataset is active at a time. All workflow pages operate on the active dataset. No joins, relationships, or cross-dataset analytics are implemented.
 
+Duplicate sample loads and identical upload content activate the existing dataset instead of creating duplicates. Users can reset the active working dataset, remove the active dataset, or clear all loaded datasets from visible controls. Dataset removal, reset, switching, and clearing remove stale analytics/export results for the affected dataset.
+
+Large dataset guardrails record row count, column count, estimated memory use, and warning state. Large datasets are allowed, but the UI warns that profiling, charting, and exports may take longer.
+
 ## Project Setup and Guided Workflow
 
 Project Setup stores lightweight business context such as project name, analysis goal, owner, reporting period, selected workflow, suggested template, and desired outputs.
+
+The Project Workspace supports multiple projects in one Streamlit session with one active project at a time. Duplicate project metadata or repeated Project Backup loads activate the existing project instead of creating duplicates. Projects can remember associated dataset IDs during the session.
 
 Workflow shows a readable process layout with Done, Open, and Optional statuses. It recommends the next action but does not block users from opening pages freely.
 
@@ -177,10 +183,14 @@ Export Center supports:
 
 Project Backup is distinct from the BI-ready Export Package. The backup is for continuing a Workbench project later; the BI-ready package is for sharing analysis outputs.
 
+Loading the same Project Backup more than once activates the existing project.
+
 ## Known Limitations
 
 - Data is stored in Streamlit session state, not a database.
+- Project Workspace is session-based and supports one active project at a time, not project sharing or cloud persistence.
 - Dataset Workspace does not implement joins or semantic relationships.
+- Large datasets may be slower in browser-based Streamlit workflows; the app warns but does not add a big-data backend.
 - JSON support is not a full JSON schema explorer.
 - Legacy `.xls`, Parquet, XML, and database connections are not implemented.
 - Rule-based schema detection may need manual mapping correction.

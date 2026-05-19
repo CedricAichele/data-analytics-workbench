@@ -1,6 +1,6 @@
 # App Walkthrough
 
-This walkthrough documents the current Data Analytics Workbench UI and workflow. The app is designed for Streamlit wide layout and a clean sidebar with a readable logo mark, app name, subtitle, active dataset selector, and icon-based navigation.
+This walkthrough documents the current Data Analytics Workbench UI and workflow. The app is designed for Streamlit wide layout and a clean sidebar with a readable logo mark, app name, subtitle, Active Project panel, Active Dataset panel, and icon-based navigation.
 
 ## Global Sidebar
 
@@ -9,8 +9,11 @@ The sidebar shows:
 - icon-only workbench/data logo mark
 - Data Analytics Workbench title
 - subtitle: Profiling, Preparation, Data Quality & KPI Analytics
+- active project selector when projects are loaded
+- active project workflow and template
 - active dataset selector when datasets are loaded
 - active dataset source, file type, and working shape
+- compact dataset actions for reset, remove active dataset, and clear all datasets
 - grouped navigation links for the main workflow
 
 Navigation groups:
@@ -43,12 +46,14 @@ It includes project name, description, analysis goal, company or department, dat
 
 The page also supports:
 
+- Project Workspace selection when multiple projects are loaded
+- Start new project
 - Save Project
 - Load Project Backup
 - Download Project Backup
 - Project Summary
 
-Business-facing labels avoid exposing internal JSON files as the main concept.
+Saving or loading a project shows clear feedback such as "Project saved" or "Project already loaded." Business-facing labels avoid exposing internal JSON files as the main concept.
 
 ## Workflow
 
@@ -74,6 +79,10 @@ The page can load bundled synthetic samples:
 - Finance
 
 Every upload or sample is added to the in-session Dataset Workspace. The newly loaded dataset becomes active, `raw_df` is copied to `working_df`, mappings and logs start clean for that dataset, and schema detection runs for implemented templates.
+
+Loading the same sample or identical uploaded content again activates the existing dataset instead of adding a duplicate. Users can reset the active working dataset, remove the active dataset, or clear all datasets from the Data Upload page or sidebar.
+
+Large datasets show an informational warning that profiling, charts, and exports may take longer.
 
 ## Data Profile
 
@@ -195,5 +204,7 @@ It can export:
 - BI-ready Excel package containing cleaned data, data dictionary, quality report, transformation log, quality rules, KPI summary, and available analytics result tables
 
 Project Backup is separate from the BI-ready Export Package. The backup is for continuing work in the Workbench; the BI-ready package is for sharing analysis outputs.
+
+Loading the same Project Backup again activates the existing project instead of creating a duplicate.
 
 Exports use Streamlit download buttons and do not overwrite local files.

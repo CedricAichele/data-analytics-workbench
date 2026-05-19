@@ -4,12 +4,17 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from datetime import datetime, timezone
+import hashlib
+import json
+import re
 from typing import Any
 
 import streamlit as st
 
 
 PROJECT_METADATA_KEY = "project_metadata"
+PROJECTS_KEY = "projects"
+ACTIVE_PROJECT_ID_KEY = "active_project_id"
 WORKFLOW_OPTIONS = ["Quick Data Check", "BI-ready Data Preparation", "Domain KPI Analysis"]
 TEMPLATE_OPTIONS = ["Generic", "Sales / Retail", "Manufacturing", "Logistics", "Finance"]
 OUTPUT_OPTIONS = [
@@ -29,6 +34,7 @@ def _state(state: MutableMapping[str, Any] | None = None) -> MutableMapping[str,
 def default_project_metadata() -> dict[str, Any]:
     """Return a fresh metadata dictionary for a new project."""
     return {
+        "project_id": "",
         "project_name": "",
         "project_description": "",
         "analysis_goal": "",
@@ -45,9 +51,165 @@ def default_project_metadata() -> dict[str, Any]:
 
 
 def initialize_project_state(state: MutableMapping[str, Any] | None = None) -> None:
-    """Initialize project metadata keys without requiring a dataset."""
+    """Initialize project workspace keys without requiring a dataset."""
     current = _state(state)
     current.setdefault(PROJECT_METADATA_KEY, default_project_metadata())
+    current.setdefault(PROJECTS_KEY, {})
+    current.setdefault(ACTIVE_PROJECT_ID_KEY, None)
+    current.setdefault("project_draft_active", False)
+
+    active_id = current.get(ACTIVE_PROJECT_ID_KEY)
+    if current.get("project_draft_active"):
+        current[PROJECT_METADATA_KEY] = current.get(PROJECT_METADATA_KEY, default_project_metadata())
+        return
+    if active_id and active_id in current[PROJECTS_KEY]:
+        current[PROJECT_METADATA_KEY] = dict(current[PROJECTS_KEY][active_id]["metadata"])
+        return
+
+    legacy_metadata = dict(current.get(PROJECT_METADATA_KEY, {}))
+    if legacy_metadata.get("project_name") and not current[PROJECTS_KEY]:
+        project_id, _ = add_or_activate_project(legacy_metadata, state=current)
+        current[ACTIVE_PROJECT_ID_KEY] = project_id
+        sync_active_project_metadata(current)
+    elif current[PROJECTS_KEY] and not active_id:
+        current[ACTIVE_PROJECT_ID_KEY] = next(iter(current[PROJECTS_KEY]))
+        sync_active_project_metadata(current)
+
+
+def compute_project_signature(metadata: dict[str, Any], backup_hash: str | None = None) -> str:
+    """Return a stable signature for duplicate project detection."""
+    comparable = _normalized_project_payload(metadata)
+    if backup_hash:
+        comparable["backup_hash"] = backup_hash
+    payload = json.dumps(comparable, sort_keys=True, default=str).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def add_or_activate_project(
+    metadata: dict[str, Any],
+    *,
+    state: MutableMapping[str, Any] | None = None,
+    backup_hash: str | None = None,
+    associated_dataset_ids: list[str] | None = None,
+) -> tuple[str, bool]:
+    """Add a project to the workspace or activate an existing duplicate."""
+    current = _state(state)
+    current.setdefault(PROJECT_METADATA_KEY, default_project_metadata())
+    current.setdefault(PROJECTS_KEY, {})
+    current.setdefault(ACTIVE_PROJECT_ID_KEY, None)
+
+    merged = default_project_metadata()
+    merged.update({key: value for key, value in dict(metadata or {}).items() if key in merged})
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    if not merged.get("created_at"):
+        merged["created_at"] = now
+    merged["updated_at"] = now
+
+    signature = compute_project_signature(merged)
+    for project_id, project in current[PROJECTS_KEY].items():
+        if backup_hash and project.get("backup_hash") == backup_hash:
+            current[ACTIVE_PROJECT_ID_KEY] = project_id
+            current["project_draft_active"] = False
+            sync_active_project_metadata(current)
+            _activate_project_dataset_if_available(project, current)
+            return project_id, False
+        if project.get("project_signature") == signature:
+            current[ACTIVE_PROJECT_ID_KEY] = project_id
+            current["project_draft_active"] = False
+            sync_active_project_metadata(current)
+            _activate_project_dataset_if_available(project, current)
+            return project_id, False
+
+    requested_id = str(merged.get("project_id") or "").strip()
+    project_id = requested_id if requested_id and requested_id not in current[PROJECTS_KEY] else _new_project_id(merged.get("project_name", "Analytics Project"), current[PROJECTS_KEY])
+    merged["project_id"] = project_id
+    current[PROJECTS_KEY][project_id] = {
+        "project_id": project_id,
+        "metadata": dict(merged),
+        "project_signature": signature,
+        "backup_hash": backup_hash,
+        "associated_dataset_ids": list(associated_dataset_ids or []),
+        "created_at": merged["created_at"],
+        "updated_at": merged["updated_at"],
+    }
+    current[ACTIVE_PROJECT_ID_KEY] = project_id
+    current["project_draft_active"] = False
+    sync_active_project_metadata(current)
+    return project_id, True
+
+
+def list_projects(state: MutableMapping[str, Any] | None = None) -> list[dict[str, Any]]:
+    """Return project workspace records for display."""
+    current = _state(state)
+    initialize_project_state(current)
+    return [
+        {
+            "project_id": project_id,
+            "project_name": project["metadata"].get("project_name") or "Untitled project",
+            "selected_workflow": project["metadata"].get("selected_workflow", "Quick Data Check"),
+            "suggested_template": project["metadata"].get("suggested_template", "Generic"),
+            "updated_at": project.get("updated_at", ""),
+            "associated_dataset_ids": list(project.get("associated_dataset_ids", [])),
+        }
+        for project_id, project in current[PROJECTS_KEY].items()
+    ]
+
+
+def get_active_project(state: MutableMapping[str, Any] | None = None) -> dict[str, Any] | None:
+    """Return the active project workspace record."""
+    current = _state(state)
+    initialize_project_state(current)
+    active_id = current.get(ACTIVE_PROJECT_ID_KEY)
+    if not active_id:
+        return None
+    return current[PROJECTS_KEY].get(active_id)
+
+
+def set_active_project(project_id: str, state: MutableMapping[str, Any] | None = None) -> None:
+    """Activate a project and synchronize the displayed metadata."""
+    current = _state(state)
+    initialize_project_state(current)
+    if project_id not in current[PROJECTS_KEY]:
+        raise ValueError(f"Unknown project id: {project_id}")
+    current[ACTIVE_PROJECT_ID_KEY] = project_id
+    current["project_draft_active"] = False
+    sync_active_project_metadata(current)
+    _activate_project_dataset_if_available(current[PROJECTS_KEY][project_id], current)
+
+
+def start_new_project_draft(state: MutableMapping[str, Any] | None = None) -> None:
+    """Clear the active project selection and show an empty project form."""
+    current = _state(state)
+    current.setdefault(PROJECTS_KEY, {})
+    current[ACTIVE_PROJECT_ID_KEY] = None
+    current["project_draft_active"] = True
+    current[PROJECT_METADATA_KEY] = default_project_metadata()
+
+
+def associate_dataset_with_active_project(dataset_id: str, state: MutableMapping[str, Any] | None = None) -> None:
+    """Remember that the active project has used a dataset in this session."""
+    current = _state(state)
+    initialize_project_state(current)
+    active = get_active_project(current)
+    if active is None or not dataset_id:
+        return
+    associated = active.setdefault("associated_dataset_ids", [])
+    if dataset_id not in associated:
+        associated.append(dataset_id)
+    active["metadata"]["updated_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    active["updated_at"] = active["metadata"]["updated_at"]
+    sync_active_project_metadata(current)
+
+
+def sync_active_project_metadata(state: MutableMapping[str, Any] | None = None) -> None:
+    """Keep the legacy project metadata key aligned with the active project."""
+    current = _state(state)
+    active_id = current.get(ACTIVE_PROJECT_ID_KEY)
+    project = current.get(PROJECTS_KEY, {}).get(active_id) if active_id else None
+    if project is None:
+        current[PROJECT_METADATA_KEY] = default_project_metadata()
+        return
+    current[PROJECT_METADATA_KEY] = dict(project["metadata"])
 
 
 def update_project_metadata(
@@ -66,7 +228,16 @@ def update_project_metadata(
         existing["created_at"] = now
     existing.update({key: value for key, value in updates.items() if key in existing})
     existing["updated_at"] = now
-    current[PROJECT_METADATA_KEY] = existing
+    active_id = current.get(ACTIVE_PROJECT_ID_KEY)
+    if active_id and active_id in current[PROJECTS_KEY]:
+        existing["project_id"] = active_id
+        project = current[PROJECTS_KEY][active_id]
+        project["metadata"] = dict(existing)
+        project["project_signature"] = compute_project_signature(existing)
+        project["updated_at"] = now
+        current[PROJECT_METADATA_KEY] = dict(existing)
+    else:
+        add_or_activate_project(existing, state=current)
     return dict(existing)
 
 
@@ -80,10 +251,8 @@ def get_project_metadata(state: MutableMapping[str, Any] | None = None) -> dict[
 def set_project_metadata(metadata: dict[str, Any], state: MutableMapping[str, Any] | None = None) -> dict[str, Any]:
     """Replace project metadata, merging with defaults for missing keys."""
     current = _state(state)
-    merged = default_project_metadata()
-    merged.update({key: value for key, value in dict(metadata or {}).items() if key in merged})
-    current[PROJECT_METADATA_KEY] = merged
-    return dict(merged)
+    project_id, _ = add_or_activate_project(metadata, state=current)
+    return dict(current[PROJECTS_KEY][project_id]["metadata"])
 
 
 def has_project(state: MutableMapping[str, Any] | None = None) -> bool:
@@ -189,3 +358,44 @@ def _recommended_next_action(
     if summary.get("Analytics results") == "None yet":
         return "Run Generic Analytics or the selected domain analytics page."
     return "Export a BI-ready package or download a Project Backup."
+
+
+def _slugify(value: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+    return slug or "project"
+
+
+def _new_project_id(project_name: str, projects: dict[str, Any]) -> str:
+    base = _slugify(project_name)
+    candidate = base
+    suffix = 2
+    while candidate in projects:
+        candidate = f"{base}-{suffix}"
+        suffix += 1
+    return candidate
+
+
+def _normalized_project_payload(metadata: dict[str, Any]) -> dict[str, Any]:
+    excluded = {"project_id", "created_at", "updated_at"}
+    payload = {
+        key: value
+        for key, value in dict(metadata or {}).items()
+        if key not in excluded and key in default_project_metadata()
+    }
+    if isinstance(payload.get("desired_outputs"), list):
+        payload["desired_outputs"] = sorted(str(value) for value in payload["desired_outputs"])
+    return payload
+
+
+def _activate_project_dataset_if_available(project: dict[str, Any], state: MutableMapping[str, Any]) -> None:
+    datasets = state.get("datasets", {})
+    for dataset_id in project.get("associated_dataset_ids", []):
+        if dataset_id in datasets:
+            state["active_dataset_id"] = dataset_id
+            try:
+                from app.services.dataset_workspace import sync_legacy_state
+
+                sync_legacy_state(state)
+            except Exception:
+                pass
+            return

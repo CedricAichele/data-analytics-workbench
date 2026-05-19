@@ -16,7 +16,10 @@ from app.services.data_loader import (
 )
 from app.services.dataset_workspace import (
     add_or_activate_dataset,
+    analyze_dataset_size,
+    clear_all_datasets,
     get_active_dataset,
+    get_active_dataset_summary,
     get_loaded_dataset_summary,
     initialize_workspace,
     list_datasets,
@@ -25,6 +28,7 @@ from app.services.dataset_workspace import (
     set_active_dataset,
     sync_legacy_state,
 )
+from app.services.project_state import associate_dataset_with_active_project
 from app.services.schema_detector import detect_retail_schema, detect_template_schema
 from app.services.template_registry import implemented_domain_templates
 
@@ -70,6 +74,7 @@ def _store_dataset(loaded: LoadedDataset) -> bool:
         if detected_template:
             st.session_state["selected_template_id"] = detected_template
     sync_legacy_state()
+    associate_dataset_with_active_project(dataset_id)
     st.session_state["last_loaded_dataset_id"] = dataset_id
     st.session_state["last_loaded_dataset_created"] = created
     return created
@@ -83,6 +88,9 @@ def _set_load_feedback(loaded: LoadedDataset, created: bool) -> None:
         f"({loaded.metadata.get('file_type', 'data').upper()}) with "
         f"{loaded.metadata['rows']:,} rows and {loaded.metadata['columns']:,} columns."
     )
+    size_profile = analyze_dataset_size(loaded.dataframe)
+    if size_profile["is_large_dataset"]:
+        message += " Large dataset detected; some profiling and charting operations may take longer."
     st.session_state["dataset_load_feedback"] = ("success" if created else "info", message)
 
 
@@ -171,11 +179,17 @@ if workspace_datasets:
     action_cols = st.columns(2)
     if action_cols[0].button("Reset active working data to raw"):
         reset_active_working_df()
-        st.success("Active working dataset reset to the original raw data.")
+        st.session_state["dataset_load_feedback"] = ("success", "Active working dataset reset to the original raw data.")
         st.rerun()
     if action_cols[1].button("Remove active dataset", disabled=len(workspace_datasets) == 0):
         remove_dataset(selected_dataset_id)
-        st.success("Dataset removed from the workspace.")
+        st.session_state["dataset_load_feedback"] = ("success", "Dataset removed from the workspace.")
+        st.rerun()
+    clear_cols = st.columns([1, 1])
+    confirm_clear_all = clear_cols[0].checkbox("Confirm clear all datasets")
+    if clear_cols[1].button("Clear all datasets", disabled=not confirm_clear_all):
+        clear_all_datasets()
+        st.session_state["dataset_load_feedback"] = ("success", "All datasets cleared. Active project was kept.")
         st.rerun()
 
 if "raw_df" in st.session_state:
@@ -187,6 +201,9 @@ if "raw_df" in st.session_state:
     st.session_state["template_schema_detections"] = active_detections
     st.session_state["retail_schema_detection"] = active_detections.get("sales_retail")
     metadata = st.session_state.get("dataset_metadata", {})
+    size_summary = get_active_dataset_summary()
+    if size_summary.get("is_large_dataset"):
+        st.warning(size_summary.get("large_dataset_message"))
     if metadata:
         st.subheader("Loaded Dataset Metadata")
         st.dataframe(
