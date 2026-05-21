@@ -198,15 +198,3 @@ def generate_generic_data_summary(df: pd.DataFrame, quality: DataQualityReport, 
         ]
     )
     return "\n".join(lines)
-
-
-def generate_llm_summary_placeholder(*args, enabled: bool = False, **kwargs) -> str:
-    """Placeholder for a future LLM-based summary integration.
-
-    The MVP intentionally avoids API keys and external LLM calls. A future
-    implementation could pass deterministic metrics into a secured LLM service
-    only when explicitly enabled by the user.
-    """
-    if not enabled:
-        return "LLM summary generation is disabled in the MVP."
-    raise NotImplementedError("LLM-based summaries are intentionally not implemented in this MVP.")

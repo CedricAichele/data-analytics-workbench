@@ -429,8 +429,7 @@ This project was implemented using an AI-assisted coding workflow. The analytica
 ## Next Steps
 
 - Improve guided onboarding based on tester feedback.
-- Add saved mapping profiles for recurring source files if Project Backup does not fully cover the recurring workflow.
-- Add stronger validation for large uploaded datasets.
+- Add stronger validation and sampling strategies for large uploaded datasets.
 - Add deeper compatibility diagnostics for user-uploaded domain datasets.
 - Add an optional PDF summary report if it can be implemented without heavy rendering dependencies.
 - Explore private deployment options for real company data.

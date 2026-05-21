@@ -11,7 +11,6 @@ from app.services.logistics_analytics import build_logistics_analytics, clean_lo
 from app.services.management_summary import (
     generate_finance_management_summary,
     generate_generic_data_summary,
-    generate_llm_summary_placeholder,
     generate_logistics_management_summary,
     generate_manufacturing_management_summary,
     generate_retail_management_summary,
@@ -103,7 +102,3 @@ else:
     )
     with st.expander("Issue summary"):
         st.dataframe(issue_summary, use_container_width=True, hide_index=True)
-
-with st.expander("LLM summary extension placeholder"):
-    st.write(generate_llm_summary_placeholder(enabled=False))
-    st.caption("The MVP does not call external LLM APIs or require API keys.")

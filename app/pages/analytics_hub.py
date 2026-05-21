@@ -149,6 +149,20 @@ else:
 st.subheader("Template Compatibility Overview")
 st.dataframe(_recommendation_rows(recommendations), use_container_width=True, hide_index=True)
 
+st.subheader("Template Actions")
+for recommendation in recommendations:
+    with st.container(border=True):
+        action_header = st.columns([1.2, 0.7, 1.1])
+        action_header[0].markdown(f"**{recommendation.template_name}**")
+        action_header[1].write(recommendation.status)
+        action_header[2].caption(recommendation.recommended_next_action)
+        st.caption(recommendation.reason)
+        if recommendation.required_missing:
+            st.write(f"Missing required fields: {', '.join(recommendation.required_missing)}")
+        else:
+            st.write("Missing required fields: None")
+        _render_actions(recommendation)
+
 st.subheader("Field Diagnostics")
 templates = list_templates(include_generic=True)
 template_by_id = {template.template_id: template for template in templates}

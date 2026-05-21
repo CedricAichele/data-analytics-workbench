@@ -199,13 +199,11 @@ Loading the same Project Backup more than once activates the existing project.
 - The Data Dictionary is useful documentation, not a full enterprise data catalog.
 - Direct SQL Server connectivity and dashboard PDF export are not implemented.
 - Project Backups are local ZIP files, not cloud-synced saved projects.
-- Screenshots are not committed yet.
 
 ## Not-Yet-Implemented Ideas
 
-- Deployed screenshots.
-- Saved mapping profiles.
-- More detailed project progress tracking.
-- Richer locale-aware date parsing controls.
-- Deeper compatibility diagnostics for uploaded domain datasets.
-- Optional owner/steward fields for the Data Dictionary.
+- Improve guided onboarding based on tester feedback.
+- Add stronger validation and sampling strategies for large uploaded datasets.
+- Add an optional PDF summary report if it can be implemented without heavy rendering dependencies.
+- Explore private deployment options for real company data.
+- Improve reusable mapping profiles for recurring source files when Project Backup is not enough.

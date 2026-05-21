@@ -13,6 +13,7 @@ st.write(
     "Any supported tabular dataset can use the generic workflow. Domain templates require schema detection "
     "or manual mapping because business KPIs need domain context."
 )
+st.info("Analytics Hub is the preferred entry point for template recommendations and compatibility diagnostics.")
 
 for template in list_templates(include_generic=True):
     with st.container(border=True):
@@ -35,11 +36,10 @@ for template in list_templates(include_generic=True):
         else:
             st.caption(template.notes)
 
-        if template.template_id in {"sales_retail", "manufacturing"}:
+        if template.template_id == "generic":
+            st.page_link("pages/6_generic_analytics.py", label="Open Generic Analytics", icon=":material/query_stats:")
+        else:
             if st.button(f"Select {template.name}", key=f"select_{template.template_id}"):
                 st.session_state["selected_template_id"] = template.template_id
                 st.success(f"{template.name} selected. Continue to Column Mapping.")
-        elif template.template_id == "generic":
-            st.page_link("pages/6_generic_analytics.py", label="Open Generic Analytics")
-        else:
-            st.info("This template is visible in the architecture and planned for a future implementation.")
+            st.page_link("pages/4_column_mapping.py", label="Open Column Mapping", icon=":material/link:")
