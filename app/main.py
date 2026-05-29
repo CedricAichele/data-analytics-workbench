@@ -31,23 +31,18 @@ st.write(
     "and save a Project Backup."
 )
 
-action_cols = st.columns([1.3, 1, 1, 1])
+action_cols = st.columns(3)
 with action_cols[0]:
-    if st.button("Start Sales / Retail Demo", type="primary", key="overview_primary_sales_demo"):
-        result = start_guided_demo("sales_retail")
-        st.session_state["guided_demo_feedback"] = f"{result.message} Continue with Workflow or Analytics Hub."
-        st.rerun()
-with action_cols[1]:
     try:
         st.page_link("pages/project_setup.py", label="Create Project", icon=":material/workspace_premium:")
     except Exception:
         pass
-with action_cols[2]:
+with action_cols[1]:
     try:
         st.page_link("pages/1_data_upload.py", label="Load Dataset", icon=":material/upload_file:")
     except Exception:
         pass
-with action_cols[3]:
+with action_cols[2]:
     try:
         st.page_link("pages/workflow.py", label="Open Workflow", icon=":material/checklist:")
     except Exception:
