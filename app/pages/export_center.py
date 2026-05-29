@@ -64,6 +64,13 @@ def _download_buttons(df: pd.DataFrame, suffix: str, label_prefix: str, key_pref
     )
 
 
+def _context_card(label: str, value: object) -> None:
+    """Render a compact context card whose text can wrap on narrower screens."""
+    with st.container(border=True):
+        st.caption(label)
+        st.write(f"**{value}**")
+
+
 def _result_tables(result: Any, table_names: Iterable[str]) -> list[tuple[str, pd.DataFrame]]:
     tables: list[tuple[str, pd.DataFrame]] = []
     metrics = getattr(result, "metrics", None)
@@ -272,14 +279,21 @@ if project_metadata.get("project_name"):
     )
 
 st.subheader("Export Context")
-context_cols = st.columns(4)
-context_cols[0].metric("Active project", project_metadata.get("project_name") or "No active project")
-context_cols[1].metric("Active dataset", dataset_name)
-context_cols[2].metric(
-    "Workflow / template",
-    f"{project_metadata.get('selected_workflow', 'Quick Data Check')} / {project_metadata.get('suggested_template', 'Generic')}",
-)
-context_cols[3].metric("Working shape", f"{len(working_df):,} x {len(working_df.columns):,}")
+context_row = st.columns(2)
+with context_row[0]:
+    _context_card("Active project", project_metadata.get("project_name") or "No active project")
+with context_row[1]:
+    _context_card("Active dataset", dataset_name)
+context_row = st.columns(2)
+with context_row[0]:
+    _context_card("Workflow", project_metadata.get("selected_workflow", "Quick Data Check"))
+with context_row[1]:
+    _context_card("Template", project_metadata.get("suggested_template", "Generic"))
+context_row = st.columns(2)
+with context_row[0]:
+    _context_card("Working shape", f"{len(working_df):,} rows x {len(working_df.columns):,} columns")
+with context_row[1]:
+    _context_card("Source", f"{metadata.get('source', 'dataset')} ({metadata.get('file_type', 'data')})")
 if size_summary.get("is_large_dataset"):
     st.warning(size_summary.get("large_dataset_message"))
 
@@ -288,7 +302,7 @@ st.caption(
     "BI-ready Export Package is the analysis/reporting output. "
     "Project Backup is for continuing or restoring project state in the Workbench."
 )
-primary_cols = st.columns(4)
+primary_cols = st.columns(2)
 with primary_cols[0]:
     st.download_button(
         "Download BI-ready Excel Package",
@@ -310,7 +324,8 @@ with primary_cols[1]:
             key="primary-project-backup-download",
             use_container_width=True,
         )
-with primary_cols[2]:
+primary_cols = st.columns(2)
+with primary_cols[0]:
     if kpi_summary_df.empty:
         st.info("Run analytics to enable KPI Summary export.")
     else:
@@ -322,7 +337,7 @@ with primary_cols[2]:
             key="primary-kpi-summary-xlsx",
             use_container_width=True,
         )
-with primary_cols[3]:
+with primary_cols[1]:
     st.download_button(
         "Download Data Dictionary",
         data=dataframe_to_excel_bytes(data_dictionary_df, sheet_name="Data_Dictionary"),
