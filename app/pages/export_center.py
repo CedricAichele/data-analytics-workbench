@@ -183,6 +183,9 @@ template_mappings = active.get("template_mappings", {})
 data_dictionary_df = generate_data_dictionary(working_df, template_mappings=template_mappings)
 quality_report = get_active_analytics_result("generic_quality_report") or calculate_quality_score(working_df)
 quality_rules_df = _quality_rules_for_mappings(working_df, template_mappings)
+quality_issue_rows = get_active_analytics_result("quality_issue_rows_result")
+if not isinstance(quality_issue_rows, pd.DataFrame):
+    quality_issue_rows = pd.DataFrame()
 quality_report_df = build_quality_report_sheet(quality_report, quality_rules_df)
 set_active_analytics_result("data_dictionary_result", data_dictionary_df)
 set_active_analytics_result("generic_quality_report", quality_report)
@@ -278,7 +281,7 @@ st.dataframe(dataset_to_export.head(20), use_container_width=True, hide_index=Tr
 _download_buttons(dataset_to_export, dataset_suffix, "Download dataset as", "dataset-export", dataset_name)
 
 st.subheader("B. Export Documentation")
-doc_tabs = st.tabs(["Data Dictionary", "Transformation Log", "Data Quality Report", "Quality Rules"])
+doc_tabs = st.tabs(["Data Dictionary", "Transformation Log", "Data Quality Report", "Quality Rules", "Quality Issues"])
 
 with doc_tabs[0]:
     st.caption("Generated from the active working dataset.")
@@ -345,6 +348,27 @@ with doc_tabs[3]:
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         key="quality-rules-xlsx",
     )
+
+with doc_tabs[4]:
+    if quality_issue_rows.empty:
+        st.info("No affected-row quality issue table is available yet. Open Data Quality to generate affected row exports.")
+    else:
+        st.dataframe(quality_issue_rows, use_container_width=True, hide_index=True)
+        issue_cols = st.columns(2)
+        issue_cols[0].download_button(
+            "Download quality issues as CSV",
+            data=dataframe_to_csv_bytes(quality_issue_rows),
+            file_name=build_export_filename(dataset_name, "quality_issues", "csv"),
+            mime="text/csv",
+            key="quality-issues-csv",
+        )
+        issue_cols[1].download_button(
+            "Download quality issues as Excel",
+            data=dataframe_to_excel_bytes(quality_issue_rows, sheet_name="Quality_Issues"),
+            file_name=build_export_filename(dataset_name, "quality_issues", "xlsx"),
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            key="quality-issues-xlsx",
+        )
 
 generic_result = get_active_analytics_result("generic_analytics_result")
 generic_table = getattr(generic_result, "aggregated", None)
@@ -413,8 +437,11 @@ st.caption(
 package_bytes = build_export_workbook(
     cleaned_data=working_df,
     data_dictionary=data_dictionary_df,
+    project_metadata=project_metadata,
+    dataset_name=dataset_name,
     quality_report=quality_report,
     quality_rules=quality_rules_df,
+    quality_issues=quality_issue_rows,
     transformation_log=get_active_transformation_log(),
     generic_analytics_result=generic_table if isinstance(generic_table, pd.DataFrame) else None,
     kpi_summary=kpi_summary_df,

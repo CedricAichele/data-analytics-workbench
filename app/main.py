@@ -12,6 +12,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from app.components.layout import configure_page, dataframe_status, page_title, render_process_steps
 from app.config import APP_SUBTITLE, APP_TITLE
 from app.services.dataset_workspace import get_active_analytics_result, get_active_dataset
+from app.services.demo_flows import list_demo_flows, start_guided_demo
 from app.services.project_state import compact_project_summary_rows, get_project_summary
 from app.services.template_registry import list_templates
 from app.services.workflow import build_workflow_steps, get_recommended_next_action
@@ -121,6 +122,38 @@ rules = [
 ]
 for rule in rules:
     st.write(f"- {rule}")
+
+st.subheader("Try a Guided Demo")
+demo_feedback = st.session_state.pop("guided_demo_feedback", None)
+if demo_feedback:
+    st.success(demo_feedback)
+    demo_links = st.columns(2)
+    with demo_links[0]:
+        try:
+            st.page_link("pages/workflow.py", label="Open Workflow", icon=":material/checklist:")
+        except Exception:
+            pass
+    with demo_links[1]:
+        try:
+            st.page_link("pages/analytics_hub.py", label="Open Analytics Hub", icon=":material/query_stats:")
+        except Exception:
+            pass
+st.write("New to the app? Start with the Sales / Retail demo to see the full workflow.")
+demo_cols = st.columns(4)
+for index, demo in enumerate(list_demo_flows()):
+    with demo_cols[index]:
+        st.write(demo.label)
+        st.caption(demo.description)
+        if st.button(
+            f"Start {demo.label}",
+            type="primary" if demo.template_id == "sales_retail" else "secondary",
+            key=f"guided_demo_{demo.template_id}",
+        ):
+            result = start_guided_demo(demo.template_id)
+            st.session_state["guided_demo_feedback"] = (
+                f"{result.message} Continue with Workflow or Analytics Hub."
+            )
+            st.rerun()
 
 with st.expander("Current readiness"):
     has_data = "raw_df" in st.session_state

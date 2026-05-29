@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pandas as pd
 import streamlit as st
 
 from app.components.layout import configure_page, get_working_dataframe, page_title
@@ -14,7 +15,7 @@ from app.services.dataset_workspace import set_active_analytics_result
 from app.services.export_service import dataframe_to_csv_bytes, dataframe_to_excel_bytes
 from app.services.column_mapper import initialize_template_mapping
 from app.services.quality_score import calculate_quality_score
-from app.services.quality_rules import run_template_quality_rules, summarize_rule_severity
+from app.services.quality_rules import build_quality_issue_rows, run_template_quality_rules, summarize_rule_severity
 from app.services.schema_detector import detect_template_schema
 from app.services.template_registry import implemented_domain_templates
 
@@ -25,6 +26,25 @@ page_title("Data Quality", "Explainable quality checks for generic datasets and 
 df = get_working_dataframe()
 if df is None:
     st.stop()
+
+
+def _generic_quality_issue_rows(source_df):
+    frames = []
+    missing_rows = source_df[source_df.isna().any(axis=1)].copy()
+    if not missing_rows.empty:
+        missing_rows.insert(0, "severity", "warning")
+        missing_rows.insert(0, "rule_name", "row contains missing values")
+        missing_rows.insert(0, "source_row_index", missing_rows.index)
+        frames.append(missing_rows.reset_index(drop=True))
+    duplicate_rows = source_df[source_df.duplicated(keep=False)].copy()
+    if not duplicate_rows.empty:
+        duplicate_rows.insert(0, "severity", "warning")
+        duplicate_rows.insert(0, "rule_name", "duplicate row")
+        duplicate_rows.insert(0, "source_row_index", duplicate_rows.index)
+        frames.append(duplicate_rows.reset_index(drop=True))
+    if not frames:
+        return source_df.head(0).copy()
+    return pd.concat(frames, ignore_index=True, sort=False)
 
 generic_report = calculate_quality_score(df)
 set_active_analytics_result("generic_quality_report", generic_report)
@@ -47,6 +67,26 @@ with st.expander("Generic quality explanations and fixes"):
     st.write("Recommended fixes")
     for fix in generic_report.recommended_fixes:
         st.write(f"- {fix}")
+
+generic_issue_rows = _generic_quality_issue_rows(df)
+set_active_analytics_result("quality_issue_rows_result", generic_issue_rows)
+if not generic_issue_rows.empty:
+    with st.expander("Generic affected rows export"):
+        st.caption("Rows with missing values or duplicate rows can be exported for review. The app does not change these rows automatically.")
+        st.dataframe(generic_issue_rows.head(50), use_container_width=True, hide_index=True)
+        issue_cols = st.columns(2)
+        issue_cols[0].download_button(
+            "Download generic affected rows as CSV",
+            data=dataframe_to_csv_bytes(generic_issue_rows),
+            file_name="generic_quality_affected_rows.csv",
+            mime="text/csv",
+        )
+        issue_cols[1].download_button(
+            "Download generic affected rows as Excel",
+            data=dataframe_to_excel_bytes(generic_issue_rows, sheet_name="Generic_Issues"),
+            file_name="generic_quality_affected_rows.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
 
 st.subheader("Template Completeness Check")
 templates = implemented_domain_templates()
@@ -154,3 +194,38 @@ else:
             file_name=f"{selected_template_id}_quality_rules.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
+        st.subheader("Affected Row Exports")
+        template_issue_rows = build_quality_issue_rows(df, selected_template_id, mapping)
+        combined_issue_rows = (
+            pd.concat([generic_issue_rows, template_issue_rows], ignore_index=True, sort=False)
+            if not generic_issue_rows.empty and not template_issue_rows.empty
+            else template_issue_rows if generic_issue_rows.empty else generic_issue_rows
+        )
+        set_active_analytics_result("quality_issue_rows_result", combined_issue_rows)
+        for _, rule in rule_results.iterrows():
+            rule_name = rule["rule_name"]
+            if int(rule["affected_rows_count"]) <= 0:
+                st.caption(f"{rule_name}: no affected rows available for export.")
+                continue
+            affected_rows = build_quality_issue_rows(df, selected_template_id, mapping, rule_name=rule_name)
+            if affected_rows.empty:
+                st.caption(f"{rule_name}: affected row export is not available for this rule.")
+                continue
+            with st.expander(f"{rule_name} affected rows"):
+                st.dataframe(affected_rows.head(50), use_container_width=True, hide_index=True)
+                row_cols = st.columns(2)
+                safe_rule_name = str(rule_name).replace(" ", "_").replace("/", "_").lower()
+                row_cols[0].download_button(
+                    "Download affected rows as CSV",
+                    data=dataframe_to_csv_bytes(affected_rows),
+                    file_name=f"{selected_template_id}_{safe_rule_name}_affected_rows.csv",
+                    mime="text/csv",
+                    key=f"{selected_template_id}_{safe_rule_name}_rows_csv",
+                )
+                row_cols[1].download_button(
+                    "Download affected rows as Excel",
+                    data=dataframe_to_excel_bytes(affected_rows, sheet_name="Affected_Rows"),
+                    file_name=f"{selected_template_id}_{safe_rule_name}_affected_rows.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    key=f"{selected_template_id}_{safe_rule_name}_rows_xlsx",
+                )

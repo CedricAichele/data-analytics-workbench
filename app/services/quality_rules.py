@@ -46,6 +46,31 @@ def summarize_rule_severity(rule_results: pd.DataFrame) -> dict[str, int]:
     return {severity: int(counts.get(severity, 0)) for severity in ["critical", "warning", "info"]}
 
 
+def build_quality_issue_rows(
+    df: pd.DataFrame,
+    template_id: str,
+    mapping: dict[str, str | None],
+    *,
+    rule_name: str | None = None,
+) -> pd.DataFrame:
+    """Return source rows affected by template quality rules without mutating data."""
+    masks = _rule_masks(df.copy(deep=True), template_id, mapping)
+    rows: list[pd.DataFrame] = []
+    for name, details in masks.items():
+        if rule_name and name != rule_name:
+            continue
+        affected = df.loc[details["mask"].fillna(False)].copy()
+        if affected.empty:
+            continue
+        affected.insert(0, "severity", details["severity"])
+        affected.insert(0, "rule_name", name)
+        affected.insert(0, "source_row_index", affected.index)
+        rows.append(affected.reset_index(drop=True))
+    if not rows:
+        return pd.DataFrame(columns=["source_row_index", "rule_name", "severity", *df.columns])
+    return pd.concat(rows, ignore_index=True, sort=False)
+
+
 def _empty_rules_frame() -> pd.DataFrame:
     return pd.DataFrame(
         columns=[
@@ -58,6 +83,22 @@ def _empty_rules_frame() -> pd.DataFrame:
             "recommended_fix",
         ]
     )
+
+
+def _rule_masks(
+    df: pd.DataFrame,
+    template_id: str,
+    mapping: dict[str, str | None],
+) -> dict[str, dict[str, pd.Series | str]]:
+    builders = {
+        "sales_retail": _sales_rule_masks,
+        "manufacturing": _manufacturing_rule_masks,
+        "logistics": _logistics_rule_masks,
+        "finance": _finance_rule_masks,
+    }
+    if template_id not in builders:
+        return {}
+    return builders[template_id](df, mapping)
 
 
 def _column(mapping: dict[str, str | None], field: str) -> str | None:
@@ -131,6 +172,27 @@ def _sales_rules(df: pd.DataFrame, mapping: dict[str, str | None]) -> list[Quali
     return results
 
 
+def _sales_rule_masks(df: pd.DataFrame, mapping: dict[str, str | None]) -> dict[str, dict[str, pd.Series | str]]:
+    masks: dict[str, dict[str, pd.Series | str]] = {}
+    order_date = _date(df, mapping, "order_date")
+    if order_date is not None:
+        masks["order_date missing or invalid"] = {"severity": "critical", "mask": order_date.isna()}
+    quantity = _numeric(df, mapping, "quantity")
+    if quantity is not None:
+        masks["quantity equals zero"] = {"severity": "warning", "mask": quantity == 0}
+        masks["negative quantity potential return"] = {"severity": "info", "mask": quantity < 0}
+    unit_price = _numeric(df, mapping, "unit_price")
+    if unit_price is not None:
+        masks["unit_price <= 0"] = {"severity": "critical", "mask": unit_price <= 0}
+    customer = _series(df, mapping, "customer_id")
+    if customer is not None:
+        masks["missing customer_id"] = {"severity": "warning", "mask": customer.isna() | customer.astype("string").str.strip().eq("")}
+    product = _series(df, mapping, "product_name")
+    if product is not None:
+        masks["missing product_name"] = {"severity": "warning", "mask": product.isna() | product.astype("string").str.strip().eq("")}
+    return masks
+
+
 def _manufacturing_rules(df: pd.DataFrame, mapping: dict[str, str | None]) -> list[QualityRuleResult]:
     template = "Manufacturing"
     results: list[QualityRuleResult] = []
@@ -155,6 +217,29 @@ def _manufacturing_rules(df: pd.DataFrame, mapping: dict[str, str | None]) -> li
     return results
 
 
+def _manufacturing_rule_masks(df: pd.DataFrame, mapping: dict[str, str | None]) -> dict[str, dict[str, pd.Series | str]]:
+    masks: dict[str, dict[str, pd.Series | str]] = {}
+    actual = _numeric(df, mapping, "actual_output")
+    scrap = _numeric(df, mapping, "scrap_count")
+    downtime = _numeric(df, mapping, "downtime_minutes")
+    planned = _numeric(df, mapping, "planned_output")
+    timestamp = _date(df, mapping, "timestamp")
+    machine = _series(df, mapping, "machine_id")
+    if actual is not None:
+        masks["actual_output < 0"] = {"severity": "critical", "mask": actual < 0}
+    if scrap is not None and actual is not None:
+        masks["scrap_count > actual_output"] = {"severity": "critical", "mask": scrap > actual}
+    if downtime is not None:
+        masks["downtime_minutes < 0"] = {"severity": "critical", "mask": downtime < 0}
+    if planned is not None:
+        masks["planned_output <= 0"] = {"severity": "warning", "mask": planned <= 0}
+    if machine is not None:
+        masks["missing machine_id"] = {"severity": "critical", "mask": machine.isna() | machine.astype("string").str.strip().eq("")}
+    if timestamp is not None:
+        masks["missing timestamp"] = {"severity": "critical", "mask": timestamp.isna()}
+    return masks
+
+
 def _logistics_rules(df: pd.DataFrame, mapping: dict[str, str | None]) -> list[QualityRuleResult]:
     template = "Logistics"
     results: list[QualityRuleResult] = []
@@ -174,6 +259,26 @@ def _logistics_rules(df: pd.DataFrame, mapping: dict[str, str | None]) -> list[Q
     if carrier is not None:
         results.append(_result(template, "missing carrier", "warning", carrier.isna() | carrier.astype("string").str.strip().eq(""), "Missing carriers weaken carrier performance reporting.", "Backfill carrier names where possible."))
     return results
+
+
+def _logistics_rule_masks(df: pd.DataFrame, mapping: dict[str, str | None]) -> dict[str, dict[str, pd.Series | str]]:
+    masks: dict[str, dict[str, pd.Series | str]] = {}
+    order_date = _date(df, mapping, "order_date")
+    delivery_date = _date(df, mapping, "delivery_date")
+    planned_delivery = _date(df, mapping, "planned_delivery_date")
+    if order_date is not None and delivery_date is not None:
+        masks["delivery_date before order_date"] = {"severity": "critical", "mask": delivery_date < order_date}
+    if delivery_date is not None:
+        masks["missing delivery_date"] = {"severity": "critical", "mask": delivery_date.isna()}
+    if planned_delivery is not None:
+        masks["planned_delivery_date missing"] = {"severity": "warning", "mask": planned_delivery.isna()}
+    shipping_cost = _numeric(df, mapping, "shipping_cost")
+    if shipping_cost is not None:
+        masks["shipping_cost < 0"] = {"severity": "critical", "mask": shipping_cost < 0}
+    carrier = _series(df, mapping, "carrier")
+    if carrier is not None:
+        masks["missing carrier"] = {"severity": "warning", "mask": carrier.isna() | carrier.astype("string").str.strip().eq("")}
+    return masks
 
 
 def _finance_rules(df: pd.DataFrame, mapping: dict[str, str | None]) -> list[QualityRuleResult]:
@@ -199,3 +304,26 @@ def _finance_rules(df: pd.DataFrame, mapping: dict[str, str | None]) -> list[Qua
         invalid_budget_actual = (budget.isna() & budget_raw.notna()) | (actual.isna() & actual_raw.notna())
         results.append(_result(template, "budget and actual non-numeric", "warning", invalid_budget_actual, "Non-numeric budget or actual values prevent variance analysis.", "Convert budget and actual fields to numeric values."))
     return results
+
+
+def _finance_rule_masks(df: pd.DataFrame, mapping: dict[str, str | None]) -> dict[str, dict[str, pd.Series | str]]:
+    masks: dict[str, dict[str, pd.Series | str]] = {}
+    amount = _numeric(df, mapping, "amount")
+    date_values = _date(df, mapping, "date")
+    type_values = _series(df, mapping, "type")
+    if amount is not None:
+        masks["amount missing or non-numeric"] = {"severity": "critical", "mask": amount.isna()}
+        masks["amount equals zero"] = {"severity": "warning", "mask": amount == 0}
+    if date_values is not None:
+        masks["date missing"] = {"severity": "critical", "mask": date_values.isna()}
+    if type_values is not None:
+        normalized = type_values.astype("string").str.strip().str.lower()
+        interpretable = normalized.isin(["revenue", "income", "sales", "cost", "expense", "spend", "cogs"])
+        masks["type not interpretable as revenue or cost"] = {"severity": "critical", "mask": ~interpretable}
+    budget = _numeric(df, mapping, "budget")
+    budget_raw = _series(df, mapping, "budget")
+    actual = _numeric(df, mapping, "actual")
+    actual_raw = _series(df, mapping, "actual")
+    if budget is not None and actual is not None:
+        masks["budget and actual non-numeric"] = {"severity": "warning", "mask": (budget.isna() & budget_raw.notna()) | (actual.isna() & actual_raw.notna())}
+    return masks

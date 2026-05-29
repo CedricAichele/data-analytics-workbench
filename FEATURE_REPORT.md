@@ -56,6 +56,8 @@ The Project Workspace supports multiple projects in one Streamlit session with o
 
 Workflow shows a readable process layout with Done, Open, and Optional statuses. It recommends the next action but does not block users from opening pages freely.
 
+Overview includes guided demos for Sales / Retail, Manufacturing, Logistics, and Finance. Starting a demo creates or activates a demo project, loads the matching bundled sample dataset, selects the template, and guides the user to Workflow or Analytics Hub. The Sales / Retail demo is the recommended first path.
+
 Implemented usage modes:
 
 - Quick Data Check
@@ -109,6 +111,8 @@ The quality score is deterministic and explainable. It evaluates missing values,
 
 Template-specific quality rules are implemented for Sales / Retail, Manufacturing, Logistics, and Finance mappings. Rules report severity, affected rows, explanations, and recommended fixes without mutating the source dataframe.
 
+Data Quality can export affected rows for generic issues and individual template rules where row-level issue identification is available.
+
 ## Generic Analytics
 
 Analytics Hub is the primary sidebar entry for analytics. It lets users choose Generic, Sales / Retail, Manufacturing, Logistics or Finance analytics, shows whether mapping is required, and displays compatibility guidance for the active dataset.
@@ -139,6 +143,8 @@ Rule-based schema detection uses synonyms and fuzzy matching. Column Mapping sup
 - Finance
 
 Mappings validate required fields, duplicate source columns, and unknown source columns. Mappings are stored per active dataset and template.
+
+Mapping Profiles can save a validated mapping for recurring source files, apply it to the active working dataset after column validation, and download or load a Mapping Profile Backup. Invalid profiles with missing source columns are not applied silently.
 
 ## Sales / Retail Analytics
 
@@ -175,11 +181,12 @@ Export Center supports:
 - transformation log as CSV and JSON
 - Data Quality Report as CSV and Excel `.xlsx`
 - template quality rules as CSV and Excel `.xlsx`
+- quality issue affected rows as CSV and Excel `.xlsx` when generated
 - KPI summaries as CSV, Excel `.xlsx`, and JSON `.json`
 - Generic Analytics aggregated result as CSV, Excel `.xlsx`, and JSON `.json`
 - domain analytics result tables as CSV, Excel `.xlsx`, and JSON `.json`
 - chart/control result tables as CSV, Excel `.xlsx`, and JSON `.json`
-- BI-ready Excel package with cleaned data, data dictionary, quality report, transformation log, quality rules, KPI summary, Generic Analytics result when available, result tables, and domain result sheets when available
+- BI-ready Excel package with a `01_Readme` sheet, cleaned data, data dictionary, quality report, transformation log, quality rules, quality issues when available, KPI summary, Generic Analytics result when available, result tables, and domain result sheets when available
 
 Project Backup is distinct from the BI-ready Export Package. The backup is for continuing a Workbench project later; the BI-ready package is for sharing analysis outputs.
 

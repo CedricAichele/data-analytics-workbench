@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from app.services.quality_rules import run_template_quality_rules, summarize_rule_severity
+from app.services.quality_rules import build_quality_issue_rows, run_template_quality_rules, summarize_rule_severity
 
 
 def test_sales_quality_rules_report_mapped_field_issues_without_mutating_input():
@@ -128,3 +128,20 @@ def test_finance_quality_rules_report_interpretation_issues():
     assert "type not interpretable as revenue or cost" in rules["rule_name"].tolist()
     assert "budget and actual non-numeric" in rules["rule_name"].tolist()
 
+
+def test_quality_issue_rows_export_includes_rule_metadata_and_source_rows():
+    df = pd.DataFrame(
+        {
+            "date": ["2026-01-01", "2026-01-02"],
+            "qty": [0, 2],
+            "price": [10, -1],
+        }
+    )
+    mapping = {"order_date": "date", "quantity": "qty", "unit_price": "price"}
+
+    affected = build_quality_issue_rows(df, "sales_retail", mapping, rule_name="unit_price <= 0")
+
+    assert affected["rule_name"].tolist() == ["unit_price <= 0"]
+    assert affected["severity"].tolist() == ["critical"]
+    assert affected["source_row_index"].tolist() == [1]
+    assert affected["price"].tolist() == [-1]

@@ -23,6 +23,7 @@ This app is built around that separation:
 
 - Upload CSV, Excel `.xlsx`, and tabular JSON `.json`
 - Load bundled Sales / Retail, Manufacturing, Logistics, and Finance sample datasets
+- Start guided demo flows that create a demo project and load the matching sample dataset
 - Create lightweight analytics project metadata before or after loading data
 - Manage multiple projects in one Streamlit session with one clearly active project
 - Follow a guided workflow checklist without being locked into a wizard
@@ -33,12 +34,13 @@ This app is built around that separation:
 - Prepare data through logged transformations on `working_df`
 - Generate a Data Dictionary from the active `working_df`
 - Score data quality with transparent sub-scores, explanations, and recommended fixes
-- Run template-specific quality rules that report issues without mutating data
+- Run template-specific quality rules that report issues and export affected rows without mutating data
 - Choose Generic or domain-specific analytics from a single Analytics Hub
 - Run robust Generic Analytics with one or multiple numeric measures
 - Map source columns to implemented domain templates
+- Save and reload Mapping Profiles for recurring source files with stable column names
 - Run Sales / Retail, Manufacturing, Logistics, and Finance KPI analytics with chart controls
-- Export the active working dataset, documentation, KPI summaries, chart/result data, and a BI-ready Excel package
+- Export the active working dataset, documentation, KPI summaries, chart/result data, and a BI-ready Excel package with a README sheet
 - Download or load a business-friendly Project Backup for continuing work later
 - Generate deterministic template-aware management summaries without API keys
 
@@ -72,6 +74,19 @@ The app is organized around a simple project flow:
 8. Export a BI-ready package or download a Project Backup
 
 The Workflow page shows each step as Done, Open, or Optional with a recommended next action. It is guidance, not a rigid wizard; users can still open any page directly.
+
+## Guided Demo Flows
+
+First-time users can start a guided demo from the Overview page. Each demo creates or activates a demo project, loads the matching bundled sample dataset, sets the suggested template, and points the user to Workflow or Analytics Hub.
+
+Available demos:
+
+- Sales / Retail Demo
+- Manufacturing Demo
+- Logistics Demo
+- Finance Demo
+
+The Sales / Retail demo is the recommended first path for employer review because it shows customer, order, product, revenue, data quality, mapping, analytics, and export workflows.
 
 ## Primary Navigation
 
@@ -214,6 +229,14 @@ The generic data quality score works for any active dataset. It evaluates visibl
 
 Template-specific quality rules add explainable checks for mapped Sales / Retail, Manufacturing, Logistics, and Finance datasets. These rules report affected row counts, severity, explanations, and recommended fixes. They do not remove rows or mutate the dataset.
 
+Where affected rows can be identified, Data Quality offers affected-row exports so users can review the exact records behind a rule before deciding how to prepare or exclude them.
+
+## Mapping Profiles
+
+Mapping Profiles help with recurring files that use the same or similar column names. Users can save a validated template mapping, apply it to another active working dataset, and download or load a Mapping Profile Backup.
+
+Profiles are session-based in the public app. Applying a profile validates that the saved source columns still exist; missing columns are shown clearly and invalid profiles are not applied silently. Extra columns remain available for profiling, preparation, analytics, and export.
+
 ## Generic Analytics
 
 Generic Analytics works with any active `working_df` and does not assign business meaning.
@@ -285,11 +308,12 @@ Available exports:
 - transformation log as CSV or JSON
 - Data Quality Report as CSV or Excel `.xlsx`
 - template quality rules as CSV or Excel `.xlsx`
+- affected quality issue rows as CSV or Excel `.xlsx` when generated on Data Quality
 - KPI summaries as CSV, Excel `.xlsx`, or JSON `.json`
 - Generic Analytics aggregated result as CSV, Excel `.xlsx`, or JSON `.json`
 - chart/control result tables as CSV, Excel `.xlsx`, or JSON `.json`
 - calculated domain result tables as CSV, Excel `.xlsx`, or JSON `.json`
-- BI-ready Excel package with sheets for cleaned data, data dictionary, quality report, transformation log, quality rules, KPI summary, Generic Analytics result, result tables, and available domain result tables
+- BI-ready Excel package with a `01_Readme` sheet plus cleaned data, data dictionary, quality report, transformation log, quality rules, quality issues when available, KPI summary, Generic Analytics result, result tables, and available domain result tables
 
 Exports use Streamlit download buttons and do not write files to disk.
 

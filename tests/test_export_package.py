@@ -33,8 +33,11 @@ def test_build_export_workbook_creates_expected_sheets():
     workbook_bytes = build_export_workbook(
         cleaned_data=cleaned,
         data_dictionary=dictionary,
+        project_metadata={"project_name": "Sales Sample Review", "selected_workflow": "Domain KPI Analysis", "suggested_template": "Sales / Retail"},
+        dataset_name="sample_retail_orders.csv",
         quality_report=calculate_quality_score(cleaned),
         quality_rules=quality_rules,
+        quality_issues=pd.DataFrame({"source_row_index": [0], "rule_name": ["unit_price <= 0"], "severity": ["critical"], "a": [1]}),
         transformation_log=["Rename column: old -> new"],
         generic_analytics_result=pd.DataFrame({"metric": ["sum"], "a": [3]}),
         kpi_summary=pd.DataFrame({"source": ["Sales"], "metric": ["gross_revenue"], "value": [100.0]}),
@@ -47,16 +50,22 @@ def test_build_export_workbook_creates_expected_sheets():
     assert len(workbook_bytes) > 0
     workbook = load_workbook(BytesIO(workbook_bytes), read_only=True)
     assert {
+        "01_Readme",
         "Cleaned_Data",
         "Data_Dictionary",
         "Data_Quality",
         "Transformation_Log",
         "KPI_Summary",
         "Quality_Rules",
+        "Quality_Issues",
         "Generic_Analytics_Result",
         "Sales_Results",
         "Result_Tables",
     }.issubset(set(workbook.sheetnames))
+
+    readme_values = [cell.value for row in workbook["01_Readme"].iter_rows(values_only=False) for cell in row if cell.value]
+    assert "Sales Sample Review" in readme_values
+    assert "sample_retail_orders.csv" in readme_values
 
     kpi_header = [cell.value for cell in next(workbook["KPI_Summary"].iter_rows(max_row=1))]
     assert kpi_header == ["source", "metric", "value"]

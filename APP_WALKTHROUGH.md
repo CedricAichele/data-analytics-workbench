@@ -31,6 +31,8 @@ The Overview page opens with a business-friendly explanation of what the app doe
 
 It explains what users can do, shows a compact Project Summary, and presents the recommended workflow in a readable process layout without truncated card text.
 
+It also includes a "Try a Guided Demo" section. The Sales / Retail demo is the recommended first demo; starting a demo creates or activates a demo project, loads the matching sample dataset, selects the template, and points the user to Workflow or Analytics Hub.
+
 Lower on the page it explains the three usage modes and the two-layer analytics model:
 
 - generic workflow for any supported tabular dataset
@@ -118,6 +120,8 @@ When a template mapping exists, the page can calculate template-aware schema and
 
 Template-specific Quality Rules report mapped-domain issues for Sales / Retail, Manufacturing, Logistics, and Finance datasets. The rules show severity, affected rows, explanations, and recommended fixes. They report issues only and do not mutate data.
 
+Where affected rows can be identified, users can download affected-row exports for generic issues and individual template rules.
+
 ## Analytics Hub
 
 Analytics Hub is the primary analytics navigation page. Users choose an analysis mode:
@@ -148,6 +152,8 @@ Column Mapping supports all implemented templates:
 - Finance
 
 The user chooses a template, reviews schema detection confidence, maps required and optional fields through selectboxes, and saves a mapping for the active dataset. Unmapped extra columns remain available for profiling, preparation, generic analytics, and export.
+
+Users can save a Mapping Profile for recurring source files, apply a saved profile to the active dataset, and download or load a Mapping Profile Backup. Profiles validate that saved source columns still exist before applying.
 
 ## Domain Analytics Pages
 
@@ -197,11 +203,12 @@ It can export:
 - transformation log as CSV or JSON
 - Data Quality Report as CSV or Excel `.xlsx`
 - template quality rules as CSV or Excel `.xlsx`
+- quality issue affected rows as CSV or Excel `.xlsx` when generated
 - Generic Analytics aggregated result as CSV, Excel `.xlsx`, or JSON `.json`
 - KPI summaries as CSV, Excel `.xlsx`, or JSON `.json`
 - available domain result tables as CSV, Excel `.xlsx`, or JSON `.json`
 - chart/control result tables as CSV, Excel `.xlsx`, or JSON `.json`
-- BI-ready Excel package containing cleaned data, data dictionary, quality report, transformation log, quality rules, KPI summary, and available analytics result tables
+- BI-ready Excel package containing a `01_Readme` sheet, cleaned data, data dictionary, quality report, transformation log, quality rules, quality issues when available, KPI summary, and available analytics result tables
 
 Project Backup is separate from the BI-ready Export Package. The backup is for continuing work in the Workbench; the BI-ready package is for sharing analysis outputs.
 

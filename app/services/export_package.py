@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from io import BytesIO
 import re
 
@@ -58,12 +59,46 @@ def build_kpi_summary_sheet(
     return pd.DataFrame(rows or [{"result_table": "No KPI result tables available", "rows": 0, "columns": 0}])
 
 
+def build_readme_sheet(
+    *,
+    project_metadata: dict | None,
+    dataset_name: str,
+    cleaned_data: pd.DataFrame,
+    included_sheets: list[str],
+) -> pd.DataFrame:
+    """Build the first sheet that explains the workbook contents."""
+    metadata = project_metadata or {}
+    rows = [
+        {"section": "Project", "item": "Project name", "value": metadata.get("project_name") or "Not documented"},
+        {"section": "Project", "item": "Selected workflow", "value": metadata.get("selected_workflow") or "Not documented"},
+        {"section": "Project", "item": "Selected template", "value": metadata.get("suggested_template") or "Generic"},
+        {"section": "Dataset", "item": "Active dataset", "value": dataset_name or "Active working dataset"},
+        {"section": "Dataset", "item": "Rows", "value": len(cleaned_data)},
+        {"section": "Dataset", "item": "Columns", "value": len(cleaned_data.columns)},
+        {"section": "Export", "item": "Export timestamp", "value": datetime.now(timezone.utc).isoformat(timespec="seconds")},
+        {
+            "section": "Export",
+            "item": "Working data note",
+            "value": "Cleaned_Data reflects user-triggered transformations applied to the working dataset.",
+        },
+        {
+            "section": "Export",
+            "item": "Included sheets",
+            "value": ", ".join(included_sheets),
+        },
+    ]
+    return pd.DataFrame(rows)
+
+
 def build_export_workbook(
     *,
     cleaned_data: pd.DataFrame,
     data_dictionary: pd.DataFrame,
+    project_metadata: dict | None = None,
+    dataset_name: str = "",
     quality_report: DataQualityReport | None = None,
     quality_rules: pd.DataFrame | None = None,
+    quality_issues: pd.DataFrame | None = None,
     transformation_log: list[str] | tuple[str, ...] | None = None,
     generic_analytics_result: pd.DataFrame | None = None,
     kpi_summary: pd.DataFrame | None = None,
@@ -80,11 +115,22 @@ def build_export_workbook(
     }
     if quality_rules is not None and not quality_rules.empty:
         base_sheets["Quality_Rules"] = quality_rules
+    if quality_issues is not None and not quality_issues.empty:
+        base_sheets["Quality_Issues"] = quality_issues
     if generic_analytics_result is not None and not generic_analytics_result.empty:
         base_sheets["Generic_Analytics_Result"] = generic_analytics_result
     for name, table in (result_tables or {}).items():
         if isinstance(table, pd.DataFrame) and not table.empty:
             base_sheets[name] = table
+    base_sheets = {
+        "01_Readme": build_readme_sheet(
+            project_metadata=project_metadata,
+            dataset_name=dataset_name,
+            cleaned_data=cleaned_data,
+            included_sheets=list(base_sheets),
+        ),
+        **base_sheets,
+    }
 
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         used_names: set[str] = set()
