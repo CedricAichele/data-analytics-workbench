@@ -97,6 +97,9 @@ st.metric(
     help="Top 10 customer net revenue divided by total net revenue.",
 )
 
+st.subheader("Main Chart: Revenue Trend")
+st.plotly_chart(monthly_revenue_chart(analytics.monthly_revenue), use_container_width=True)
+
 with st.expander("KPI definitions"):
     st.dataframe(
         [
@@ -112,12 +115,11 @@ with st.expander("KPI definitions"):
         hide_index=True,
     )
 
-st.subheader("Template Quality Score")
-st.progress(quality.overall_score / 100)
-quality_cols = st.columns(len(quality.sub_scores))
-for col, (name, score) in zip(quality_cols, quality.sub_scores.items()):
-    col.metric(name.replace("_", " ").title(), f"{score:.1f}")
-with st.expander("Quality explanations and recommended fixes"):
+with st.expander("Template Quality Score"):
+    st.progress(quality.overall_score / 100)
+    quality_cols = st.columns(len(quality.sub_scores))
+    for col, (name, score) in zip(quality_cols, quality.sub_scores.items()):
+        col.metric(name.replace("_", " ").title(), f"{score:.1f}")
     st.write("Explanations")
     for explanation in quality.explanations:
         st.write(f"- {explanation}")
@@ -125,7 +127,7 @@ with st.expander("Quality explanations and recommended fixes"):
     for fix in quality.recommended_fixes:
         st.write(f"- {fix}")
 
-st.subheader("Chart Controls")
+st.subheader("Explore with Chart Controls")
 controlled_orders = clean_result.cleaned_orders.copy()
 date_values = pd.to_datetime(controlled_orders["order_date"], errors="coerce").dropna()
 control_cols = st.columns([1, 1, 1, 1])
@@ -198,18 +200,14 @@ with interactive_tabs[2]:
 st.subheader("Revenue and Orders")
 left, right = st.columns(2)
 with left:
-    st.plotly_chart(monthly_revenue_chart(analytics.monthly_revenue), use_container_width=True)
-with right:
     st.plotly_chart(monthly_order_count_chart(analytics.monthly_revenue), use_container_width=True)
-
-left, right = st.columns(2)
-with left:
-    st.plotly_chart(returns_by_month_chart(analytics.monthly_revenue), use_container_width=True)
 with right:
-    if not analytics.product_performance.empty and analytics.product_performance["product_category"].nunique() > 1:
-        st.plotly_chart(category_revenue_chart(analytics.product_performance), use_container_width=True)
-    else:
-        st.info("Product category is not available or has only one usable value.")
+    st.plotly_chart(returns_by_month_chart(analytics.monthly_revenue), use_container_width=True)
+
+if not analytics.product_performance.empty and analytics.product_performance["product_category"].nunique() > 1:
+    st.plotly_chart(category_revenue_chart(analytics.product_performance), use_container_width=True)
+else:
+    st.info("Product category is not available or has only one usable value.")
 
 st.subheader("Product and Customer Performance")
 left, right = st.columns(2)

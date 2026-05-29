@@ -88,15 +88,21 @@ render_kpi_grid(
     ]
 )
 
-st.subheader("Template Quality Score")
-st.progress(quality.overall_score / 100)
-st.dataframe(
-    [{"dimension": key.replace("_", " ").title(), "score": value} for key, value in quality.sub_scores.items()],
+st.subheader("Main Chart: Monthly Revenue, Cost and Net Result")
+st.plotly_chart(
+    px.line(analytics.monthly_summary, x="month", y=["revenue", "cost", "net_result"], markers=True, title="Monthly Revenue, Cost and Net Result"),
     use_container_width=True,
-    hide_index=True,
 )
 
-st.subheader("Chart Controls")
+with st.expander("Template Quality Score"):
+    st.progress(quality.overall_score / 100)
+    st.dataframe(
+        [{"dimension": key.replace("_", " ").title(), "score": value} for key, value in quality.sub_scores.items()],
+        use_container_width=True,
+        hide_index=True,
+    )
+
+st.subheader("Explore with Chart Controls")
 controlled_transactions = clean_result.analysis_rows.copy()
 date_values = controlled_transactions["date"].dropna()
 control_cols = st.columns([1, 1, 1, 1])

@@ -89,21 +89,27 @@ if metrics["simplified_oee_approximation"] is not None:
         help="Attainment x availability approximation x quality rate approximation. This is not a certified OEE standard.",
     )
 
+st.subheader("Main Chart: Output Trend")
+st.plotly_chart(
+    px.line(analytics.output_over_time, x="period", y="actual_output", markers=True, title="Output Over Time"),
+    use_container_width=True,
+)
+
 with st.expander("Calculation notes"):
     st.write(
         "Analytics pages create temporary derived analytical columns internally, but they do not overwrite raw_df or working_df. "
         "Simplified OEE is shown only when planned output, runtime, downtime, output, and scrap inputs are available."
     )
 
-st.subheader("Template Quality Score")
-st.progress(quality.overall_score / 100)
-st.dataframe(
-    [{"dimension": key.replace("_", " ").title(), "score": value} for key, value in quality.sub_scores.items()],
-    use_container_width=True,
-    hide_index=True,
-)
+with st.expander("Template Quality Score"):
+    st.progress(quality.overall_score / 100)
+    st.dataframe(
+        [{"dimension": key.replace("_", " ").title(), "score": value} for key, value in quality.sub_scores.items()],
+        use_container_width=True,
+        hide_index=True,
+    )
 
-st.subheader("Chart Controls")
+st.subheader("Explore with Chart Controls")
 controlled_ops = clean_result.analysis_rows.copy()
 date_values = controlled_ops["timestamp"].dropna()
 control_cols = st.columns([1, 1, 1, 1])
@@ -194,17 +200,10 @@ with interactive_tabs[1]:
     st.download_button("Download controlled machine ranking CSV", download_csv_bytes(controlled_machine_top), "manufacturing_controlled_machine_ranking.csv", "text/csv")
 
 st.subheader("Production Trends")
-left, right = st.columns(2)
-with left:
-    st.plotly_chart(
-        px.line(analytics.output_over_time, x="period", y="actual_output", markers=True, title="Output Over Time"),
-        use_container_width=True,
-    )
-with right:
-    st.plotly_chart(
-        px.line(analytics.downtime_over_time, x="period", y="downtime_minutes", markers=True, title="Downtime Over Time"),
-        use_container_width=True,
-    )
+st.plotly_chart(
+    px.line(analytics.downtime_over_time, x="period", y="downtime_minutes", markers=True, title="Downtime Over Time"),
+    use_container_width=True,
+)
 
 st.subheader("Machine Performance")
 left, right = st.columns(2)

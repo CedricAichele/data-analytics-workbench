@@ -80,15 +80,21 @@ render_kpi_grid(
     ]
 )
 
-st.subheader("Template Quality Score")
-st.progress(quality.overall_score / 100)
-st.dataframe(
-    [{"dimension": key.replace("_", " ").title(), "score": value} for key, value in quality.sub_scores.items()],
+st.subheader("Main Chart: Lead Time Trend")
+st.plotly_chart(
+    px.line(analytics.lead_time_over_time, x="order_month", y="average_lead_time_days", markers=True, title="Lead Time Over Time"),
     use_container_width=True,
-    hide_index=True,
 )
 
-st.subheader("Chart Controls")
+with st.expander("Template Quality Score"):
+    st.progress(quality.overall_score / 100)
+    st.dataframe(
+        [{"dimension": key.replace("_", " ").title(), "score": value} for key, value in quality.sub_scores.items()],
+        use_container_width=True,
+        hide_index=True,
+    )
+
+st.subheader("Explore with Chart Controls")
 controlled_shipments = clean_result.analysis_rows.copy()
 control_cols = st.columns([1, 1, 1, 1])
 date_column = control_cols[0].selectbox("Date basis", ["order_date", "delivery_date"])
@@ -185,11 +191,7 @@ with interactive_tabs[2]:
     st.download_button("Download controlled destination ranking CSV", download_csv_bytes(destination_top), "logistics_controlled_destination.csv", "text/csv")
 
 st.subheader("Shipment Trends")
-left, right = st.columns(2)
-with left:
-    st.plotly_chart(px.line(analytics.shipments_over_time, x="order_month", y="shipment_count", markers=True, title="Shipments Over Time"), use_container_width=True)
-with right:
-    st.plotly_chart(px.line(analytics.lead_time_over_time, x="order_month", y="average_lead_time_days", markers=True, title="Lead Time Over Time"), use_container_width=True)
+st.plotly_chart(px.line(analytics.shipments_over_time, x="order_month", y="shipment_count", markers=True, title="Shipments Over Time"), use_container_width=True)
 
 left, right = st.columns(2)
 with left:
