@@ -27,18 +27,28 @@ Generic Analytics, Sales / Retail, Manufacturing, Logistics and Finance analytic
 
 ## Overview
 
-The Overview page opens with a business-friendly explanation of what the app does: turn raw CSV, Excel and JSON datasets into checked, prepared and exportable analytics results.
+The Overview page opens as a short landing page for new users. It explains that the app turns raw CSV, Excel and JSON datasets into checked, prepared and exportable analytics results.
 
-It explains what users can do, shows a compact Project Summary, and presents the recommended workflow in a readable process layout without truncated card text.
+The first screen includes primary actions:
 
-It also includes a "Try a Guided Demo" section. The Sales / Retail demo is the recommended first demo; starting a demo creates or activates a demo project, loads the matching sample dataset, selects the template, and points the user to Workflow or Analytics Hub.
+- Start Sales / Retail Demo
+- Create Project
+- Load Dataset
+- Open Workflow
 
-Lower on the page it explains the three usage modes and the two-layer analytics model:
+The guided demo section appears near the top. The Sales / Retail demo is the recommended first demo; starting a demo creates or activates a demo project, loads the matching sample dataset, selects the template, and points the user to Workflow or Analytics Hub.
 
-- generic workflow for any supported tabular dataset
-- domain KPI templates that require schema detection or manual mapping
+The page shows a compact current status card. If no project or dataset exists, it shows "No active project yet" and "No dataset loaded yet" instead of a large empty table. If a project or dataset exists, it shows only the key fields and recommended next action.
 
-Before data is loaded, the page shows that no dataset is active. After loading data, it shows raw and working row/column counts.
+The Overview includes a short five-step "How It Works" preview:
+
+1. Load data
+2. Check quality
+3. Prepare and map fields
+4. Analyze
+5. Export package
+
+Detailed workflow guidance remains on the Workflow page. Technical details such as the analytics model, available templates, and data handling rules are kept in collapsed expanders.
 
 ## Project Setup
 
