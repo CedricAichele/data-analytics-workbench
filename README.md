@@ -44,6 +44,28 @@ This app is built around that separation:
 - Download or load a business-friendly Project Backup for continuing work later
 - Generate deterministic template-aware management summaries without API keys
 
+## Screenshots
+
+### Guided landing page
+
+![Overview](screenshots/overview.png)
+
+### Analytics Hub recommendation
+
+![Analytics Hub](screenshots/analytics_hub.png)
+
+### Data quality checks
+
+![Data Quality](screenshots/data_quality.png)
+
+### Sales / Retail KPI analytics
+
+![Sales Analytics](screenshots/sales_analytics.png)
+
+### Export Center
+
+![Export Center](screenshots/export_center.png)
+
 ## Architecture
 
 ```text
