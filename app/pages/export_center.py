@@ -191,185 +191,11 @@ set_active_analytics_result("data_dictionary_result", data_dictionary_df)
 set_active_analytics_result("generic_quality_report", quality_report)
 set_active_analytics_result("quality_rules_result", quality_rules_df)
 
-st.subheader("Active Dataset")
-status_cols = st.columns(4)
-status_cols[0].metric("Dataset", dataset_name)
-status_cols[1].metric("Source", str(metadata.get("source", "dataset")))
-status_cols[2].metric("File type", str(metadata.get("file_type", "data")))
-status_cols[3].metric("Working shape", f"{len(working_df):,} x {len(working_df.columns):,}")
 size_summary = get_active_dataset_summary()
-if size_summary.get("is_large_dataset"):
-    st.warning(size_summary.get("large_dataset_message"))
-
-st.caption(
-    "The standard export target is the active working dataset. "
-    "Use raw export only when you need the unchanged source copy."
-)
-
-st.subheader("Project Export")
-st.write(
-    "Project Backup is for continuing or restoring project state. "
-    "The BI-ready Export Package is the analysis/reporting output for business review."
-)
 project_metadata = get_project_metadata()
 project_summary = get_project_summary(active_dataset=active, quality_report=quality_report)
 active_project = get_active_project()
-if active_project is None or not project_metadata.get("project_name"):
-    st.info("No active project. Create or load a project to download a Project Backup.")
-else:
-    project_cols_status = st.columns(4)
-    project_cols_status[0].metric("Active project", project_metadata.get("project_name", "Untitled project"))
-    project_cols_status[1].metric("Workflow", project_metadata.get("selected_workflow", "Quick Data Check"))
-    project_cols_status[2].metric("Template", project_metadata.get("suggested_template", "Generic"))
-    project_cols_status[3].metric("Associated dataset", active.get("name", "No active dataset"))
-    st.dataframe(compact_project_summary_rows(project_summary), use_container_width=True, hide_index=True)
-project_cols = st.columns(2)
-with project_cols[0]:
-    if not project_metadata.get("project_name"):
-        st.info("Create or load a project before downloading a Project Backup.")
-    else:
-        backup_bytes = build_project_backup_zip(
-            project_metadata=project_metadata,
-            active_dataset=active,
-            data_dictionary=data_dictionary_df,
-            quality_report=quality_report,
-            quality_rules=quality_rules_df,
-        )
-        st.download_button(
-            "Download Project Backup",
-            data=backup_bytes,
-            file_name=safe_project_filename(project_metadata.get("project_name", "analytics_project")),
-            mime="application/zip",
-            key="project-backup-download",
-        )
-with project_cols[1]:
-    backup_upload = st.file_uploader("Load Project Backup", type=["zip"], key="export-center-project-backup")
-    if backup_upload is not None:
-        try:
-            loaded = load_project_backup_zip(backup_upload)
-            _, created_project = add_or_activate_project(loaded.project_metadata, backup_hash=loaded.backup_hash)
-            if loaded.cleaned_dataset is not None:
-                restored_metadata = dict(loaded.dataset_metadata or {})
-                restored_metadata.update({"source": "project backup", "file_type": "csv"})
-                dataset_id, _ = add_or_activate_dataset(
-                    loaded.project_metadata.get("project_name", "Restored project dataset"),
-                    loaded.cleaned_dataset,
-                    restored_metadata,
-                )
-                associate_dataset_with_active_project(dataset_id)
-                restored_active = get_active_dataset()
-                if restored_active is not None:
-                    restored_active["transformation_log"] = list(loaded.transformation_log)
-                    restored_active["template_mappings"] = dict(loaded.column_mappings)
-                    sync_legacy_state()
-            for message in loaded.messages:
-                st.info(message)
-            if created_project:
-                st.success(f"Project Backup loaded: {loaded.project_metadata.get('project_name', 'Analytics Project')}")
-            else:
-                st.info("Project already loaded. Activated existing project.")
-        except Exception as exc:
-            st.error(f"Project Backup could not be loaded: {exc}")
-
-st.subheader("A. Export Active Working Dataset")
-if size_summary.get("is_large_dataset"):
-    st.info("Large export: downloads may take longer depending on browser and network speed.")
-export_raw = st.checkbox("Export raw dataset instead of working dataset", value=False)
-dataset_to_export = raw_df if export_raw else working_df
-dataset_suffix = "raw_dataset" if export_raw else "working_dataset"
-st.dataframe(dataset_to_export.head(20), use_container_width=True, hide_index=True)
-_download_buttons(dataset_to_export, dataset_suffix, "Download dataset as", "dataset-export", dataset_name)
-
-st.subheader("B. Export Documentation")
-doc_tabs = st.tabs(["Data Dictionary", "Transformation Log", "Data Quality Report", "Quality Rules", "Quality Issues"])
-
-with doc_tabs[0]:
-    st.caption("Generated from the active working dataset.")
-    st.dataframe(data_dictionary_df, use_container_width=True, hide_index=True)
-    _download_buttons(data_dictionary_df, "data_dictionary", "Download dictionary as", "dictionary-export", dataset_name)
-
-with doc_tabs[1]:
-    log_df = transformation_log_to_dataframe(get_active_transformation_log())
-    if log_df.empty:
-        st.info("No transformations have been logged for the active dataset.")
-    else:
-        st.dataframe(log_df, use_container_width=True, hide_index=True)
-    log_cols = st.columns(2)
-    log_cols[0].download_button(
-        "Download log as CSV",
-        data=dataframe_to_csv_bytes(log_df),
-        file_name=build_export_filename(dataset_name, "transformation_log", "csv"),
-        mime="text/csv",
-        key="transformation-log-csv",
-    )
-    log_cols[1].download_button(
-        "Download log as JSON",
-        data=dataframe_to_json_bytes(log_df),
-        file_name=build_export_filename(dataset_name, "transformation_log", "json"),
-        mime="application/json",
-        key="transformation-log-json",
-    )
-
-with doc_tabs[2]:
-    st.dataframe(quality_report_df, use_container_width=True, hide_index=True)
-    quality_cols = st.columns(2)
-    quality_cols[0].download_button(
-        "Download quality report as CSV",
-        data=dataframe_to_csv_bytes(quality_report_df),
-        file_name=build_export_filename(dataset_name, "data_quality_report", "csv"),
-        mime="text/csv",
-        key="quality-report-csv",
-    )
-    quality_cols[1].download_button(
-        "Download quality report as Excel",
-        data=dataframe_to_excel_bytes(quality_report_df, sheet_name="Data_Quality"),
-        file_name=build_export_filename(dataset_name, "data_quality_report", "xlsx"),
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        key="quality-report-xlsx",
-    )
-
-with doc_tabs[3]:
-    if quality_rules_df.empty:
-        st.info("No template-specific quality rules are available until a compatible template mapping is saved.")
-    else:
-        st.dataframe(quality_rules_df, use_container_width=True, hide_index=True)
-    rule_cols = st.columns(2)
-    rule_cols[0].download_button(
-        "Download rules as CSV",
-        data=dataframe_to_csv_bytes(quality_rules_df),
-        file_name=build_export_filename(dataset_name, "quality_rules", "csv"),
-        mime="text/csv",
-        key="quality-rules-csv",
-    )
-    rule_cols[1].download_button(
-        "Download rules as Excel",
-        data=dataframe_to_excel_bytes(quality_rules_df, sheet_name="Quality_Rules"),
-        file_name=build_export_filename(dataset_name, "quality_rules", "xlsx"),
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        key="quality-rules-xlsx",
-    )
-
-with doc_tabs[4]:
-    if quality_issue_rows.empty:
-        st.info("No affected-row quality issue table is available yet. Open Data Quality to generate affected row exports.")
-    else:
-        st.dataframe(quality_issue_rows, use_container_width=True, hide_index=True)
-        issue_cols = st.columns(2)
-        issue_cols[0].download_button(
-            "Download quality issues as CSV",
-            data=dataframe_to_csv_bytes(quality_issue_rows),
-            file_name=build_export_filename(dataset_name, "quality_issues", "csv"),
-            mime="text/csv",
-            key="quality-issues-csv",
-        )
-        issue_cols[1].download_button(
-            "Download quality issues as Excel",
-            data=dataframe_to_excel_bytes(quality_issue_rows, sheet_name="Quality_Issues"),
-            file_name=build_export_filename(dataset_name, "quality_issues", "xlsx"),
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            key="quality-issues-xlsx",
-        )
-
+log_df = transformation_log_to_dataframe(get_active_transformation_log())
 generic_result = get_active_analytics_result("generic_analytics_result")
 generic_table = getattr(generic_result, "aggregated", None)
 result_sources = [
@@ -422,18 +248,6 @@ result_table_pack = _pack_named_tables(
 if not result_table_pack.empty:
     package_tables["Result_Tables"] = result_table_pack
 
-st.subheader("C. KPI Summary Export")
-if kpi_summary_df.empty:
-    st.info("No KPI summaries are available yet. Run Generic Analytics or a compatible domain analytics page first.")
-else:
-    st.dataframe(kpi_summary_df, use_container_width=True, hide_index=True)
-    _download_buttons(kpi_summary_df, "kpi_summary", "Download KPI summary as", "kpi-summary-export", dataset_name)
-
-st.subheader("D. BI-ready Export Package")
-st.caption(
-    "Creates one Excel workbook with the active working dataset, data dictionary, quality report, "
-    "transformation log, and available result tables."
-)
 package_bytes = build_export_workbook(
     cleaned_data=working_df,
     data_dictionary=data_dictionary_df,
@@ -447,31 +261,249 @@ package_bytes = build_export_workbook(
     kpi_summary=kpi_summary_df,
     result_tables=package_tables,
 )
-st.download_button(
-    "Download BI-ready Excel package",
-    data=package_bytes,
-    file_name=build_export_filename(dataset_name, "bi_ready_export_package", "xlsx"),
-    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    key="bi-ready-export-package",
-)
+backup_bytes: bytes | None = None
+if project_metadata.get("project_name"):
+    backup_bytes = build_project_backup_zip(
+        project_metadata=project_metadata,
+        active_dataset=active,
+        data_dictionary=data_dictionary_df,
+        quality_report=quality_report,
+        quality_rules=quality_rules_df,
+    )
 
-st.subheader("E. Export Chart / Result Data")
-available_results = False
-if isinstance(generic_table, pd.DataFrame) and not generic_table.empty:
-    available_results = True
-    with st.expander("Generic Analytics", expanded=False):
-        st.markdown("**Aggregated Result**")
+st.subheader("Export Context")
+context_cols = st.columns(4)
+context_cols[0].metric("Active project", project_metadata.get("project_name") or "No active project")
+context_cols[1].metric("Active dataset", dataset_name)
+context_cols[2].metric(
+    "Workflow / template",
+    f"{project_metadata.get('selected_workflow', 'Quick Data Check')} / {project_metadata.get('suggested_template', 'Generic')}",
+)
+context_cols[3].metric("Working shape", f"{len(working_df):,} x {len(working_df.columns):,}")
+if size_summary.get("is_large_dataset"):
+    st.warning(size_summary.get("large_dataset_message"))
+
+st.subheader("Project Export and Primary Actions")
+st.caption(
+    "BI-ready Export Package is the analysis/reporting output. "
+    "Project Backup is for continuing or restoring project state in the Workbench."
+)
+primary_cols = st.columns(4)
+with primary_cols[0]:
+    st.download_button(
+        "Download BI-ready Excel Package",
+        data=package_bytes,
+        file_name=build_export_filename(dataset_name, "bi_ready_export_package", "xlsx"),
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        key="primary-bi-ready-export-package",
+        use_container_width=True,
+    )
+with primary_cols[1]:
+    if backup_bytes is None:
+        st.info("Create or load a project before downloading a Project Backup.")
+    else:
+        st.download_button(
+            "Download Project Backup",
+            data=backup_bytes,
+            file_name=safe_project_filename(project_metadata.get("project_name", "analytics_project")),
+            mime="application/zip",
+            key="primary-project-backup-download",
+            use_container_width=True,
+        )
+with primary_cols[2]:
+    if kpi_summary_df.empty:
+        st.info("Run analytics to enable KPI Summary export.")
+    else:
+        st.download_button(
+            "Download KPI Summary",
+            data=dataframe_to_excel_bytes(kpi_summary_df, sheet_name="KPI_Summary"),
+            file_name=build_export_filename(dataset_name, "kpi_summary", "xlsx"),
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            key="primary-kpi-summary-xlsx",
+            use_container_width=True,
+        )
+with primary_cols[3]:
+    st.download_button(
+        "Download Data Dictionary",
+        data=dataframe_to_excel_bytes(data_dictionary_df, sheet_name="Data_Dictionary"),
+        file_name=build_export_filename(dataset_name, "data_dictionary", "xlsx"),
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        key="primary-data-dictionary-xlsx",
+        use_container_width=True,
+    )
+
+with st.expander("Load Project Backup"):
+    backup_upload = st.file_uploader("Load Project Backup", type=["zip"], key="export-center-project-backup")
+    if backup_upload is not None:
+        try:
+            loaded = load_project_backup_zip(backup_upload)
+            _, created_project = add_or_activate_project(loaded.project_metadata, backup_hash=loaded.backup_hash)
+            if loaded.cleaned_dataset is not None:
+                restored_metadata = dict(loaded.dataset_metadata or {})
+                restored_metadata.update({"source": "project backup", "file_type": "csv"})
+                dataset_id, _ = add_or_activate_dataset(
+                    loaded.project_metadata.get("project_name", "Restored project dataset"),
+                    loaded.cleaned_dataset,
+                    restored_metadata,
+                )
+                associate_dataset_with_active_project(dataset_id)
+                restored_active = get_active_dataset()
+                if restored_active is not None:
+                    restored_active["transformation_log"] = list(loaded.transformation_log)
+                    restored_active["template_mappings"] = dict(loaded.column_mappings)
+                    sync_legacy_state()
+            for message in loaded.messages:
+                st.info(message)
+            if created_project:
+                st.success(f"Project Backup loaded: {loaded.project_metadata.get('project_name', 'Analytics Project')}")
+            else:
+                st.info("Project already loaded. Activated existing project.")
+        except Exception as exc:
+            st.error(f"Project Backup could not be loaded: {exc}")
+
+with st.expander("Show project details"):
+    if active_project is None or not project_metadata.get("project_name"):
+        st.info("No active project. Create or load a project to download a Project Backup.")
+    else:
+        project_cols_status = st.columns(4)
+        project_cols_status[0].metric("Active project", project_metadata.get("project_name", "Untitled project"))
+        project_cols_status[1].metric("Workflow", project_metadata.get("selected_workflow", "Quick Data Check"))
+        project_cols_status[2].metric("Template", project_metadata.get("suggested_template", "Generic"))
+        project_cols_status[3].metric("Associated dataset", active.get("name", "No active dataset"))
+        st.dataframe(compact_project_summary_rows(project_summary), use_container_width=True, hide_index=True)
+
+with st.expander("Show active dataset export and preview"):
+    st.caption(
+        "The standard export target is the active working dataset. "
+        "Use raw export only when you need the unchanged source copy."
+    )
+    if size_summary.get("is_large_dataset"):
+        st.info("Large export: downloads may take longer depending on browser and network speed.")
+    export_raw = st.checkbox("Export raw dataset instead of working dataset", value=False)
+    dataset_to_export = raw_df if export_raw else working_df
+    dataset_suffix = "raw_dataset" if export_raw else "working_dataset"
+    st.dataframe(dataset_to_export.head(20), use_container_width=True, hide_index=True)
+    _download_buttons(dataset_to_export, dataset_suffix, "Download dataset as", "dataset-export", dataset_name)
+
+with st.expander("Show documentation exports"):
+    doc_tabs = st.tabs(["Data Dictionary", "Transformation Log", "Data Quality Report", "Quality Rules", "Quality Issues"])
+
+    with doc_tabs[0]:
+        st.caption("Generated from the active working dataset.")
+        st.dataframe(data_dictionary_df, use_container_width=True, hide_index=True)
+        _download_buttons(data_dictionary_df, "data_dictionary", "Download dictionary as", "dictionary-export", dataset_name)
+
+    with doc_tabs[1]:
+        if log_df.empty:
+            st.info("No transformations have been logged for the active dataset.")
+        else:
+            st.dataframe(log_df, use_container_width=True, hide_index=True)
+        log_cols = st.columns(2)
+        log_cols[0].download_button(
+            "Download log as CSV",
+            data=dataframe_to_csv_bytes(log_df),
+            file_name=build_export_filename(dataset_name, "transformation_log", "csv"),
+            mime="text/csv",
+            key="transformation-log-csv",
+        )
+        log_cols[1].download_button(
+            "Download log as JSON",
+            data=dataframe_to_json_bytes(log_df),
+            file_name=build_export_filename(dataset_name, "transformation_log", "json"),
+            mime="application/json",
+            key="transformation-log-json",
+        )
+
+    with doc_tabs[2]:
+        st.dataframe(quality_report_df, use_container_width=True, hide_index=True)
+        quality_cols = st.columns(2)
+        quality_cols[0].download_button(
+            "Download quality report as CSV",
+            data=dataframe_to_csv_bytes(quality_report_df),
+            file_name=build_export_filename(dataset_name, "data_quality_report", "csv"),
+            mime="text/csv",
+            key="quality-report-csv",
+        )
+        quality_cols[1].download_button(
+            "Download quality report as Excel",
+            data=dataframe_to_excel_bytes(quality_report_df, sheet_name="Data_Quality"),
+            file_name=build_export_filename(dataset_name, "data_quality_report", "xlsx"),
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            key="quality-report-xlsx",
+        )
+
+    with doc_tabs[3]:
+        if quality_rules_df.empty:
+            st.info("No template-specific quality rules are available until a compatible template mapping is saved.")
+        else:
+            st.dataframe(quality_rules_df, use_container_width=True, hide_index=True)
+        rule_cols = st.columns(2)
+        rule_cols[0].download_button(
+            "Download rules as CSV",
+            data=dataframe_to_csv_bytes(quality_rules_df),
+            file_name=build_export_filename(dataset_name, "quality_rules", "csv"),
+            mime="text/csv",
+            key="quality-rules-csv",
+        )
+        rule_cols[1].download_button(
+            "Download rules as Excel",
+            data=dataframe_to_excel_bytes(quality_rules_df, sheet_name="Quality_Rules"),
+            file_name=build_export_filename(dataset_name, "quality_rules", "xlsx"),
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            key="quality-rules-xlsx",
+        )
+
+    with doc_tabs[4]:
+        if quality_issue_rows.empty:
+            st.info("No affected-row quality issue table is available yet. Open Data Quality to generate affected row exports.")
+        else:
+            st.dataframe(quality_issue_rows, use_container_width=True, hide_index=True)
+            issue_cols = st.columns(2)
+            issue_cols[0].download_button(
+                "Download quality issues as CSV",
+                data=dataframe_to_csv_bytes(quality_issue_rows),
+                file_name=build_export_filename(dataset_name, "quality_issues", "csv"),
+                mime="text/csv",
+                key="quality-issues-csv",
+            )
+            issue_cols[1].download_button(
+                "Download quality issues as Excel",
+                data=dataframe_to_excel_bytes(quality_issue_rows, sheet_name="Quality_Issues"),
+                file_name=build_export_filename(dataset_name, "quality_issues", "xlsx"),
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                key="quality-issues-xlsx",
+            )
+
+with st.expander("Show KPI summary export"):
+    if kpi_summary_df.empty:
+        st.info("No KPI summaries are available yet. Run Generic Analytics or a compatible domain analytics page first.")
+    else:
+        st.dataframe(kpi_summary_df, use_container_width=True, hide_index=True)
+        _download_buttons(kpi_summary_df, "kpi_summary", "Download KPI summary as", "kpi-summary-export", dataset_name)
+
+with st.expander("Show BI-ready package details"):
+    st.write(
+        "Creates one Excel workbook with the active working dataset, data dictionary, quality report, "
+        "transformation log, and available result tables."
+    )
+    st.write("The primary package download is available near the top of this page.")
+
+with st.expander("Show chart and result table exports"):
+    available_results = False
+    if isinstance(generic_table, pd.DataFrame) and not generic_table.empty:
+        available_results = True
+        st.markdown("**Generic Analytics - Aggregated Result**")
         st.dataframe(generic_table, use_container_width=True, hide_index=True)
         _download_buttons(generic_table, "generic_analytics_result", "Download table as", "generic-analytics-result", dataset_name)
 
-for section in display_sections:
-    tables = section["tables"]
-    if not tables:
-        continue
-    available_results = True
-    with st.expander(section["label"], expanded=False):
+    for section in display_sections:
+        tables = section["tables"]
+        if not tables:
+            continue
+        available_results = True
+        st.markdown(f"**{section['label']}**")
         for table_name, table_df in tables:
-            st.markdown(f"**{table_name.replace('_', ' ').title()}**")
+            st.caption(table_name.replace("_", " ").title())
             st.dataframe(table_df, use_container_width=True, hide_index=True)
             _download_buttons(
                 table_df,
@@ -481,5 +513,5 @@ for section in display_sections:
                 dataset_name,
             )
 
-if not available_results:
-    st.info("No analytics result tables are available yet. Run Generic Analytics or a compatible domain analytics page first.")
+    if not available_results:
+        st.info("No analytics result tables are available yet. Run Generic Analytics or a compatible domain analytics page first.")
