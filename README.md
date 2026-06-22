@@ -8,6 +8,16 @@ GitHub repository: `https://github.com/CedricAichele/data-analytics-workbench`
 Live Demo: `https://data-analytics-workbench.streamlit.app/`  
 License: MIT
 
+## Recommended Review Path
+
+For a quick employer or recruiter review, use this path:
+
+```text
+Open Live Demo -> Start Sales/Retail Demo -> Analytics Hub -> Sales/Retail Analytics -> Export Center -> BI-ready Export Package
+```
+
+This is a portfolio-grade analytics prototype, not enterprise production software.
+
 ## Business Problem
 
 Analysts rarely receive clean, perfectly modeled datasets. A useful analytics workflow needs to separate generic data understanding from domain-specific KPI logic, preserve source data, and document preparation decisions before reporting business metrics.

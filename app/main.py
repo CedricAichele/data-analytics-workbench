@@ -63,7 +63,8 @@ if demo_feedback:
             st.page_link("pages/analytics_hub.py", label="Open Analytics Hub", icon=":material/query_stats:")
         except Exception:
             pass
-st.write("New to the app? Start with the Sales / Retail demo to see the full workflow.")
+st.write("For a quick review, start with the Sales/Retail demo.")
+st.caption("New to the app? The demo shows the full workflow from sample data to Analytics Hub and Export Center.")
 demo_cols = st.columns(4)
 for index, demo in enumerate(list_demo_flows()):
     with demo_cols[index]:
